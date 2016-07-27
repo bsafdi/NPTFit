@@ -3,8 +3,10 @@ plots
 data
 psf
 chains
+<<<<<<< HEAD
 chains
 mathematica
+=======
 run_test
 env.sh
 build/*
