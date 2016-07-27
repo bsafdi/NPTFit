@@ -4,17 +4,12 @@ data
 psf
 chains
 chains
-ipython
 mathematica
 run_test
 env.sh
 build/*
 *.pyc
 *.so
-*.ipynb
-!basic_examples/*.ipynb
-*.ipynb*
-*ipynb*
 *.o
 *.c
 *~
