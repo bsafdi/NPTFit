@@ -57,7 +57,7 @@ cdef double log_like_internal(double[::1] xbg_PSF_compressed,
     cdef int npixROI = len(xbg_PSF_compressed)
 
     # Setup variables used for indexing loops
-    cdef size_t f_index, p, k, n
+    cdef Py_ssize_t f_index, p, k, n
 
 
     ## Calculate the required x_m values
