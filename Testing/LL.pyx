@@ -5,13 +5,20 @@
 ## Calculation of Log Likelihood for a template
 ## fit involving non-poissonian templates
 ##
+## Calculation broken into two parts:
+##  1. Determination of x_m and x_m_sum, which
+##     depends on the number of non-poissonian
+##     templates & the number of breaks each one
+##     has; and
+##  2. Determination of LL in terms of these
+##     using a recurrence relation
+##
 #------------------------------------------------
 
-# Import modules 
 import numpy as np
 cimport numpy as np
 cimport cython
-import special as spc
+import incgamma_fct as igf
 
 # Type used for all non-integer functions
 DTYPE = np.float
@@ -30,83 +37,26 @@ def log_like(double[::1] xbg_PSF_compressed,
              double[::1] df_rho_div_f_ary, 
              double[::1] PS_dist_compressed, 
              int[::1] data):
+
+## SETUP SO IT PASSES SUM OF STUFF ON
     return log_like_internal(xbg_PSF_compressed,theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data)
 
 
-## Define cython function
+## Implement the recurrence relation and return LL
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
 @cython.initializedcheck(False)
 cdef double log_like_internal(double[::1] xbg_PSF_compressed, 
-                              double[::1] theta, 
-                              double[::1] f_ary, 
-                              double[::1] df_rho_div_f_ary, 
-                              double[::1] PS_dist_compressed, 
                               int[::1] data):
-
-    # Unpack theta into individual NPT parameters
-    cdef double A = np.float(theta[0])
-    cdef double n1 = np.float(theta[1])
-    cdef double n2 = np.float(theta[2])
-    cdef double n3 = np.float(theta[3])
-    cdef double Sb1 = np.float(theta[4])
-    cdef double Sb2 = np.float(theta[5])
-
-    # Extract variables used to set array lengths
-    cdef int k_max = np.max(data) + 1
-    cdef int npixROI = len(xbg_PSF_compressed)
-
-    # Setup variables used for indexing loops
-    cdef size_t f_index, p, k, n
-
-
-    ## Calculate the required x_m values
-    
-    cdef double f2 = 0., df_rho_div_f2 = 0.
-    cdef double term1 = 0., term2 = 0.
-    cdef double second_1_alpha = 0., second_1_beta = 0.
-    cdef double second_1_a = 0., second_1_b = 0.
-    cdef double second_1_c = 0., second_1_d = 0.
-    
-    cdef double[:,::1] x_m_ary = np.zeros((npixROI,k_max + 1), dtype=DTYPE)
-    cdef double[::1] x_m_sum = np.zeros(npixROI, dtype=DTYPE)
-    cdef double x_m_ary_f, x_m_sum_f
-
-    cdef double[::1] g0_ary_f = np.zeros(k_max + 1, dtype=DTYPE)
-    cdef double[::1] g1_ary_f = np.zeros(k_max + 1, dtype=DTYPE)
-    cdef double[::1] g2_ary_f = np.zeros(k_max + 1, dtype=DTYPE)
-
-    # Loop through f to perform the integral over df
-    for f_index in range(len(f_ary)):
-        f2 = f_ary[f_index]
-        df_rho_div_f2 = df_rho_div_f_ary[f_index]
-        g0_ary_f = spc.gammainc_up_fct_ary_log(k_max, 1. - n1, Sb2 * f2) 
-        g1_ary_f = spc.gammainc_up_fct_ary_log(k_max, 1. - n2, Sb1 * f2) - spc.gammainc_up_fct_ary_log(k_max, 1. - n2, Sb2 * f2)
-        g2_ary_f = spc.gammainc_lo_fct_ary_back(k_max, 1. - n3, Sb1 * f2)
-        term1 = (A * Sb1 * f2) \
-                             * (1./(n2-1.) + 1./(1.-n3) - pow(Sb1 / Sb2, n2-1.)/(n2-1.) \
-                                - (pow(Sb1 * f2, n2-1.) * g1_ary_f[0] + pow(Sb1 * f2, n3-1.) * g2_ary_f[0])   + pow( Sb1 / Sb2, n2 - 1.)*( 1./(n1-1.) - pow(Sb2*f2, n1 - 1.)*g0_ary_f[0] )  )
-        second_1_alpha = A * pow(Sb2 * f2, n1)* pow(Sb1 / Sb2 , n2)
-        second_1_a =  A  * pow(Sb1 * f2, n2)
-        second_1_b = A * pow(Sb1 * f2, n3)
-
-        for p in range(npixROI):
-            x_m_sum_f = term1 * PS_dist_compressed[p]
-            x_m_sum[p] += df_rho_div_f2*x_m_sum_f
-
-            second_1_beta = second_1_alpha * PS_dist_compressed[p]
-            second_1_c = second_1_a * PS_dist_compressed[p]
-            second_1_d = second_1_b * PS_dist_compressed[p]
-            for k in range(data[p]+1):
-                x_m_ary_f = second_1_beta * g0_ary_f[k] + second_1_c  * g1_ary_f[k] + second_1_d * g2_ary_f[k] 
-                x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
-
 
     ## Determine log likelihood for model to see data
     # This amounts to calculating p_k in every pixel
     # and adding their log likelihoods
 
+    cdef int k_max = np.max(data) + 1
+    cdef int npixROI = len(xbg_PSF_compressed)
+    cdef size_t p, k
     cdef double ll = 0.
     cdef double f0_ary, f1_ary
     cdef double[:] pk = np.zeros((k_max+1), dtype=DTYPE)
@@ -129,7 +79,8 @@ cdef double log_like_internal(double[::1] xbg_PSF_compressed,
 
         # Need prob > 0 to define a LL
         # If a very bad fit can get prob = 0,
-        # if so then penalise
+        # if so then penalise to avoid this
+        # region
         if pk[data[p]] > 0:
             ll += log(pk[data[p]])
         else:
