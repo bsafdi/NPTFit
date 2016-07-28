@@ -92,7 +92,71 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
 
         x_m_sum -= x_m_ary[:,0]
 
-    elif n_break == 2:
+    elif n_break == 2 and not test:
+
+        # k_max = np.max(data)+1
+
+        # A = theta[0]
+        # n1 = theta[1]
+        # n2 = theta[2]
+        # n3 = theta[3]
+        # Sb1 = theta[4]
+        # Sb2 = theta[5]
+        # npixROI = len(PS_dist_compressed)
+
+        # Sb1, Sb2 = Sb2, Sb1 # Cheeky variable swap
+        # A = A * (Sb2/Sb1)**n2  # Cheeky rescaling
+
+
+        # f2 = 0.
+        # df_rho_div_f2 = 0.
+
+        # x_m_ary = np.zeros(shape=(npixROI,k_max+1))
+        # x_m_sum = np.zeros(npixROI)
+
+        # g0_ary_f = np.zeros(k_max + 1)
+        # g1_ary_f = np.zeros(k_max + 1)
+        # g2_ary_f = np.zeros(k_max + 1)
+
+        # # PS Calcs
+        # term1 = 0.
+        # term2 = 0.
+        # second_2_a = 0.
+        # second_2_b = 0.
+        # second_2_c = 0.
+        # second_2_d = 0.
+        # second_1_alpha = 0.
+        # second_1_a = 0.
+        # second_1_b = 0.
+        # second_1_beta = 0.
+        # second_1_c = 0.
+        # second_1_d = 0.
+
+        # for f_index in range(len(f_ary)):
+        #     f2 = f_ary[f_index]
+        #     df_rho_div_f2 = df_rho_div_f_ary[f_index]
+        #     g0_ary_f = gammainc_up_fct_ary_log(k_max, 1. - n1, Sb2 * f2)
+        #     g1_ary_f = gammainc_up_fct_ary_log(k_max, 1. - n2, Sb1 * f2) - gammainc_up_fct_ary_log(k_max, 1. - n2, Sb2 * f2)
+        #     g2_ary_f = gammainc_lo_fct_ary_back(k_max, 1. - n3, Sb1 * f2)
+        #     term1 = (A * Sb1 * f2) \
+        #                          * (1./(n2-1.) + 1./(1.-n3) - pow(Sb1 / Sb2, n2-1.)/(n2-1.) \
+        #                             - (pow(Sb1 * f2, n2-1.) * g1_ary_f[0] + pow(Sb1 * f2, n3-1.) * g2_ary_f[0])   + pow( Sb1 / Sb2, n2 - 1.)*( 1./(n1-1.) - pow(Sb2*f2, n1 - 1.)*g0_ary_f[0] )  )
+        #     second_1_alpha = A * pow(Sb2 * f2, n1)* pow(Sb1 / Sb2 , n2)
+        #     second_1_a =  A  * pow(Sb1 * f2, n2)
+        #     second_1_b = A * pow(Sb1 * f2, n3)
+
+        #     for p in range(npixROI):
+        #         x_m_sum_f = term1 * PS_dist_compressed[p]
+        #         x_m_sum[p] += df_rho_div_f2*x_m_sum_f
+
+        #         second_1_beta = second_1_alpha * PS_dist_compressed[p]
+        #         second_1_c = second_1_a * PS_dist_compressed[p]
+        #         second_1_d = second_1_b * PS_dist_compressed[p]
+        #         for k in range(data[p]+1):
+        #             x_m_ary_f = second_1_beta * g0_ary_f[k] + second_1_c  * g1_ary_f[k] + second_1_d * g2_ary_f[k]
+        #             x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
+
+
 
         k_max = int(np.max(data) + 1)
 
@@ -141,66 +205,66 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
                     x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
 
 
-    # # version that agrees with original code
-    # elif n_break == 2:
+    # version that agrees with original code
+    elif n_break == 2 and test:
 
-    #     k_max = np.max(data)+1
+        k_max = np.max(data)+1
 
-    #     A = theta[0]
-    #     n1 = theta[1]
-    #     n2 = theta[2]
-    #     n3 = theta[3]
-    #     Sb1 = theta[4]
-    #     Sb2 = theta[5]
-    #     npixROI = len(PS_dist_compressed)
+        A = theta[0]
+        n1 = theta[1]
+        n2 = theta[2]
+        n3 = theta[3]
+        Sb1 = theta[4]
+        Sb2 = theta[5]
+        npixROI = len(PS_dist_compressed)
 
-    #     f2 = 0.
-    #     df_rho_div_f2 = 0.
+        f2 = 0.
+        df_rho_div_f2 = 0.
 
-    #     x_m_ary = np.zeros(shape=(npixROI,k_max+1))
-    #     x_m_sum = np.zeros(npixROI)
+        x_m_ary = np.zeros(shape=(npixROI,k_max+1))
+        x_m_sum = np.zeros(npixROI)
 
-    #     g0_ary_f = np.zeros(k_max + 1)
-    #     g1_ary_f = np.zeros(k_max + 1)
-    #     g2_ary_f = np.zeros(k_max + 1)
+        g0_ary_f = np.zeros(k_max + 1)
+        g1_ary_f = np.zeros(k_max + 1)
+        g2_ary_f = np.zeros(k_max + 1)
 
-    #     # PS Calcs
-    #     term1 = 0.
-    #     term2 = 0.
-    #     second_2_a = 0.
-    #     second_2_b = 0.
-    #     second_2_c = 0.
-    #     second_2_d = 0.
-    #     second_1_alpha = 0.
-    #     second_1_a = 0.
-    #     second_1_b = 0.
-    #     second_1_beta = 0.
-    #     second_1_c = 0.
-    #     second_1_d = 0.
+        # PS Calcs
+        term1 = 0.
+        term2 = 0.
+        second_2_a = 0.
+        second_2_b = 0.
+        second_2_c = 0.
+        second_2_d = 0.
+        second_1_alpha = 0.
+        second_1_a = 0.
+        second_1_b = 0.
+        second_1_beta = 0.
+        second_1_c = 0.
+        second_1_d = 0.
 
-    #     for f_index in range(len(f_ary)):
-    #         f2 = f_ary[f_index]
-    #         df_rho_div_f2 = df_rho_div_f_ary[f_index]
-    #         g0_ary_f = gammainc_up_fct_ary_log(k_max, 1. - n1, Sb2 * f2)
-    #         g1_ary_f = gammainc_up_fct_ary_log(k_max, 1. - n2, Sb1 * f2) - gammainc_up_fct_ary_log(k_max, 1. - n2, Sb2 * f2)
-    #         g2_ary_f = gammainc_lo_fct_ary_back(k_max, 1. - n3, Sb1 * f2)
-    #         term1 = (A * Sb1 * f2) \
-    #                              * (1./(n2-1.) + 1./(1.-n3) - pow(Sb1 / Sb2, n2-1.)/(n2-1.) \
-    #                                 - (pow(Sb1 * f2, n2-1.) * g1_ary_f[0] + pow(Sb1 * f2, n3-1.) * g2_ary_f[0])   + pow( Sb1 / Sb2, n2 - 1.)*( 1./(n1-1.) - pow(Sb2*f2, n1 - 1.)*g0_ary_f[0] )  )
-    #         second_1_alpha = A * pow(Sb2 * f2, n1)* pow(Sb1 / Sb2 , n2)
-    #         second_1_a =  A  * pow(Sb1 * f2, n2)
-    #         second_1_b = A * pow(Sb1 * f2, n3)
+        for f_index in range(len(f_ary)):
+            f2 = f_ary[f_index]
+            df_rho_div_f2 = df_rho_div_f_ary[f_index]
+            g0_ary_f = gammainc_up_fct_ary_log(k_max, 1. - n1, Sb2 * f2)
+            g1_ary_f = gammainc_up_fct_ary_log(k_max, 1. - n2, Sb1 * f2) - gammainc_up_fct_ary_log(k_max, 1. - n2, Sb2 * f2)
+            g2_ary_f = gammainc_lo_fct_ary_back(k_max, 1. - n3, Sb1 * f2)
+            term1 = (A * Sb1 * f2) \
+                                 * (1./(n2-1.) + 1./(1.-n3) - pow(Sb1 / Sb2, n2-1.)/(n2-1.) \
+                                    - (pow(Sb1 * f2, n2-1.) * g1_ary_f[0] + pow(Sb1 * f2, n3-1.) * g2_ary_f[0])   + pow( Sb1 / Sb2, n2 - 1.)*( 1./(n1-1.) - pow(Sb2*f2, n1 - 1.)*g0_ary_f[0] )  )
+            second_1_alpha = A * pow(Sb2 * f2, n1)* pow(Sb1 / Sb2 , n2)
+            second_1_a =  A  * pow(Sb1 * f2, n2)
+            second_1_b = A * pow(Sb1 * f2, n3)
 
-    #         for p in range(npixROI):
-    #             x_m_sum_f = term1 * PS_dist_compressed[p]
-    #             x_m_sum[p] += df_rho_div_f2*x_m_sum_f
+            for p in range(npixROI):
+                x_m_sum_f = term1 * PS_dist_compressed[p]
+                x_m_sum[p] += df_rho_div_f2*x_m_sum_f
 
-    #             second_1_beta = second_1_alpha * PS_dist_compressed[p]
-    #             second_1_c = second_1_a * PS_dist_compressed[p]
-    #             second_1_d = second_1_b * PS_dist_compressed[p]
-    #             for k in range(data[p]+1):
-    #                 x_m_ary_f = second_1_beta * g0_ary_f[k] + second_1_c  * g1_ary_f[k] + second_1_d * g2_ary_f[k]
-    #                 x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
+                second_1_beta = second_1_alpha * PS_dist_compressed[p]
+                second_1_c = second_1_a * PS_dist_compressed[p]
+                second_1_d = second_1_b * PS_dist_compressed[p]
+                for k in range(data[p]+1):
+                    x_m_ary_f = second_1_beta * g0_ary_f[k] + second_1_c  * g1_ary_f[k] + second_1_d * g2_ary_f[k]
+                    x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
 
 
     elif n_break == 3:
