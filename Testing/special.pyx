@@ -1,3 +1,12 @@
+#------------------------------------------------
+# Incomplete Gamma Function / Factorial Arrays
+#------------------------------------------------
+##
+## Calculation of Log Likelihood for a template
+## fit involving non-poissonian templates
+##
+#------------------------------------------------
+
 import numpy as np
 cimport numpy as np
 from mpmath import mp
@@ -5,12 +14,11 @@ from mpmath import mp
 sp_max = 5000
 
 def log_factorial(k):
-    #return log(k!)]
+    #return log(k!)
     return np.sum(np.log(np.arange(1., k + 1., dtype=np.float128)))
 
 #precalculate m! and log(m!) arrays for m in [0, sp_max - 1]
 #need to use mp.factorial, since np.math.factorial overflows for m ~ 170
-factorial_ary = np.array([np.float128(mp.factorial(m)) for m in np.arange(sp_max)])
 log_factorial_ary = np.vectorize(log_factorial)(np.arange(sp_max))
 
 gammainc_mem = mp.gammainc
