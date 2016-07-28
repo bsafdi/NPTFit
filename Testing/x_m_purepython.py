@@ -19,7 +19,7 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
     Returns arrays of x_m and x_m_sum
     """
     n_break = (len(theta) - 2)/2 # TODO: handle exception in length of theta
-    print "The number of breaks is", n_break
+    #print "The number of breaks is", n_break
     
     if n_break == 1:
 
