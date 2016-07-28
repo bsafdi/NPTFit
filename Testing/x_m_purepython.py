@@ -1,13 +1,22 @@
+#------------------------------------------------------
+# x_m and x_m_sum arrays for arbitary number of breaks
+#------------------------------------------------------
+
 import numpy as np
 from mpmath import mp
+
 gammainc_mem = mp.gammainc
 
-sp_max = 5000
 def log_factorial(k):
     return np.sum(np.log(np.arange(1., k + 1.)))
+
+sp_max = 5000
 log_factorial_ary = np.vectorize(log_factorial)(np.arange(sp_max))
 
 def gammainc_up_fct_ary_log(m_max, z, a):
+    """
+    Array of incomplete upper gamma functions, returns Gamma(z+m,a)/m! for m from 0 up to m_max  + 1
+    """
     gi_list = np.zeros(m_max + 1)
     gi_list[0] = gammainc_mem(z, a)
 
@@ -17,6 +26,9 @@ def gammainc_up_fct_ary_log(m_max, z, a):
     return np.asarray(gi_list)
 
 def gammainc_lo_fct_ary_back(m_max, z, b):
+    """
+    Array of incomplete lower gamma functions, returns Gamma(z+m,0,b)/m! for m from 0 up to m_max  + 1
+    """
     gi_list = np.zeros(m_max + 1)
     gi_list[m_max] = gammainc_mem(z + m_max, 0, b) / mp.factorial(m_max)
 
@@ -26,16 +38,13 @@ def gammainc_lo_fct_ary_back(m_max, z, b):
         gi_list[i-1] = (gi_list[i] + np.exp((i_array[-i] - 1. + np.float128(z))*np.log(np.float128(b)) - np.float128(b) - log_factorial_ary[i]))*i_array[-i]/(i_array[-i] - 1. + np.float128(z))
     return np.asarray(gi_list)
 
-#=====================================
-#Just return x's 
-def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100000.0, test = False):
-
-
+def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100000.0):
+    """
+    Returns arrays of x_m and x_m_sum
+    """
     n_break = (len(theta) - 2)/2
-
-    print n_break
-
-    if n_break == 1 and not test:
+    
+    if n_break == 1:
 
         k_max = np.max(data) + 1
 
@@ -43,12 +52,10 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
         n1 = np.float(theta[1])
         n2 = np.float(theta[2])
         Sb = np.float(theta[3])
-        xbg_PSF_compressed = data*1.0
         npixROI = len(PS_dist_compressed)
 
         f2 = 0.0
         df_rho_div_f2 = 0.0
-
 
         x_m_ary = np.zeros((npixROI,k_max + 1))
         x_m_sum = np.zeros(npixROI)
@@ -56,7 +63,6 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
         g1_ary_f = np.zeros(k_max + 1)
         g2_ary_f = np.zeros(k_max + 1)
 
-        term1 = 0.0
         second_1_a = 0.0
         second_1_b = 0.0
         second_1_c = 0.0
@@ -67,14 +73,11 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
             df_rho_div_f2 = df_rho_div_f_ary[f_index]
             g1_ary_f = gammainc_up_fct_ary_log(k_max, 1. - n1, Sb * f2) - gammainc_up_fct_ary_log(k_max, 1. - n1, Sc * f2)
             g2_ary_f = gammainc_lo_fct_ary_back(k_max, 1. - n2, Sb * f2)
-            term1 = (A * Sb * f2) \
-                                 * (1./(n1-1.) + 1./(1.-n2) - pow(Sb / Sc, n1-1.)/(n1-1.) \
-                                    - (pow(Sb * f2, n1-1.) * g1_ary_f[0] + pow(Sb * f2, n2-1.) * g2_ary_f[0]))
             second_1_a =  A  * pow(Sb * f2, n1)
             second_1_b = A * pow(Sb * f2, n2)
 
             for p in range(npixROI):
-                x_m_sum_f = term1 * PS_dist_compressed[p]
+                x_m_sum_f = A*Sb*f2*(1/(n1-1)+1/(1-n2))* PS_dist_compressed[p]
                 x_m_sum[p] += df_rho_div_f2*x_m_sum_f
 
                 second_1_c = second_1_a * PS_dist_compressed[p]
@@ -82,56 +85,7 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
                 for k in range(data[p]+1):
                     x_m_ary_f = second_1_c  * g1_ary_f[k] + second_1_d * g2_ary_f[k] 
                     x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
-                
-    elif n_break == 1 and test==True:
-
-        k_max = np.max(data) + 1
-
-        A = np.float(theta[0])
-        n1 = np.float(theta[1])
-        n2 = np.float(theta[2])
-        Sb = np.float(theta[3])
-        xbg_PSF_compressed = data*1.0
-        npixROI = len(PS_dist_compressed)
-
-        f2 = 0.0
-        df_rho_div_f2 = 0.0
-
-
-        x_m_ary = np.zeros((npixROI,k_max + 1))
-        x_m_sum = np.zeros(npixROI)
-
-        g1_ary_f = np.zeros(k_max + 1)
-        g2_ary_f = np.zeros(k_max + 1)
-
-        term1 = 0.0
-        second_1_a = 0.0
-        second_1_b = 0.0
-        second_1_c = 0.0
-        second_1_d = 0.0
-
-        for f_index in range(len(f_ary)):
-            f2 = f_ary[f_index]
-            df_rho_div_f2 = df_rho_div_f_ary[f_index]
-            g1_ary_f = gammainc_up_fct_ary_log(k_max, 1. - n1, Sb * f2) - gammainc_up_fct_ary_log(k_max, 1. - n1, Sc * f2)
-            g2_ary_f = gammainc_lo_fct_ary_back(k_max, 1. - n2, Sb * f2)
-            term1 = (A * Sb * f2) \
-                                 * (1./(n1-1.) + 1./(1.-n2) - pow(Sb / Sc, n1-1.)/(n1-1.) \
-                                    - (pow(Sb * f2, n1-1.) * g1_ary_f[0] + pow(Sb * f2, n2-1.) * g2_ary_f[0]))
-            second_1_a =  A  * pow(Sb * f2, n1)
-            second_1_b = A * pow(Sb * f2, n2)
-
-            for p in range(npixROI):
-                x_m_sum_f = (A * Sb * f2) \
-                                 * (1./(n1-1.) + 1./(1.-n2)) * PS_dist_compressed[p]
-                x_m_sum[p] += df_rho_div_f2*x_m_sum_f
-
-                second_1_c = second_1_a * PS_dist_compressed[p]
-                second_1_d = second_1_b * PS_dist_compressed[p]
-                for k in range(data[p]+1):
-                    x_m_ary_f = second_1_c  * g1_ary_f[k] + second_1_d * g2_ary_f[k] 
-                    x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
-                x_m_sum[p] -= x_m_ary[p,0]
+        x_m_sum -= x_m_ary[:,0]
 
     elif n_break == 2:
 
@@ -143,8 +97,7 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
         n3 = theta[3]
         Sb1 = theta[4]
         Sb2 = theta[5]
-        xbg_PSF_compressed = data*1.0
-        npixROI = len(xbg_PSF_compressed)
+        npixROI = len(PS_dist_compressed)
 
         f2 = 0.
         df_rho_div_f2 = 0.
@@ -194,7 +147,7 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
                     x_m_ary_f = second_1_beta * g0_ary_f[k] + second_1_c  * g1_ary_f[k] + second_1_d * g2_ary_f[k]
                     x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
 
-    elif n_break == 3 and not test:
+    elif n_break == 3:
 
         k_max = np.max(data) + 1
 
@@ -206,8 +159,7 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
         Sb1 = np.float(theta[5])
         Sb2 = np.float(theta[6])
         Sb3 = np.float(theta[7])
-        xbg_PSF_compressed = data*1.0
-        npixROI = len(xbg_PSF_compressed)
+        npixROI = len(PS_dist_compressed)
 
         Sb1, Sb3 = Sb3, Sb1 # Cheeky variable swap
         A = A * (Sb2/Sb1)**n3 * (Sb3/Sb2)**n2 # Cheeky rescaling
@@ -274,15 +226,14 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
                     x_m_ary_f = second_1_beta * g0_ary_f[k] + second_1_c  * g1_ary_f[k] + second_1_d * g2_ary_f[k]+ second_1_dp * g3_ary_f[k] 
                     x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
 
-    elif n_break == 3 and test:
+    else: # arbitrary number of breaks (application for > 3)
 
         k_max = np.max(data) + 1
 
         A = np.float(theta[0])
-        n_ary = theta[1:n_break + 2] # Float these
-        Sb_ary = theta[n_break + 2:2*n_break + 2] # Float these
-        xbg_PSF_compressed = data*1.0
-        npixROI = len(xbg_PSF_compressed)
+        n_ary = [np.float(n_val) for n_val in theta[1:n_break + 2]]
+        Sb_ary = [np.float(n_val) for n_val in theta[n_break + 2:2*n_break + 2]]
+        npixROI = len(PS_dist_compressed)
 
         x_m_ary = np.zeros((npixROI,k_max + 1))
         x_m_sum = np.zeros(npixROI)
@@ -290,7 +241,7 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
         g_ary_f_ary = np.zeros((n_break + 1, k_max + 1))
         pref_x_m_ary = np.zeros(n_break + 1)
 
-        pref_x_m_sum_ary = np.zeros(n_break + 1)
+        first_x_m_sum_ary = np.zeros(n_break + 1)
         post_x_m_sum_ary = np.zeros(n_break + 1)
 
 
@@ -307,28 +258,28 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
             pref_x_m_ary[1:n_break] = [np.prod([pow(Sb_ary[j-1] * f2 , n_ary[j] - n_ary[j-1]) for j in range(1, k + 1)]) for k in range(1,n_break)] # make sure np.prod is okay precision-wise!
             pref_x_m_ary[n_break] = np.prod([pow(Sb_ary[j-1] * f2, n_ary[j] - n_ary[j-1]) for j in range(1, n_break + 1)])
 
-            post_x_m_sum_ary = [1/(1 - n_ary[i]) for i in range(n_break+1)]
+            second_x_m_sum_ary = [1/(1 - n_ary[i]) for i in range(n_break+1)]
 
-            # pref_x_m_sum_ary[0] = -1. # Make sure there isn't a typo here in the notes
-            # pref_x_m_sum_ary[1] = 1. - pow(Sb_ary[1] / Sb_ary[0], 1. - n_ary[1])
-            # pref_x_m_sum_ary[2:n_break] = [np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], 1. - n_ary[j]) for j in range(1, i - 1)]) * (1 - pow(Sb_ary[i-1] / Sb_ary[i-2], 1 - n_ary[i-1])) for i in range(2,n_break)]
-            # pref_x_m_sum_ary[n_break] = np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], 1. - n_ary[j]) for j in range(1, n_break)])
+            first_x_m_sum_ary[0] = -1. # Make sure there isn't a typo here in the notes
+            first_x_m_sum_ary[1] = 1. - pow(Sb_ary[1] / Sb_ary[0], 1. - n_ary[1])
+            first_x_m_sum_ary[2:n_break] = [np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], 1. - n_ary[j]) for j in range(1, i - 1)]) * (1 - pow(Sb_ary[i-1] / Sb_ary[i-2], 1 - n_ary[i-1])) for i in range(3,n_break+1)]
+            first_x_m_sum_ary[n_break] = np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], 1. - n_ary[j]) for j in range(1, n_break)])
 
-            pref_x_m_sum_ary[0] = -1. # Make sure there isn't a typo here in the notes
-            pref_x_m_sum_ary[1:n_break] = [np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j]) for j in range(1, i)]) * pow(Sb_ary[i-1], n_ary[i]) * (-pow(Sb_ary[i-1], 1-n_ary[i])+pow(Sb_ary[i], 1-n_ary[i])) / Sb_ary[0] for i in range(1,n_break)]
-
-            pref_x_m_sum_ary[n_break] = np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j]) for j in range(1, n_break)]) * Sb_ary[n_break-1] / Sb_ary[0]
+            ## This is as in Nick's code
+            # first_x_m_sum_ary[0] = -1. # Make sure there isn't a typo here in the notes
+            # first_x_m_sum_ary[1:n_break] = [np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j]) for j in range(1, i)]) * pow(Sb_ary[i-1], n_ary[i]) * (-pow(Sb_ary[i-1], 1-n_ary[i])+pow(Sb_ary[i], 1-n_ary[i])) / Sb_ary[0] for i in range(1,n_break)]
+            # first_x_m_sum_ary[n_break] = np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j]) for j in range(1, n_break)]) * Sb_ary[n_break-1] / Sb_ary[0]
 
             for p in range(npixROI):
                 
-                x_m_sum_f = A * Sb_ary[0] * f2 * np.dot(pref_x_m_sum_ary, post_x_m_sum_ary) * PS_dist_compressed[p] # NPIX? # Make sure you can do this to PS_dist_compressed
+                x_m_sum_f = A * Sb_ary[0] * f2 * np.dot(first_x_m_sum_ary, second_x_m_sum_ary) * PS_dist_compressed[p]
                 x_m_sum[p] += df_rho_div_f2 * x_m_sum_f
                 
                 for k in range(data[p]+1):
 
                     x_m_ary_f = A * pow(Sb_ary[0] * f2, n_ary[0]) * np.dot(pref_x_m_ary, np.transpose(g_ary_f_ary)[k]) * PS_dist_compressed[p]
                     x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
-                # print x_m_sum[p], x_m_ary[p,0]
-                # x_m_sum[p] -= x_m_ary[p,1]
-                # print x_m_sum[p]
+
+        x_m_sum -= x_m_ary[:,0]
+
     return np.asarray(x_m_ary), np.asarray(x_m_sum)
