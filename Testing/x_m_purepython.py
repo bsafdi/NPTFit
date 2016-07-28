@@ -14,7 +14,38 @@ import incgamma_fct as ig
 
 gammainc_mem = mp.gammainc
 
-def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100000.0):
+def log_factorial(k):
+    return np.sum(np.log(np.arange(1., k + 1.)))
+
+sp_max = 5000
+log_factorial_ary = np.vectorize(log_factorial)(np.arange(sp_max))
+
+def gammainc_up_fct_ary_log(m_max, z, a):
+    """
+    Array of incomplete upper gamma functions, returns Gamma(z+m,a)/m! for m from 0 up to m_max  + 1
+    """
+    gi_list = np.zeros(m_max + 1)
+    gi_list[0] = gammainc_mem(z, a)
+
+    i_array = np.arange(1., m_max + 1.)
+    for i in np.arange(1, m_max + 1):
+        gi_list[i] = (i_array[i-1] - 1. + z)*gi_list[i-1]/i + np.exp((i_array[i-1] - 1. + z)*np.log(a) - a - log_factorial_ary[i])
+    return np.asarray(gi_list)
+
+def gammainc_lo_fct_ary_back(m_max, z, b):
+    """
+    Array of incomplete lower gamma functions, returns Gamma(z+m,0,b)/m! for m from 0 up to m_max  + 1
+    """
+    gi_list = np.zeros(m_max + 1)
+    gi_list[m_max] = gammainc_mem(z + m_max, 0, b) / mp.factorial(m_max)
+
+    i_array = np.arange(m_max, 0, -1)
+
+    for i in np.arange(m_max, 0, -1):
+        gi_list[i-1] = (gi_list[i] + np.exp((i_array[-i] - 1. + np.float128(z))*np.log(np.float128(b)) - np.float128(b) - log_factorial_ary[i]))*i_array[-i]/(i_array[-i] - 1. + np.float128(z))
+    return np.asarray(gi_list)
+
+def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100000.0, test = False):
     """
     Returns arrays of x_m and x_m_sum
     """
@@ -72,6 +103,9 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
         Sb1 = float(theta[4])
         Sb2 = float(theta[5])
 
+        Sb1, Sb2 = Sb2, Sb1 # Cheeky variable swap
+        A = A * (Sb2/Sb1)**n2  # Cheeky rescaling
+
         npixROI = len(PS_dist_compressed)
 
         x_m_ary = np.zeros(shape=(npixROI,k_max+1))
@@ -88,23 +122,86 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
             
             g0_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n1, Sb2 * f2)
             g1_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n2, Sb1 * f2) - ig.incgamma_up_fct_ary(k_max, 1. - n2, Sb2 * f2)
-            g2_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n3, Sb1 * f2)
+            g2_ary_f = ig.incgamma_lo_fct_ary(k_max, 1. - n3, Sb1 * f2)
 
-            term1 = (A * pow(Sb2 / Sb2, n2) * Sb1 * f2) \
+            term1 = (A * Sb1 * f2) \
                                  * (1./(n2-1.) + 1./(1.-n3) - pow(Sb1 / Sb2, n2-1.)/(n2-1.) \
                                     - (pow(Sb1 * f2, n2-1.) * g1_ary_f[0] + pow(Sb1 * f2, n3-1.) * g2_ary_f[0])   + pow( Sb1 / Sb2, n2 - 1.)*( 1./(n1-1.) - pow(Sb2*f2, n1 - 1.)*g0_ary_f[0] )  )
 
             pref0_x_m_ary = pow(Sb2 * f2, n1)* pow(Sb1 / Sb2 , n2)
-            pref1_x_m_ary =  pow(Sb2 / Sb2, n2) * pow(Sb1 * f2, n2)
-            pref2_x_m_ary = pow(Sb2 / Sb2, n2) * pow(Sb1 * f2, n3)
+            pref1_x_m_ary =  pow(Sb1 * f2, n2)
+            pref2_x_m_ary = pow(Sb1 * f2, n3)
 
             for p in range(npixROI):
                 x_m_sum_f = term1 * PS_dist_compressed[p]
                 x_m_sum[p] += df_rho_div_f2*x_m_sum_f
 
                 for k in range(data[p]+1):
-                    x_m_ary_f = A * pow(Sb2 / Sb2, n2)  * (pref0_x_m_ary * g0_ary_f[k] + pref1_x_m_ary  * g1_ary_f[k] + pref2_x_m_ary * g2_ary_f[k]) * PS_dist_compressed[p]
+                    x_m_ary_f = A * (pref0_x_m_ary * g0_ary_f[k] + pref1_x_m_ary  * g1_ary_f[k] + pref2_x_m_ary * g2_ary_f[k]) * PS_dist_compressed[p]
                     x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
+
+
+    # # version that agrees with original code
+    # elif n_break == 2:
+
+    #     k_max = np.max(data)+1
+
+    #     A = theta[0]
+    #     n1 = theta[1]
+    #     n2 = theta[2]
+    #     n3 = theta[3]
+    #     Sb1 = theta[4]
+    #     Sb2 = theta[5]
+    #     npixROI = len(PS_dist_compressed)
+
+    #     f2 = 0.
+    #     df_rho_div_f2 = 0.
+
+    #     x_m_ary = np.zeros(shape=(npixROI,k_max+1))
+    #     x_m_sum = np.zeros(npixROI)
+
+    #     g0_ary_f = np.zeros(k_max + 1)
+    #     g1_ary_f = np.zeros(k_max + 1)
+    #     g2_ary_f = np.zeros(k_max + 1)
+
+    #     # PS Calcs
+    #     term1 = 0.
+    #     term2 = 0.
+    #     second_2_a = 0.
+    #     second_2_b = 0.
+    #     second_2_c = 0.
+    #     second_2_d = 0.
+    #     second_1_alpha = 0.
+    #     second_1_a = 0.
+    #     second_1_b = 0.
+    #     second_1_beta = 0.
+    #     second_1_c = 0.
+    #     second_1_d = 0.
+
+    #     for f_index in range(len(f_ary)):
+    #         f2 = f_ary[f_index]
+    #         df_rho_div_f2 = df_rho_div_f_ary[f_index]
+    #         g0_ary_f = gammainc_up_fct_ary_log(k_max, 1. - n1, Sb2 * f2)
+    #         g1_ary_f = gammainc_up_fct_ary_log(k_max, 1. - n2, Sb1 * f2) - gammainc_up_fct_ary_log(k_max, 1. - n2, Sb2 * f2)
+    #         g2_ary_f = gammainc_lo_fct_ary_back(k_max, 1. - n3, Sb1 * f2)
+    #         term1 = (A * Sb1 * f2) \
+    #                              * (1./(n2-1.) + 1./(1.-n3) - pow(Sb1 / Sb2, n2-1.)/(n2-1.) \
+    #                                 - (pow(Sb1 * f2, n2-1.) * g1_ary_f[0] + pow(Sb1 * f2, n3-1.) * g2_ary_f[0])   + pow( Sb1 / Sb2, n2 - 1.)*( 1./(n1-1.) - pow(Sb2*f2, n1 - 1.)*g0_ary_f[0] )  )
+    #         second_1_alpha = A * pow(Sb2 * f2, n1)* pow(Sb1 / Sb2 , n2)
+    #         second_1_a =  A  * pow(Sb1 * f2, n2)
+    #         second_1_b = A * pow(Sb1 * f2, n3)
+
+    #         for p in range(npixROI):
+    #             x_m_sum_f = term1 * PS_dist_compressed[p]
+    #             x_m_sum[p] += df_rho_div_f2*x_m_sum_f
+
+    #             second_1_beta = second_1_alpha * PS_dist_compressed[p]
+    #             second_1_c = second_1_a * PS_dist_compressed[p]
+    #             second_1_d = second_1_b * PS_dist_compressed[p]
+    #             for k in range(data[p]+1):
+    #                 x_m_ary_f = second_1_beta * g0_ary_f[k] + second_1_c  * g1_ary_f[k] + second_1_d * g2_ary_f[k]
+    #                 x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
+
 
     elif n_break == 3:
 
@@ -118,8 +215,13 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
         Sb1 = float(theta[5])
         Sb2 = float(theta[6])
         Sb3 = float(theta[7])
-
         npixROI = len(PS_dist_compressed)
+
+        Sb1, Sb3 = Sb3, Sb1 # Cheeky variable swap
+        A = A * (Sb2/Sb1)**n3 * (Sb3/Sb2)**n2 # Cheeky rescaling
+
+        f2 = 0.0
+        df_rho_div_f2 = 0.0
 
         x_m_ary = np.zeros((npixROI,k_max + 1))
         x_m_sum = np.zeros(npixROI)
@@ -129,40 +231,58 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
         g2_ary_f = np.zeros(k_max + 1)
         g3_ary_f = np.zeros(k_max + 1)
 
-        for f_index in range(len(f_ary)):
+        #calculations for PS
 
+        term1 = 0.0
+        term2 = 0.0
+        second_2_a = 0.0
+        second_2_b = 0.0
+        second_2_c = 0.0
+        second_2_d = 0.0
+        second_1_alpha = 0.0
+        second_1_a = 0.0
+        second_1_b = 0.0
+        second_1_bp = 0.0
+        second_1_beta = 0.0
+        second_1_c = 0.0
+        second_1_d = 0.0
+        second_1_dp = 0.0
+
+        kappa = 0.0
+        kappa2 = 0.0
+
+        for f_index in range(len(f_ary)):
             f2 = float(f_ary[f_index])
             df_rho_div_f2 = df_rho_div_f_ary[f_index]
 
-            g0_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n1, Sb1 * f2) 
-            g1_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n2, Sb2 * f2) - ig.incgamma_up_fct_ary(k_max, 1. - n2, Sb1 * f2)
-            g2_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n3, Sb3 * f2) - ig.incgamma_up_fct_ary(k_max, 1. - n3, Sb2 * f2)
-            g3_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n4, Sb3 * f2)
+            g0_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n1, Sb3 * f2) 
+            g1_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n2, Sb2 * f2) - ig.incgamma_up_fct_ary(k_max, 1. - n2, Sb3 * f2)
+            g2_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n3, Sb1 * f2) - ig.incgamma_up_fct_ary(k_max, 1. - n3, Sb2 * f2)
+            g3_ary_f = ig.incgamma_lo_fct_ary(k_max, 1. - n4, Sb1 * f2)
 
             kappa = pow(Sb2 / Sb1,1-n3)
             kappa2 = kappa * pow(Sb3 / Sb2,1-n2) 
-            term1 = (A * pow(Sb2/Sb1, n3) * pow(Sb3/Sb2, n2) * Sb1 * f2) \
+            term1 = (A * Sb1 * f2) \
                                  * (kappa/(n2-1.)+1./(n3-1.) + 1./(1.-n4) - pow(Sb1 / Sb2, n3-1.)/(n3-1.) - kappa * pow(Sb2 / Sb3, n2-1.)/(n2-1.) \
-                                    - (kappa*pow(Sb2 * f2, n2-1.) * g1_ary_f[0]+pow(Sb1 * f2, n3-1.) * g2_ary_f[0] + pow(Sb1 * f2, n4-1.) * g3_ary_f[0]) + kappa2*( 1./(n1-1.) - pow(Sb3*f2, n1 - 1.)*g0_ary_f[0] )  )
-            
-            pref0_x_m_ary = 1.
-            pref1_x_m_ary = pow(Sb1, n2 - n1)
-            pref2_x_m_ary = pow(Sb1, n2 - n1) * pow(Sb2, n3 - n2)
-            pref3_x_m_ary = pow(Sb1, n2 - n1) * pow(Sb2, n3 - n2) * pow(Sb3, n4 - n3)
-
+                                    - (kappa*pow(Sb2 * f2, n2-1.) * g1_ary_f[0]+pow(Sb1 * f2, n3-1.) * g2_ary_f[0] + pow(Sb1 * f2, n4-1.) * g3_ary_f[0])   + kappa2*( 1./(n1-1.) - pow(Sb3*f2, n1 - 1.)*g0_ary_f[0] )  )
+            second_1_alpha = A * pow(Sb3 * f2, n1)* pow(Sb1 / Sb2 , n3) * pow(Sb2 / Sb3 , n2)
+            second_1_a =  A * pow(Sb2 * f2, n2)* pow(Sb1 / Sb2 , n3)
+            second_1_b = A * pow(Sb1 * f2, n3)
+            second_1_bp = A * pow(Sb1 * f2, n4)
 
             for p in range(npixROI):
-                
                 x_m_sum_f = term1 * PS_dist_compressed[p]
                 x_m_sum[p] += df_rho_div_f2*x_m_sum_f
 
+                second_1_beta = second_1_alpha * PS_dist_compressed[p]
+                second_1_c = second_1_a * PS_dist_compressed[p]
+                second_1_d = second_1_b * PS_dist_compressed[p]
+                second_1_dp = second_1_bp * PS_dist_compressed[p]
                 for k in range(data[p]+1):
-
-                    x_m_ary_f = A * pow(Sb1, n1) * (pref0_x_m_ary * g0_ary_f[k] + pref1_x_m_ary  * g1_ary_f[k] + pref2_x_m_ary * g2_ary_f[k]+ pref3_x_m_ary * g3_ary_f[k]) * PS_dist_compressed[p]
-
+                    x_m_ary_f = second_1_beta * g0_ary_f[k] + second_1_c  * g1_ary_f[k] + second_1_d * g2_ary_f[k]+ second_1_dp * g3_ary_f[k] 
                     x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
 
-    else: # arbitrary number of breaks (applicable for > 3)
+    else: # arbitrary number of breaks (application for > 3)
 
         k_max = int(np.max(data) + 1)
 
@@ -180,6 +300,7 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
         first_x_m_sum_ary = np.zeros(n_break + 1)
         post_x_m_sum_ary = np.zeros(n_break + 1)
 
+
         for f_index in range(len(f_ary)):
 
             f2 = float(f_ary[f_index])
@@ -187,7 +308,7 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
 
             g_ary_f_ary[0] = ig.incgamma_up_fct_ary(k_max, 1. - n_ary[0], Sb_ary[0] * f2) 
             g_ary_f_ary[1:n_break] = [ig.incgamma_up_fct_ary(k_max, 1. - n_ary[i], Sb_ary[i] * f2) - ig.incgamma_up_fct_ary(k_max, 1. - n_ary[i], Sb_ary[i-1] * f2) for i in range(1,n_break)] 
-            g_ary_f_ary[n_break] = ig.incgamma_up_fct_ary(k_max, 1. - n_ary[n_break], Sb_ary[n_break-1] * f2) 
+            g_ary_f_ary[n_break] = ig.incgamma_lo_fct_ary(k_max, 1. - n_ary[n_break], Sb_ary[n_break-1] * f2) 
 
             pref_x_m_ary[0] = 1.
             pref_x_m_ary[1:n_break] = [np.prod([pow(Sb_ary[j-1] * f2 , n_ary[j] - n_ary[j-1]) for j in range(1, k + 1)]) for k in range(1,n_break)] # make sure np.prod is okay precision-wise!
@@ -195,16 +316,15 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
 
             second_x_m_sum_ary = [1/(1 - n_ary[i]) for i in range(n_break+1)]
 
-            ## This is as in Nick's code, and below is slightly different but really the same
-
-            # first_x_m_sum_ary[0] = -1. # Make sure there isn't a typo here in the notes
-            # first_x_m_sum_ary[1] = 1. - pow(Sb_ary[1] / Sb_ary[0], 1. - n_ary[1])
-            # first_x_m_sum_ary[2:n_break] = [np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], 1. - n_ary[j]) for j in range(1, i - 1)]) * (1 - pow(Sb_ary[i-1] / Sb_ary[i-2], 1 - n_ary[i-1])) for i in range(3,n_break+1)]
-            # first_x_m_sum_ary[n_break] = np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], 1. - n_ary[j]) for j in range(1, n_break)])
-
             first_x_m_sum_ary[0] = -1. # Make sure there isn't a typo here in the notes
-            first_x_m_sum_ary[1:n_break] = [np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j]) for j in range(1, i)]) * pow(Sb_ary[i-1], n_ary[i]) * (-pow(Sb_ary[i-1], 1-n_ary[i])+pow(Sb_ary[i], 1-n_ary[i])) / Sb_ary[0] for i in range(1,n_break)]
-            first_x_m_sum_ary[n_break] = np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j]) for j in range(1, n_break)]) * Sb_ary[n_break-1] / Sb_ary[0]
+            first_x_m_sum_ary[1] = 1. - pow(Sb_ary[1] / Sb_ary[0], 1. - n_ary[1])
+            first_x_m_sum_ary[2:n_break] = [np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], 1. - n_ary[j]) for j in range(1, i - 1)]) * (1 - pow(Sb_ary[i-1] / Sb_ary[i-2], 1 - n_ary[i-1])) for i in range(3,n_break+1)]
+            first_x_m_sum_ary[n_break] = np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], 1. - n_ary[j]) for j in range(1, n_break)])
+
+            ## This is as in Nick's code
+            # first_x_m_sum_ary[0] = -1. # Make sure there isn't a typo here in the notes
+            # first_x_m_sum_ary[1:n_break] = [np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j]) for j in range(1, i)]) * pow(Sb_ary[i-1], n_ary[i]) * (-pow(Sb_ary[i-1], 1-n_ary[i])+pow(Sb_ary[i], 1-n_ary[i])) / Sb_ary[0] for i in range(1,n_break)]
+            # first_x_m_sum_ary[n_break] = np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j]) for j in range(1, n_break)]) * Sb_ary[n_break-1] / Sb_ary[0]
 
             for p in range(npixROI):
                 
