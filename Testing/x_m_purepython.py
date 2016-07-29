@@ -119,13 +119,11 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data):
         Sb1 = float(theta[5])
         Sb2 = float(theta[6])
         Sb3 = float(theta[7])
-        npixROI = len(PS_dist_compressed)
 
         Sb1, Sb3 = Sb3, Sb1 # Cheeky variable swap
         A = A * (Sb2/Sb1)**n3 * (Sb3/Sb2)**n2 # Cheeky rescaling
 
-        f2 = 0.0
-        df_rho_div_f2 = 0.0
+        npixROI = len(PS_dist_compressed)
 
         x_m_ary = np.zeros((npixROI,k_max + 1))
         x_m_sum = np.zeros(npixROI)
@@ -149,21 +147,18 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data):
             term1 = (A * Sb1 * f2) \
                                  * (kappa/(n2-1.)+1./(n3-1.) + 1./(1.-n4) - pow(Sb1 / Sb2, n3-1.)/(n3-1.) - kappa * pow(Sb2 / Sb3, n2-1.)/(n2-1.) \
                                     - (kappa*pow(Sb2 * f2, n2-1.) * g1_ary_f[0]+pow(Sb1 * f2, n3-1.) * g2_ary_f[0] + pow(Sb1 * f2, n4-1.) * g3_ary_f[0])   + kappa2*( 1./(n1-1.) - pow(Sb3*f2, n1 - 1.)*g0_ary_f[0] )  )
-            second_1_alpha = A * pow(Sb3 * f2, n1)* pow(Sb1 / Sb2 , n3) * pow(Sb2 / Sb3 , n2)
-            second_1_a =  A * pow(Sb2 * f2, n2)* pow(Sb1 / Sb2 , n3)
-            second_1_b = A * pow(Sb1 * f2, n3)
-            second_1_bp = A * pow(Sb1 * f2, n4)
+
+            pref0_x_m_ary = pow(Sb3 * f2, n1)* pow(Sb1 / Sb2 , n3) * pow(Sb2 / Sb3 , n2)
+            pref1_x_m_ary =  pow(Sb2 * f2, n2)* pow(Sb1 / Sb2 , n3)
+            pref2_x_m_ary = pow(Sb1 * f2, n3)
+            pref3_x_m_ary = pow(Sb1 * f2, n4)
 
             for p in range(npixROI):
                 x_m_sum_f = term1 * PS_dist_compressed[p]
                 x_m_sum[p] += df_rho_div_f2*x_m_sum_f
 
-                second_1_beta = second_1_alpha * PS_dist_compressed[p]
-                second_1_c = second_1_a * PS_dist_compressed[p]
-                second_1_d = second_1_b * PS_dist_compressed[p]
-                second_1_dp = second_1_bp * PS_dist_compressed[p]
                 for k in range(data[p]+1):
-                    x_m_ary_f = second_1_beta * g0_ary_f[k] + second_1_c  * g1_ary_f[k] + second_1_d * g2_ary_f[k]+ second_1_dp * g3_ary_f[k] 
+                    x_m_ary_f = A * (pref0_x_m_ary * g0_ary_f[k] + pref1_x_m_ary  * g1_ary_f[k] + pref2_x_m_ary * g2_ary_f[k]+ pref3_x_m_ary * g3_ary_f[k]) * PS_dist_compressed[p]
                     x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
 
     else: # arbitrary number of breaks (application for > 3)
