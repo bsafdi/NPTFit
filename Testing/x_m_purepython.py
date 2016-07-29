@@ -42,7 +42,7 @@ def return_xs(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data, Sc = 100
             df_rho_div_f2 = df_rho_div_f_ary[f_index]
             
             g1_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n1, Sb * f2) #- ig.incgamma_up_fct_ary(k_max, 1. - n1, Sc * f2)
-            g2_ary_f = ig.incgamma_up_fct_ary(k_max, 1. - n2, Sb * f2)
+            g2_ary_f = ig.incgamma_lo_fct_ary(k_max, 1. - n2, Sb * f2)
             
             pref1_x_m_ary =  pow(Sb * f2, n1)
             pref2_x_m_ary = pow(Sb * f2, n2)
