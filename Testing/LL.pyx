@@ -12,6 +12,7 @@
 ##
 #------------------------------------------------------------------------------
 
+import sys
 import numpy as np
 cimport numpy as np
 cimport cython
@@ -24,7 +25,6 @@ DTYPE = np.float
 cdef extern from "math.h":
     double log(double x) nogil
     double exp(double x) nogil
-    double pow(double x, double y) nogil
 
 
 def log_like(PT_sum_compressed, theta, f_ary, df_rho_div_f_ary, NPT_compressed,
@@ -33,6 +33,18 @@ def log_like(PT_sum_compressed, theta, f_ary, df_rho_div_f_ary, NPT_compressed,
 
     Organises the calculation of x_m values for multiple non-poissonian 
     templates
+
+    Args:
+        PT_sum_compressed: pixel-wise sum of Poissonian model templates
+        theta: Array of non-poissonian parameters. Length of array is the
+               number of NP templates, and each element in the array has
+               the form: [A, n[1], .., n[j+1], Sb[1], .., Sb[j]]
+        f_ary: Photon leakage probabilities characterizing PSF, sum(f_ary) = 1.0
+        df_rho_div_f_ary: df*rho(f)/f for integrating over f as a sum
+        NPT_compressed: Array of non-poissonian templates. Length of array is
+                        the number of PS templates, and each element in the
+                        array is the pixel-wise normalization of the PS template
+        data: The pixel-wise data
 
     Returns:
         double log likelihood
@@ -48,6 +60,9 @@ def log_like(PT_sum_compressed, theta, f_ary, df_rho_div_f_ary, NPT_compressed,
     cdef double[:,::1] x_m_ary_out = np.zeros((npixROI,k_max + 1), dtype=DTYPE)
     cdef double[::1] x_m_sum_out = np.zeros(npixROI, dtype=DTYPE)
     for i in range(len(theta)):
+        # Check theta has the correct length
+        if (len(theta[i]) % 2 != 0):
+            sys.exit("ERROR: theta has an invalid length")
         x_m_ary_out, x_m_sum_out = x_m.return_xs(theta[i], f_ary, df_rho_div_f_ary, 
                                        NPT_compressed[i], data)
         x_m_ary += np.asarray(x_m_ary_out)
