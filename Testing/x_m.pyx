@@ -12,6 +12,9 @@ cimport numpy as np
 from mpmath import mp
 cimport cython
 
+import marshal
+cache = {}
+
 DTYPE = np.float
 ctypedef np.float_t DTYPE_t
 
@@ -261,21 +264,47 @@ def return_xs_nbreak(double[::1] theta, int n_break, double[::1] f_ary, double[:
 
     cdef double f2, df_rho_div_f2
 
+    cdef double[::1] Sbpow_ary = np.zeros(n_break + 1)
+
+    cdef double dp = 0.0, dp_sum = 0
+
     cdef double x_m_sum_f, x_m_ary_f
 
     cdef Py_ssize_t f_index, p, k, n, m, i
 
-    for f_index in range(len(f_ary)):
+    # Get (Sb[j]/Sb[j+1])**(-n[j]) to avoid having to call pow() repeatedly 
+    for j in range(n_break + 1):
+        Sbpow_ary[j] = pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j])
+
+    # x_m_sum factors 1
+    first_x_m_sum_ary[0] = -1. 
+
+    for i in range(1, n_break + 1):
+        first_x_m_sum_ary[i] = first_x_m_sum_ary[0]
+        for j in range(1, i):
+            first_x_m_sum_ary[i] *= pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j])
+        first_x_m_sum_ary[i] *= Sb_ary[i-1] * ( - 1 + Sbpow_ary[i] * (Sb_ary[i] / Sb_ary[i - 1])) / Sb_ary[0] 
+
+    first_x_m_sum_ary[n_break] = 1.
+    for j in range(1, n_break):
+        first_x_m_sum_ary[n_break] *= Sbpow_ary[j]
+    first_x_m_sum_ary[n_break]  *=  Sb_ary[n_break-1] / Sb_ary[0]
+
+    # x_m_sum factors 2
+    for i in range(n_break+1):
+        second_x_m_sum_ary[i] = 1/(1 - n_ary[i])
+
+    for f_index in range(len(f_ary)): # PSF loop
 
         f2 = float(f_ary[f_index])
         df_rho_div_f2 = df_rho_div_f_ary[f_index]
 
+        # Terms involving incomplete gamma functions in x_m
+
         gamma_ary = ig.incgamma_up_fct_ary(k_max, 1. - n_ary[0], Sb_ary[0] * f2)
-        
         for m in range(k_max + 1):
             g_ary_f_ary[0][m] = gamma_ary[m]
 
-        
         for i in range(1, n_break):
             gamma_ary = ig.incgamma_up_fct_ary(k_max, 1. - n_ary[i], Sb_ary[i] * f2) - ig.incgamma_up_fct_ary(k_max, 1. - n_ary[i], Sb_ary[i-1] * f2)
             for m in range(k_max + 1):
@@ -285,28 +314,34 @@ def return_xs_nbreak(double[::1] theta, int n_break, double[::1] f_ary, double[:
         for m in range(k_max + 1):
             g_ary_f_ary[n_break][m] = gamma_ary[m]
 
-        pref_x_m_ary[0] = pow(Sb_ary[0] * f2, n_ary[0]) * 1.
-        for k in range(1, n_break):
-            pref_x_m_ary[k] = pow(Sb_ary[0] * f2, n_ary[0]) * np.prod([pow(Sb_ary[j-1] * f2 , n_ary[j] - n_ary[j-1]) for j in range(1, k + 1)]) # make sure np.prod is okay precision-wise!
-        pref_x_m_ary[n_break] = pow(Sb_ary[0] * f2, n_ary[0]) * np.prod([pow(Sb_ary[j-1] * f2, n_ary[j] - n_ary[j-1]) for j in range(1, n_break + 1)])
+        # Terms not involving incomplete gamma functions in x_m
 
-        second_x_m_sum_ary = np.asarray([1/(1 - n_ary[i]) for i in range(n_break+1)])
+        pref_x_m_ary[0] = pow(Sb_ary[0] * f2, n_ary[0])
 
-        first_x_m_sum_ary[0] = -1. 
-        for i in range(1, n_break):
-            first_x_m_sum_ary[i] = -1*np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j]) for j in range(1, i)]) * pow(Sb_ary[i-1], n_ary[i]) * (-pow(Sb_ary[i-1], 1-n_ary[i])+pow(Sb_ary[i], 1-n_ary[i])) / Sb_ary[0] 
-        first_x_m_sum_ary[n_break] = np.prod([pow(Sb_ary[j] / Sb_ary[j - 1], - n_ary[j]) for j in range(1, n_break)]) * Sb_ary[n_break-1] / Sb_ary[0]
+        for i in range(1, n_break + 1):
+            pref_x_m_ary[i]  = pref_x_m_ary[i-1]*pow(Sb_ary[i-1] * f2 , n_ary[i] - n_ary[i-1])
+
+        dp_sum = 0.0
+
+        for i in range(0, n_break+1):
+            dp_sum+=first_x_m_sum_ary[i]*second_x_m_sum_ary[i]
+
 
         for p in range(npixROI):
-            
-            x_m_sum_f = A * Sb_ary[0] * f2 * np.dot(first_x_m_sum_ary, second_x_m_sum_ary) * PS_dist_compressed[p]
+
+            x_m_sum_f = A * Sb_ary[0] * f2 * dp_sum * PS_dist_compressed[p]
             x_m_sum[p] += df_rho_div_f2 * x_m_sum_f
             
             for k in range(data[p]+1):
 
-                x_m_ary_f = A * np.dot(pref_x_m_ary, np.transpose(g_ary_f_ary)[k]) * PS_dist_compressed[p]
+                dp = 0.0
+
+                for i in range(0, n_break+1):
+                    dp+=pref_x_m_ary[i]*g_ary_f_ary[i][k]
+
+                x_m_ary_f = A * dp * PS_dist_compressed[p]
                 x_m_ary[p,k] += df_rho_div_f2*x_m_ary_f
 
-    x_m_sum = np.asarray(x_m_sum) - np.asarray(x_m_ary)[:,0] # x_m_sum -= x_m_ary[:,0]
+    x_m_sum = np.asarray(x_m_sum) - np.asarray(x_m_ary)[:,0] 
 
     return np.asarray(x_m_ary), np.asarray(x_m_sum)
