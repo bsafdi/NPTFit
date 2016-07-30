@@ -26,9 +26,20 @@ cdef extern from "math.h":
 import incgamma_fct as ig
 
 def return_xs(double[::1] theta, double[::1] f_ary, double[::1] df_rho_div_f_ary, double[::1] PS_dist_compressed, int[::1] data):
+    """Returns arrays of x_m and x_m_sum for likelihood calculations
+
+    Args:
+        theta: Array of parameters, [A, n[1], .., n[j+1], Sb[1], .., Sb[j]]
+        f_ary: Photon leakage probabilities characterizing PSF, sum(f_ary) = 1.0
+        df_rho_div_f_ary: df*rho(f)/f for integrating over f as a sum
+        PS_dist_compressed: pixel-wise normalization of PS template
+        data: The data yo
+
+    Returns:
+        A list containing (x_m, x_m_sum) 
+
     """
-    Returns arrays of x_m and x_m_sum
-    """
+
     cdef int n_break = int((len(theta) - 2)/2) # TODO: handle exception in length of theta etc
 
     if n_break == 1:
@@ -36,7 +47,7 @@ def return_xs(double[::1] theta, double[::1] f_ary, double[::1] df_rho_div_f_ary
     if n_break == 2:
         return return_xs_2break(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data)
     if n_break == 3:
-        return return_xs_nbreak(theta, n_break, f_ary, df_rho_div_f_ary, PS_dist_compressed, data)
+        return return_xs_3break(theta, f_ary, df_rho_div_f_ary, PS_dist_compressed, data)
     else:
         return return_xs_nbreak(theta, n_break, f_ary, df_rho_div_f_ary, PS_dist_compressed, data)
 
@@ -322,10 +333,8 @@ def return_xs_nbreak(double[::1] theta, int n_break, double[::1] f_ary, double[:
             pref_x_m_ary[i]  = pref_x_m_ary[i-1]*pow(Sb_ary[i-1] * f2 , n_ary[i] - n_ary[i-1])
 
         dp_sum = 0.0
-
         for i in range(0, n_break+1):
             dp_sum+=first_x_m_sum_ary[i]*second_x_m_sum_ary[i]
-
 
         for p in range(npixROI):
 
@@ -335,7 +344,6 @@ def return_xs_nbreak(double[::1] theta, int n_break, double[::1] f_ary, double[:
             for k in range(data[p]+1):
 
                 dp = 0.0
-
                 for i in range(0, n_break+1):
                     dp+=pref_x_m_ary[i]*g_ary_f_ary[i][k]
 
