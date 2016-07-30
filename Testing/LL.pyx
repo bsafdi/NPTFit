@@ -15,7 +15,7 @@
 import numpy as np
 cimport numpy as np
 cimport cython
-import x_m_purepython as x_m
+import x_m
 
 # Type used for all non-integer functions
 DTYPE = np.float
