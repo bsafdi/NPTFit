@@ -111,8 +111,8 @@ cdef double log_like_internal(double[::1] PT_sum_compressed, int[::1] data,
         for k in range(2,data[p]+1):
             pk[k] = 0.
             for n in range(0, k - 1):
-                pk[k] += (k-n)/ float(k) * x_m_ary[p,k-n] * pk[n]
-            pk[k] += f1_ary * pk[k-1] / float(k)
+                pk[k] += (k-n)/float(k)*x_m_ary[p,k-n]*pk[n]
+            pk[k] += f1_ary*pk[k-1]/float(k)
 
         # Need prob > 0 to define a LL
         # If a very bad fit can get prob = 0, if so then penalise to avoid this

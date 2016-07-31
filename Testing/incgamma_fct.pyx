@@ -42,7 +42,7 @@ def incgamma_up_fct_ary(np.int m_max, np.float z, np.float a):
     cdef np.ndarray i_array = np.arange(1., m_max + 1., dtype=np.float128)
     
     cdef Py_ssize_t i 
-    for i in np.arange(1, m_max + 1):
+    for i in np.arange(1,m_max+1):
         igf_list[i] = ((i_array[i-1] - 1. + z)*igf_list[i-1]/i 
                       + np.exp((i_array[i-1] - 1. + z)*np.log(a) - a 
                       - log_factorial_ary[i]))
