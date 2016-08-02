@@ -1,4 +1,4 @@
-import sys, os
+import os
 
 class set_dirs:
     def __init__(self,tag = 'test',make_plots_data_tag = True,work_dir = '',psf_dir = 'False',**kwargs):
@@ -38,10 +38,6 @@ class set_dirs:
 
         self.make_dirs(self.dirs_for_run)
 
-    def make_dirs_for_ps_data(self):
-        self.ps_data_dir = self.data_dir_base + 'ps_data/'
-        self.make_dirs(self,[self.ps_data_dir])
-
     def make_dirs(self,dirs):
         for d in dirs:
             if not os.path.exists(d):
@@ -53,4 +49,3 @@ class set_dirs:
                         if e.errno != 17:
                             raise   
                         pass
-
