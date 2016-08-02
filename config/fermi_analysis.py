@@ -11,7 +11,6 @@ import triangle
 import pulsars.masks as masks
 
 import config.compute_PSF as CPSF
-import config.config_file as cf
 import config.bayesian_scan as bs
 from config.NPTF import NPTF
 import config.bayesian_scan_models as bsm

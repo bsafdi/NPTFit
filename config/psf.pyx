@@ -3,21 +3,13 @@ import healpy as hp
 cimport cython
 cimport numpy as np
 
+# Type used for all non-integer functions
 DTYPE = np.float
-ctypedef np.float_t DTYPE_t
-
-import logging
-logger = logging.getLogger(__name__)
 
 cdef int num_f_bins = 10
 cdef int n_gauss = 50000
 cdef int n_pts_per_gauss = 1000
 cdef double f_trunc = 0.01 #10. / n_pts_per_gauss
-
-cdef extern from "math.h":
-    double log(double x) nogil
-    double exp(double x) nogil
-    double pow(double x, double y) nogil
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -32,10 +24,10 @@ cdef np.ndarray make_PSF_int(str psf_dir, int nside, double sigma_PSF_deg,double
     cdef np.ndarray phi_temp = np.zeros(n_pts_per_gauss,dtype=DTYPE)
     cdef np.ndarray theta = np.zeros(n_pts_per_gauss,dtype=DTYPE) 
     cdef np.ndarray phi = np.zeros(n_pts_per_gauss,dtype=DTYPE) 
-    cdef np.ndarray pixel_hist #= np.zeros(mx-mn,dtype=DTYPE) 
+    cdef np.ndarray pixel_hist 
     cdef double mn,mx
     cdef int[::1] pixel
-    cdef list outlist=[] #=np.array((n_gauss,mx-mn),dtype=DTYPE)
+    cdef list outlist=[] 
     for gauss in range(n_gauss):
         dtheta = np.random.normal(scale=sigma_PSF, size=n_pts_per_gauss)
         dphi = np.random.normal(scale=sigma_PSF, size=n_pts_per_gauss)/(np.sin(theta_c[gauss]+dtheta/2))
@@ -60,10 +52,6 @@ cdef np.ndarray make_PSF_int(str psf_dir, int nside, double sigma_PSF_deg,double
         mx = np.max(pixel) + 1
         pixel_hist = np.histogram(pixel, bins=mx-mn, range=(mn, mx), normed=1)[0]
         outlist.append(pixel_hist)
-        # f_values_temp = np.append(f_values_temp, pixel_hist)
-        # if (gauss + 1) % 1000 == 0:
-        #     f_values = np.append(f_values, np.array(f_values_temp).ravel())
-        #     f_values_temp = np.array([])
     cdef np.ndarray f_values = np.concatenate(outlist) 
     return f_values
 

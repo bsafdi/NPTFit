@@ -1,32 +1,15 @@
-import sys, os
-
-# current_dir = os.getcwd()
-# change_path = ".."
-# os.chdir(change_path)
-
-# This file stores input
 import healpy as hp
 import numpy as np
 import numpy.ma as ma
 from config.set_dirs import set_dirs as sd
 import pulsars.masks as masks
-import pulsars.CTB as CTB
-import config.make_templates as mt
-import config.compute_PSF as CPSF
-
-from config.make_NFW import make_NFW
-from config.load_ps_mask import load_ps_mask as lpm
-
 from astropy.io import fits
-
-import logging
 import pickle
 
 
 class config(sd):
     """The configuration file """
 
-    # def __init__(self,tag='test',CTB_en_min = 8, CTB_en_max = 16, nside = 128,data_name = 'new_CTBCORE',make_plots_data_tag = True,**kwargs):#,**kwargs):
     def __init__(self, nside=128, nexp=1, use_exposure=False, *args, **kwargs):
 
         self.kwargs = kwargs
@@ -38,23 +21,9 @@ class config(sd):
         self.nside = nside
         self.npix = hp.nside2npix(self.nside)
 
-        # Parameters for the CTBCORE data
-        # self.data_name = data_name
-
-        # self.CTB_en_min = CTB_en_min;
-        # self.CTB_en_max = CTB_en_max;
-        # self.nEbins = self.CTB_en_max - self.CTB_en_min
-
         # setup the directories
         sd.__init__(self, *args, **kwargs)  #
 
-
-        # #Now load the CTBCORE data
-        # if 'CTB_count_maps' in self.kwargs.keys():
-        #     self.load_external_data()
-        # else:
-        #     self.load_CTBCORE_data()
-        # self.load_data_ps_model_and_maps()
 
         # templates will be added to self.templates
         self.templates = []
@@ -159,32 +128,6 @@ class config(sd):
         self.exposure_mean = np.mean(self.total_exposure_map_masked.compressed())
 
 
-            # Below is the original version of make_mask_total, replaced by the one above by Nick Rodd on 15 Sept 2015
-            #    def make_mask_total(self,band_mask_range = [-30,30],mask_ring = False,lat= 90,lng = 0,inner = 0, outer= 30,ps_mask_array = 'False'):
-            #        self.band_mask_range = band_mask_range
-            #        self.band_mask = self.make_band_mask(self.band_mask_range)
-            #
-            #        self.mask_ring = mask_ring
-            #        self.lat = lat
-            #        self.lng = lng
-            #        self.inner = inner
-            #        self.outer = outer
-            #
-            #        if not self.mask_ring:
-            #            self.mask_geom_total = self.band_mask #fix this!
-            #        else:
-            #            self.ring_mask = self.make_ring_mask(self.inner,self.outer,self.lat,self.lng)
-            #            self.mask_geom_total = self.ring_mask + self.band_mask
-            #
-            #        # self.ps_mask_type = ps_mask_type
-            #        self.ps_mask_array = ps_mask_array
-            #        if self.ps_mask_array == 'False':
-            #            self.mask_total = self.mask_geom_total
-            #            self.mask_total_array = np.array([self.mask_geom_total for en in self.CTB_en_bins])
-            #        else:
-            #            self.mask_total = np.sum(self.ps_mask_array,axis=0,dtype=bool)+self.mask_geom_total
-            #            self.mask_total_array = np.array(self.ps_mask_array + self.mask_geom_total,dtype=bool)
-
     def load_external_data(self, CTB_en_bins, CTB_count_maps, CTB_exposure_maps):
         self.CTB_en_bins = CTB_en_bins
         self.CTB_en_min = self.CTB_en_bins[0]
@@ -247,8 +190,6 @@ class config(sd):
             self.comp_array = []
             self.templates = []
             self.templates_dict = {}
-
-        # templates_correct_nside = np.array(  [hp.ud_grade(temp,self.nside, power=-2) for temp in templates]    )
 
         self.templates_dict.update(input_template_dict)
 
@@ -341,21 +282,15 @@ class config(sd):
         """
         # TODO: Make this energy dependent. Change self.CTB_exposure_maps[0]
 
-        # pixel_list, exposure_list = self.dividing_exposure(np.mean(self.CTB_exposure_maps, axis=0), self.nexp)
-        # self.pixel_list = pixel_list
-        # self.exposure_list = exposure_list
         masked_arrays_list = []
-        #self.mask_array = []
         for i in range(self.nexp):
             if flux:
                 masked_arrays = [hp.ma((array/flux_map)*np.mean(flux_map)) for array, flux_map in map(None, arrays, self.CTB_exposure_maps)]
             else:
                 masked_arrays = [hp.ma(array) for array in arrays]
             for array in masked_arrays:
-                #self.mask_array += [np.logical_or(self.mask_total, self.making_mask(pixel_list[i], self.CTB_exposure_maps[0]))]
                 array.mask = np.logical_or(self.mask_total, self.making_mask(self.pixel_list[i], self.CTB_exposure_maps[0]))
             masked_arrays_list.append(masked_arrays)
-        #self.masked_arrays_list = masked_arrays_list
         if not compressed:
             return masked_arrays_list
         else:
@@ -363,15 +298,6 @@ class config(sd):
         if summed:
             masked_arrays_compressed = np.sum(masked_arrays_compressed, axis=1)
         return masked_arrays_compressed
-
-    # def compress_fixed_templates(self):
-    #     self.fixed_templates_masked = [hp.ma(temp_1) for temp_1 in self.fixed_templates]
-    #     for temp_masked in self.fixed_templates_masked:
-    #         temp_masked.mask = self.mask_total
-    #     self.fixed_templates_masked_compressed = [temp_2.compressed() for temp_2 in self.fixed_templates_masked]
-
-    # def sum_fixed_templates_over_energy_range(self): #flag: old
-    #     self.summed_fixed_templates = np.sum(self.fixed_templates_masked_compressed,axis=0)
 
     def compress_data(self):
         """
@@ -396,7 +322,6 @@ class config(sd):
         """
         # Reverting back here to find bug
         self.exposure_pixels_compressed()  # This compresses the exposure and gives out the means
-        # self.CTB_masked = [hp.ma(the_data) for the_data in self.CTB_count_maps]
         self.CTB_masked_compressed_exposure = []
         for i in range(self.nexp):
             for the_map in self.CTB_masked:
@@ -488,16 +413,5 @@ class config(sd):
         self.mask_compress_exposure()
         self.pixel_list_compressed, self.exposure_list_compressed = self.dividing_exposure(self.CTB_exposure_maps_masked_compressed_mean, self.nexp)
         self.pixel_list, self.exposure_list = self.dividing_exposure(np.mean(self.CTB_exposure_maps, axis=0), self.nexp)
-        #self.pixel_list_compressed = []
-        #self.exposure_means_list = []
 
         self.exposure_means_list = [np.mean(self.exposure_list_compressed[i]) for i in range(len(self.exposure_list_compressed))]
-        # for exp_group in range(len(self.pixel_list)):
-        #     pixels_compressed = []
-        #     exposure_list_compressed = []
-        #     for i in range(exp_group):
-        #         if not self.mask_total[i]:
-        #             pixels_compressed.append(i)
-        #             exposure_list_compressed.append(self.exposure_list[exp_group][i])
-        #     self.pixel_list_compressed.append(pixels_compressed)
-        #     self.exposure_means_list.append(np.mean(exposure_list_compressed))

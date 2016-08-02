@@ -109,9 +109,9 @@ cdef double log_like_internal(double[::1] PT_sum_compressed, int[::1] data,
         pk[0] = exp(f0_ary)
         pk[1] = pk[0] * f1_ary
 
-        for k in range(2,data[p]+1):
+        for k in range(2, data[p]+1):
             pk[k] = 0.
-            for n in range(0, k - 1):
+            for n in range(0, k-1):
                 pk[k] += (k-n)/float(k)*x_m_ary[p,k-n]*pk[n]
             pk[k] += f1_ary*pk[k-1]/float(k)
 

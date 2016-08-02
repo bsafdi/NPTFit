@@ -1,23 +1,5 @@
-import healpy as hp
 import numpy as np
-import config.set_dirs as sd
-import pulsars.masks as masks
-import pulsars.CTB as CTB
-import pulsars.psf_king as psfk
-import pulsars.psf as psf
-import config.make_templates as mt
 import config.compute_PSF as CPSF
-
-import pymultinest
-import triangle
-import matplotlib.pyplot as plt
-
-import config.likelihood as llh
-
-import logging
-
-from config.config_file import config
-
 
 class NPTF:
     def __init__(self, psf_dir, CTB_map_compressed, k_max='False', Sc='False', nside=128, norm_arrays='False',
@@ -37,8 +19,6 @@ class NPTF:
         self.set_Sc(Sc=Sc)
         self.npixROI = len(self.CTB_map_compressed)
         # TODO: I don't think this is right since the dimensions of (CTB_map_compressed is (1,6000))
-
-        # self.make_f_ary()
 
         self.xbg_PSF_compressed = []
         self.theta_PS = []  # This is the wrong type!!! This should end up being an array!!! TODO: Fix these types!!!
