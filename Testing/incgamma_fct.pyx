@@ -8,7 +8,7 @@
 ##
 ## Determine these using gamma function recursion relations. The use of 128 
 ## point precision is important, and is why part of the code is python rather 
-## than cython
+## than cython.
 ##
 #------------------------------------------------------------------------------
 

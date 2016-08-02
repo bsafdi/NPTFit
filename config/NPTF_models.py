@@ -1,35 +1,8 @@
-import sys, os
-
-# current_dir = os.getcwd()
-# change_path = ".."
-# os.chdir(change_path)
-
-# This file sets up and executes the scan
-import healpy as hp
 import numpy as np
-import math
-import config.set_dirs as sd
-import pulsars.masks as masks
-import pulsars.CTB as CTB
 import pulsars.likelihood_psf_pdep_new as llpsfn
 import pulsars.likelihood_psf_pdep_2break as llpsfb
 import pulsars.likelihood_psf_pdep_3break as llpsfb3
-import config.make_templates as mt
-import config.compute_PSF as CPSF
-
-import pymultinest
-import triangle
-import matplotlib.pyplot as plt
-
-import likelihood as llh
-
-import logging
-
-from config.config_file import config
-
 from config.NPTF import NPTF
-
-import time
 
 
 class NPTF_1_ps(NPTF):

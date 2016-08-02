@@ -10,6 +10,5 @@ extensions = [
         include_dirs=[numpy.get_include()], extra_compile_args=["-ffast-math",'-O3']) 
 ]
 setup(
-    #name = "My hello app",
     ext_modules = cythonize(extensions),
 )
