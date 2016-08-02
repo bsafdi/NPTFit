@@ -14,9 +14,6 @@ class config(sd):
 
         self.kwargs = kwargs
 
-        # for saving and loading
-        # self.tag = tag
-
         # nside
         self.nside = nside
         self.npix = hp.nside2npix(self.nside)
@@ -343,9 +340,6 @@ class config(sd):
     def flatten(self, the_list):
         the_list = list(the_list)
         return [item for sublist in the_list for item in list(sublist)]
-
-    def make_logging(self, log_dir):
-        sd.make_logging(log_dir)
 
     def dividing_exposure(self, exposure_array, nexp):
         """
