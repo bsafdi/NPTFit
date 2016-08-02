@@ -41,11 +41,10 @@ class set_dirs:
     def make_dirs(self,dirs):
         for d in dirs:
             if not os.path.exists(d):
-                while True:
-                    try:
-                        os.mkdir(d)
-                        break
-                    except OSError, e:
-                        if e.errno != 17:
-                            raise   
-                        pass
+                try:
+                    os.mkdir(d)
+                    break
+                except OSError, e:
+                    if e.errno != 17:
+                        raise   
+                    break
