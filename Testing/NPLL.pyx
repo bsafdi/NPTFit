@@ -13,7 +13,6 @@
 ##
 #------------------------------------------------------------------------------
 
-import sys
 import numpy as np
 cimport numpy as np
 cimport cython
@@ -62,8 +61,8 @@ def log_like(PT_sum_compressed, theta, f_ary, df_rho_div_f_ary, NPT_compressed,
     cdef double[::1] x_m_sum_out = np.zeros(npixROI, dtype=DTYPE)
     for i in range(len(theta)):
         # Check theta has the correct length
-        if (len(theta[i]) % 2 != 0):
-            sys.exit("ERROR: theta has an invalid length")
+        assert(len(theta[i]) % 2 == 0),"theta has an invalid length"
+        
         x_m_ary_out, x_m_sum_out = x_m.return_xs(theta[i], f_ary, df_rho_div_f_ary, 
                                        NPT_compressed[i], data)
         x_m_ary += np.asarray(x_m_ary_out)
