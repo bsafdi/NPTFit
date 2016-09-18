@@ -1,22 +1,44 @@
+import sys, os
+
+import healpy as hp
+import numpy as np
+import config.set_dirs as sd
+import pulsars.masks as masks
+import pulsars.CTB as CTB
+import config.make_templates as mt
+import config.compute_PSF as CPSF
+
+import pymultinest
+from mpi4py import MPI
+import triangle
+import matplotlib.pyplot as plt
 import copy
+
 import inspect
 import types
 
-import numpy as np
-import pymultinest
-from mpi4py import MPI
-
 import likelihood as llh
+
+import logging
+
 from config.config_file import config
+from config.NPTF import NPTF
+import config.NPTF_models as NPTF_models
+import config.polychord as polychord_class
+
+import time as time
+
+import datetime
 
 
 class bayesian_scan(config):
     """ The file that sets up and executes the scan """
 
-    def __init__(self, nlive=100, k_max='False', *args, **kwargs):
+    def __init__(self, nlive=100, k_max='False', Sc='False', *args, **kwargs):
         config.__init__(self, *args, **kwargs)
 
         self.k_max = k_max
+        self.Sc = Sc
 
         self.priors = []
         self.is_log_prior = []
@@ -35,12 +57,15 @@ class bayesian_scan(config):
         self.nlive = nlive
         self.resume = False
 
+
+
         # new stuff
         self.non_poiss_models = {}
         self.poiss_models = {}
 
         ###
         self.already_loaded = False
+
 
         ########
         ###temp
@@ -54,15 +79,6 @@ class bayesian_scan(config):
         # prior should be of the form [[min, max]] or [[min, max],[min, max]], etc.
         for is_log in is_logs:
             self.is_log_prior.append(is_log)
-
-    def set_is_poissonian(self, is_poiss):
-        # prior should be of the form [[min, max]] or [[min, max],[min, max]], etc.
-        for is_pois in is_poiss:
-            self.is_poissonian.append(is_pois)
-
-    def set_priors(self, prior):
-        for pri in prior:
-            self.priors.append(pri)
 
     def adding_energy_bins(self, array1):
         new_array = []
@@ -137,6 +153,15 @@ class bayesian_scan(config):
             self.non_poiss_models[template_name]['n_params_total'] += len(
                 self.non_poiss_models[template_name]['fixed_params'])
 
+    def set_is_poissonian(self, is_poiss):
+        # prior should be of the form [[min, max]] or [[min, max],[min, max]], etc.
+        for is_pois in is_poiss:
+            self.is_poissonian.append(is_pois)
+
+    def set_priors(self, prior):
+        for pri in prior:
+            self.priors.append(pri)
+
     def configure_priors(self, number_energy_bins=1):
 
         self.configure_poissonian_priors()
@@ -160,6 +185,11 @@ class bayesian_scan(config):
     def log_prior(self, cube, ndim, nparams):
         for i in range(ndim):
             cube[i] = cube[i] * self.theta_interval[i] + self.theta_min[i]
+
+    def log_prior_polychord(self, cube):
+        for i in range(len(cube)):
+            cube[i] = cube[i] * self.theta_interval[i] + self.theta_min[i]
+        return cube
 
     def set_ll(self, mode='Poisson'):
         if mode == 'Poisson':
@@ -442,6 +472,14 @@ class bayesian_scan(config):
         return [params[0] / float(params[nfix_index + energy_bin])] + params[1:nfix_index - nbreak + 1] + [
             params[nfix_index + energy_bin] * np.product(params[i:nfix_index]) for i in range(nfix_index - nbreak + 1, nfix_index)] + [
                    params[nfix_index + energy_bin]]
+        # return [params[0] / float(params[nfix_index + energy_bin])] + params[1:nfix_index - nbreak + 1] + [
+        #     params[nfix_index + energy_bin] * params[i] for i in range(nfix_index - nbreak + 1, nfix_index)] + [
+        #            params[nfix_index + energy_bin]]
+
+    # def single_model_parameters_specify_nbreak(self, params):
+    #     nbreak = self.nbreak
+    #     nfix_index = (nbreak - 1) * 2 + 3
+    #     return [params[0] / float(params[-1])] + params[1:]
 
     def model_parameters_edep(self, theta_PS, energy_bin):
         if self.n_non_poiss_models == 1:
@@ -509,7 +547,7 @@ class bayesian_scan(config):
             self.NPTF_inst_array[energy_bin].set_xbg()
 
             ll += self.NPTF_inst_array[energy_bin].make_ll_PDF_PSF()
-
+            
         self.index += 1
 
         return ll
@@ -536,6 +574,17 @@ class bayesian_scan(config):
     def ll_pc(self, params):
         temp = self.ll(np.array(params), self.n_params, self.n_params)
         return temp
+
+    def perform_scan_polychord(self, run_tag='test', edep=False, nlive='False', n_chords=1):
+        self.make_dirs_for_run(run_tag, polychord=True)
+        if nlive != 'False':
+            self.nlive = nlive
+        import pypolychord
+        print 'Performing scan with polychord.  The number of parameters is ', self.n_params
+        pypolychord.run(self.ll_pc, self.log_prior_polychord, self.n_params, n_live=self.nlive, n_chords=n_chords,
+                        output_basename=self.chains_dir_for_run)
+
+        # self.load_scan(run_tag = run_tag, edep = edep)
 
     def perform_scan_minuit(self, run_tag='test', edep=False, print_level=1, **kwargs):
         self.run_tag = run_tag
@@ -621,7 +670,13 @@ class bayesian_scan(config):
 
             print 'In load_scan: polychord, minuit:', polychord, minuit
 
-            if minuit:
+            if polychord:
+                self.a = polychord_class.Analyzer(n_params=self.n_params, outputfiles_basename=self.chains_dir_for_run)
+                self.s = self.a.get_stats()
+                self.chain_file = self.chains_dir_for_run + 'test_equal_weights.txt'
+                # self.samples = np.array(np.loadtxt(self.chain_file)[:,2:2+self.n_params])
+                self.samples = np.array(np.loadtxt(self.chain_file)[::, 2:-1])
+            elif minuit:
                 self.load_minuit(run_tag=run_tag, *args, **kwargs)
             else:
                 self.a = pymultinest.Analyzer(n_params=self.n_params, outputfiles_basename=self.chains_dir_for_run)
