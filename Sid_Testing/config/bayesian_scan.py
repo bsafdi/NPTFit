@@ -22,7 +22,6 @@ import likelihood as llh
 import logging
 
 from config.config_file import config
-from config.NPTF import NPTF
 import config.NPTF_models as NPTF_models
 import config.polychord as polychord_class
 
@@ -355,6 +354,7 @@ class bayesian_scan(config):
 
     # @autojit
     def make_xbg_edep(self, theta):
+
         theta_list = theta
         A_theta = []
         theta_PS = []
@@ -454,9 +454,8 @@ class bayesian_scan(config):
     def log_like_NPTF(self, theta, ndim, nparams):
         xbg_PSF_compressed, theta_PS = self.make_xbg(theta)
 
-        self.NPTF_inst.theta_PS = list(np.vectorize(float)(np.array(theta_PS)[::, 1]))
+        self.NPTF_inst.theta_PS = self.make_theta_PS_ary(list(np.vectorize(float)(np.array(theta_PS)[::, 1])))
         self.NPTF_inst.xbg_PSF_compressed = xbg_PSF_compressed
-        self.NPTF_inst.set_xbg()
 
         ll = self.NPTF_inst.make_ll_PDF_PSF()
 
@@ -532,19 +531,24 @@ class bayesian_scan(config):
         theta_PS = list(np.vectorize(float)(np.array(theta_PS_marked)[::, 1]))
         return xbg_PSF_compressed, theta_PS
 
+    def make_theta_PS_ary(self, theta_PS):
+        theta_len = len(theta_PS)
+        theta_PS_new = []
+        for i in range(self.n_non_poiss_models):
+            theta_PS_new += [np.array(theta_PS)[i*len(theta_PS)/self.n_non_poiss_models:(i+1)*theta_len/self.n_non_poiss_models]]
+        return theta_PS_new
+
     def log_like_NPTF_edep(self, theta, ndim, nparams):
         if self.use_exposure:
             xbg_PSF_compressed, theta_PS_marked = self.make_xbg_edep_exposure(theta)
         else:
             xbg_PSF_compressed, theta_PS_marked = self.make_xbg_edep(theta)
         theta_PS = list(np.vectorize(float)(np.array(theta_PS_marked)[::, 1]))
-
         ll = 0.0
 
         for energy_bin in range(self.number_energy_bins):
-            self.NPTF_inst_array[energy_bin].theta_PS = self.model_parameters_edep_nbreak(theta_PS, energy_bin)
+            self.NPTF_inst_array[energy_bin].theta_PS = self.make_theta_PS_ary(self.model_parameters_edep_nbreak(theta_PS, energy_bin))
             self.NPTF_inst_array[energy_bin].xbg_PSF_compressed = xbg_PSF_compressed[energy_bin]
-            self.NPTF_inst_array[energy_bin].set_xbg()
 
             ll += self.NPTF_inst_array[energy_bin].make_ll_PDF_PSF()
             
