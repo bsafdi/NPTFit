@@ -14,7 +14,7 @@
 
 import os
 import numpy as np
-import psf
+import psf_compute
 
 class psf_correction:
     def __init__(self, num_f_bins=10, n_psf=50000, n_pts_per_psf=1000, 
@@ -80,9 +80,15 @@ class psf_correction:
             """
         if not os.path.exists(self.psf_corr_file):
             print "Computing the psf correction ..."
-            self.f_ary, self.df_rho_div_f_ary = psf.make_PSF(self.psf_dir, self.nside, self.sigma_PSF_deg)
+            self.f_ary, self.df_rho_div_f_ary \
+            = psf_compute.psf_corr(self.num_f_bins, self.n_psf, 
+                                   self.n_pts_per_psf, self.f_trunc, 
+                                   self.psf_r_func), self.sample_psf_max, 
+                                   self.psf_sample):
             print "... done"
+#SAVE THE ARRAYS HERE
             print "File saved as:",self.psf_corr_file
         else:
             print "Loading the psf correction from:",self.psf_corr_file
             self.f_ary, self.df_rho_div_f_ary = np.load(self.psf_corr_file)
+# ADJUST THIS ONCE KNOW HOW SAVING

@@ -3,6 +3,7 @@ plots
 data
 psf
 chains
+Fermi_Data
 <<<<<<< HEAD
 chains
 mathematica
@@ -15,6 +16,7 @@ build/*
 *.o
 *.c
 *~
+*.npy
 IG_runs/run.sh
 jobs/slurm*
 *.out
