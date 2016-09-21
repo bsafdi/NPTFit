@@ -14,11 +14,11 @@
 
 import os
 import numpy as np
-import psf
+import psf_compute
 
 class psf_correction:
     def __init__(self, num_f_bins=10, n_psf=50000, n_pts_per_psf=1000, 
-                 f_trunc=0.01, psf_sigma_deg=0.5, delay_compute = False):
+                 f_trunc=0.01, psf_sigma_deg=0.1812, delay_compute = False):
         """ Load or calculate the NPTF PSF correction
             Adds f_ary and df_rho_div_ary to self
             Defaults to a gaussian psf, for user defined psfs see below
@@ -56,21 +56,26 @@ class psf_correction:
         self.n_pts_per_psf = n_pts_per_psf
         self.f_trunc = f_trunc
 
+        # TODO: remove this hack
+        self.psf_dir = '/zfs/nrodd/NPTFit/PSF_Testing/psf_dir/'
+        self.nside = 128
+
         # Convert psf from degrees to radians
         # Only used if the psf is a gaussian
         psf_sigma = psf_sigma_deg*np.pi/180.
 
         # If using a custom PSF, set delay_compute = True and manually 
         # set the following 4 variables for that instance of psf_correction 
-        self.psf_r_func = lambda r: np.exp(-r**2 / (2.*psf_sigma)**2)
+        self.psf_r_func = lambda r: np.exp(-r**2 / (2.*psf_sigma**2))
         self.sample_psf_max = 5. * psf_sigma
         self.psf_samples = 10000
-        self.psf_tag = 'gauss_'+str(np.round(sigma_PSF_deg, 3))
+        # TODO: remove rand
+        self.psf_tag = 'gauss_'+str(self.nside)+'_'+str(np.round(psf_sigma_deg, 3))
 
         
         # If set delay evaluation so that a user defined PSF can be entered
         # User then has to manually call this to implement the calculation
-        self.psf_corr_file = self.psf_dir + psf_tag + '.npy'
+        self.psf_corr_file = self.psf_dir + self.psf_tag + '.npy'
         if not delay_compute:
             self.make_or_load_psf_corr()
 
@@ -80,9 +85,17 @@ class psf_correction:
             """
         if not os.path.exists(self.psf_corr_file):
             print "Computing the psf correction ..."
-            self.f_ary, self.df_rho_div_f_ary = psf.make_PSF(self.psf_dir, self.nside, self.sigma_PSF_deg)
+            self.f_ary, self.df_rho_div_f_ary \
+            = psf_compute.psf_corr(self.nside, self.num_f_bins, self.n_psf, 
+                                   self.n_pts_per_psf, self.f_trunc, 
+                                   self.psf_r_func, self.sample_psf_max, 
+                                   self.psf_samples)
             print "... done"
+            tosave = np.array([self.f_ary, self.df_rho_div_f_ary])
+            np.save(self.psf_corr_file,tosave)
             print "File saved as:",self.psf_corr_file
         else:
             print "Loading the psf correction from:",self.psf_corr_file
-            self.f_ary, self.df_rho_div_f_ary = np.load(self.psf_corr_file)
+            loadpsf = np.load(self.psf_corr_file)
+            self.f_ary = loadpsf[0]
+            self.df_rho_div_f_ary = loadpsf[1]
