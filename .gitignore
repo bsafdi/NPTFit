@@ -6,7 +6,9 @@ chains
 run_test
 Create_Fermi_Data
 env.sh
+psf_dir
 build/*
+notebooks
 *.pyc
 *.so
 *.o
@@ -14,6 +16,7 @@ build/*
 *~
 IG_runs/run.sh
 jobs/slurm*
+*.npy
 *.out
 *.idea
 env_test_home.sh
