@@ -3,12 +3,8 @@ plots
 data
 psf
 chains
-Fermi_Data
-<<<<<<< HEAD
-chains
-mathematica
-=======
 run_test
+Create_Fermi_Data
 env.sh
 build/*
 *.pyc
