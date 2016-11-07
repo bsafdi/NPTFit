@@ -69,7 +69,6 @@ class psf_correction:
         self.psf_r_func = lambda r: np.exp(-r**2 / (2.*psf_sigma**2))
         self.sample_psf_max = 5. * psf_sigma
         self.psf_samples = 10000
-        # TODO: remove rand
         self.psf_tag = 'gauss_'+str(self.nside)+'_'+str(np.round(psf_sigma_deg, 3))
 
         
