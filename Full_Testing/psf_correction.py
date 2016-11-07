@@ -57,7 +57,7 @@ class psf_correction:
         self.f_trunc = f_trunc
 
         # TODO: remove this hack
-        self.psf_dir = '/zfs/nrodd/NPTFit/PSF_Testing/psf_dir/'
+        self.psf_dir = '/zfs/nrodd/NPTFit/Full_Testing/psf_dir/'
         self.nside = 128
 
         # Convert psf from degrees to radians
