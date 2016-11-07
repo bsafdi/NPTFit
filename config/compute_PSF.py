@@ -1,5 +1,6 @@
 import numpy as np
 import pulsars.psf as psf
+import os
 
 class compute_PSF:
     def __init__(self, sigma_PSF_deg, psf_dir, nside=128, num_f_bins=10):
