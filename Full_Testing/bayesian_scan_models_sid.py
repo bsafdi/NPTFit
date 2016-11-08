@@ -23,8 +23,8 @@ class bayesian_scan_NPTF(bayesian_scan):
         self.NPT_dist_compressed_ary = [self.templates_dict_nested[self.non_poiss_models.keys()[i]]['summed_templates'] for i in range(self.n_non_poiss_models)] 
 
         self.NPTF_inst_array = [
-                NPTF_ps(self.NPT_dist_compressed_ary, self.f_ary[en], self.df_rho_div_f_ary[en], self.CTB_masked_compressed[en], self.psf_dir, 
-                                    nside=self.nside, nbreak=self.nbreak) for en in range(self.number_energy_bins)]
+                NPTF_ps(self.NPT_dist_compressed_ary, self.f_ary, self.df_rho_div_f_ary, self.CTB_masked_compressed, self.psf_dir, 
+                                    nside=self.nside, nbreak=self.nbreak)]
 
         self.ll = self.log_like_NPTF_edep
 
