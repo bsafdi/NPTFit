@@ -193,7 +193,7 @@ class bayesian_scan(config):
         self.compress_data()
         self.compress_data_exposure()
         self.compress_templates()
-        self.number_energy_bins = len(self.CTB_en_bins) - 1
+        self.number_energy_bins = 1
 
         for en in range(self.number_energy_bins):
             for key in self.templates_dict_nested.keys():
