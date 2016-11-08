@@ -17,9 +17,6 @@ class config(sd):
         self.templates = []
         self.templates_dict = {}
 
-        # TODO: remove any mention of this from other files
-        self.use_fixed_template = False
-
         # TODO: Always use exposure regions, remove below once setup
         self.nexp = nexp
         self.use_exposure = use_exposure
@@ -220,4 +217,3 @@ class config(sd):
         for i in range(len(mask_array)):
             new_data_masked[mask_array[i]] = 1
         return np.logical_not(new_data_masked)
-

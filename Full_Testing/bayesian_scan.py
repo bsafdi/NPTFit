@@ -324,19 +324,10 @@ class bayesian_scan(config):
         else:
             theta_PS = 0
 
-        if self.use_fixed_template:
-            if self.n_poiss > 0:  # len(A_theta) > 0:
-                xbg_PSF_compressed = self.fixed_template_dict_nested['summed_templates'] + np.sum(
-                    map(lambda i: A_theta[i][1] * self.templates_dict_nested[A_theta[i][0]]['summed_templates'],
-                        range(len(A_theta))), axis=0)
-            else:
-                xbg_PSF_compressed = self.fixed_template_dict_nested['summed_templates']
-        else:
-            xbg_PSF_compressed = np.sum(
-                map(lambda i: A_theta[i][1] * self.templates_dict_nested[A_theta[i][0]]['summed_templates'],
-                    range(len(A_theta))), axis=0)
+        xbg_PSF_compressed = np.sum(
+            map(lambda i: A_theta[i][1] * self.templates_dict_nested[A_theta[i][0]]['summed_templates'],
+                range(len(A_theta))), axis=0)
 
-            # np.sum(A_theta[i,1]*self.poiss_models[A_theta[0]]['summed_templates'] for i in range(len(A_theta)))
 
         return xbg_PSF_compressed, theta_PS
 
@@ -370,20 +361,10 @@ class bayesian_scan(config):
                             theta_PS.insert(int(fixed[0]) + index, [key, fixed[1]])
                     index += self.non_poiss_models[key]['n_params_total']  # n_params
 
-        if self.use_fixed_template:
-            if self.n_poiss > 0:  # len(A_theta[0]) > 0:
-                xbg_PSF_compressed = [self.fixed_template_dict_nested['templates_masked_compressed'][en] + np.sum(map(
-                    lambda i: A_theta[en][i][1] *
-                              self.templates_dict_nested[A_theta[en][i][0]]['templates_masked_compressed'][en],
-                    range(len(A_theta[en]))), axis=0) for en in range(self.number_energy_bins)]
-            else:
-                xbg_PSF_compressed = [self.fixed_template_dict_nested['templates_masked_compressed'][en] for en in
-                                      range(self.number_energy_bins)]
-        else:
-            xbg_PSF_compressed = [np.sum(map(lambda i: A_theta[en][i][1] *
-                                                       self.templates_dict_nested[A_theta[en][i][0]][
-                                                           'templates_masked_compressed'][en], range(len(A_theta[en]))),
-                                         axis=0) for en in range(self.number_energy_bins)]
+        xbg_PSF_compressed = [np.sum(map(lambda i: A_theta[en][i][1] *
+                                                    self.templates_dict_nested[A_theta[en][i][0]][
+                                                        'templates_masked_compressed'][en], range(len(A_theta[en]))),
+                                        axis=0) for en in range(self.number_energy_bins)]
 
         return xbg_PSF_compressed, theta_PS
 
@@ -408,20 +389,10 @@ class bayesian_scan(config):
                             theta_PS.insert(int(fixed[0]) + index, [key, fixed[1]])
                     index += self.non_poiss_models[key]['n_params_total']  # n_params
 
-        if self.use_fixed_template:
-            if self.n_poiss > 0:  # len(A_theta[0]) > 0:
-                xbg_PSF_compressed = [self.fixed_template_dict_nested['templates_masked_compressed_exposure'][en] + np.sum(map(
-                    lambda i: A_theta[en][i][1] *
-                              self.templates_dict_nested[A_theta[en][i][0]]['templates_masked_compressed_exposure'][en],
-                    range(len(A_theta[en]))), axis=0) for en in range(self.number_energy_bins)]
-            else:
-                xbg_PSF_compressed = [self.fixed_template_dict_nested['templates_masked_compressed_exposure'][en] for en in
-                                      range(self.number_energy_bins)]
-        else:
-            xbg_PSF_compressed = [[np.sum(map(lambda i: A_theta[en][i][1] *
-                                                       self.templates_dict_nested[A_theta[en][i][0]][
-                                                           'templates_masked_compressed_exposure'][region][en], range(len(A_theta[en]))), axis=0)
-                                        for region in range(self.nexp)] for en in range(self.number_energy_bins)]
+        xbg_PSF_compressed = [[np.sum(map(lambda i: A_theta[en][i][1] *
+                                                    self.templates_dict_nested[A_theta[en][i][0]][
+                                                        'templates_masked_compressed_exposure'][region][en], range(len(A_theta[en]))), axis=0)
+                                    for region in range(self.nexp)] for en in range(self.number_energy_bins)]
 
         return xbg_PSF_compressed, theta_PS
 
