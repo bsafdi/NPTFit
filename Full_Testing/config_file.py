@@ -327,6 +327,8 @@ class config(sd):
 
         self.CTB_masked_compressed_summed_exposure = np.sum(self.CTB_masked_compressed_exposure, axis=1)
 
+        print self.CTB_masked_compressed_summed_exposure
+
     @staticmethod
     def convert_log_list(the_list, is_log):
         new_list = []
