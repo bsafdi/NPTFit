@@ -59,9 +59,17 @@ def log_like(PT_sum_compressed, theta, f_ary, df_rho_div_f_ary, NPT_compressed,
     cdef Py_ssize_t i
     cdef double[:,::1] x_m_ary_out = np.zeros((npixROI,k_max + 1), dtype=DTYPE)
     cdef double[::1] x_m_sum_out = np.zeros(npixROI, dtype=DTYPE)
+    print "test!??!"
+    
+    theta = np.array([theta])
+
+    NPT_compressed = np.array([NPT_compressed])
+    
     for i in range(len(theta)):
         # Check theta has the correct length
-        assert(len(theta[i]) % 2 == 0),"theta has an invalid length"
+        assert(len(theta[i]) % 2 == 0),"theta has an invalid length!!??!!"
+
+        print np.shape(theta), np.shape(f_ary), np.shape(df_rho_div_f_ary), np.shape(NPT_compressed), np.shape(data)
         
         x_m_ary_out, x_m_sum_out = x_m.return_xs(theta[i], f_ary, df_rho_div_f_ary, 
                                        NPT_compressed[i], data)
