@@ -21,7 +21,7 @@ class bayesian_scan_NPTF(bayesian_scan):
 
         self.use_exposure = True
 
-        self.exposure_pixels_compressed()
+        # self.exposure_pixels_compressed()
         self.configure_for_edep_scan()
 
         self.use_exposure = True
