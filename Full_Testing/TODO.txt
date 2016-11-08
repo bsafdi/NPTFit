@@ -1,0 +1,3 @@
+Folders that need to be created at outset of code:
+- psf_dir
+- chains

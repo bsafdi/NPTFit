@@ -8,7 +8,6 @@ Create_Fermi_Data
 env.sh
 psf_dir
 build/*
-notebooks
 *.pyc
 *.so
 *.o
