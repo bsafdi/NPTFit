@@ -13,7 +13,7 @@ import copy
 import inspect
 import types
 
-import likelihood as llh
+import NPLL as log_like
 
 import logging
 
@@ -431,14 +431,14 @@ class bayesian_scan(config):
 
         # mt.make_xbg_PSF([A_diff, A_bubs, A_iso],x_vec)
 
-        ll = llh.log_poisson(xbg_PSF_compressed, np.array(self.CTB_masked_compressed_summed, dtype='int32'))
+        ll = log_like.log_poisson(xbg_PSF_compressed, np.array(self.CTB_masked_compressed_summed, dtype='int32'))
 
         return ll
 
     def log_like_poisson_edep(self, theta, ndim, nparams):
         xbg_PSF_compressed = self.make_xbg_edep(theta)[0]
 
-        ll = np.sum([llh.log_likelihood_poissonian(xbg_PSF_compressed[i],
+        ll = np.sum([log_like.log_likelihood_poissonian(xbg_PSF_compressed[i],
                                                    np.array(self.CTB_masked_compressed[i], dtype='int32')) for i in
                      range(self.number_energy_bins)])
 
@@ -536,7 +536,6 @@ class bayesian_scan(config):
 
         for energy_bin in range(self.number_energy_bins):
             self.NPTF_inst_array[energy_bin].theta_PS = self.model_parameters_edep_nbreak(theta_PS, energy_bin)
-            print 'theta_PS is', self.NPTF_inst_array[energy_bin].theta_PS
             self.NPTF_inst_array[energy_bin].xbg_PSF_compressed = xbg_PSF_compressed[energy_bin]
             self.NPTF_inst_array[energy_bin].set_xbg()
 

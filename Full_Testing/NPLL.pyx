@@ -59,17 +59,14 @@ def log_like(PT_sum_compressed, theta, f_ary, df_rho_div_f_ary, NPT_compressed,
     cdef Py_ssize_t i
     cdef double[:,::1] x_m_ary_out = np.zeros((npixROI,k_max + 1), dtype=DTYPE)
     cdef double[::1] x_m_sum_out = np.zeros(npixROI, dtype=DTYPE)
-    print "test!??!"
-    
-    theta = np.array([theta])
 
-    NPT_compressed = np.array([NPT_compressed])
-    
+    theta = np.array_split(theta,len(NPT_compressed)) # Split PS theta array into sub-arrays for different PS templates
+
+    data = data[0] # TODO: Doing this since config_file needs [data]; correct later
+
     for i in range(len(theta)):
         # Check theta has the correct length
-        assert(len(theta[i]) % 2 == 0),"theta has an invalid length!!??!!"
-
-        print np.shape(theta), np.shape(f_ary), np.shape(df_rho_div_f_ary), np.shape(NPT_compressed), np.shape(data)
+        assert(len(theta[i]) % 2 == 0), "theta has an invalid length!"
         
         x_m_ary_out, x_m_sum_out = x_m.return_xs(theta[i], f_ary, df_rho_div_f_ary, 
                                        NPT_compressed[i], data)
@@ -130,4 +127,40 @@ cdef double log_like_internal(double[::1] PT_sum_compressed, int[::1] data,
         else:
             ll += -10.1**10.
 
+    return ll
+
+#------------------------------------------------------------------------------
+##
+##     Purely Poissonian functions, when using initiate_poissonian_edep
+##
+#------------------------------------------------------------------------------
+
+
+sp_max = 5000 
+
+def log_factorial(k):
+    return np.sum(np.log(np.arange(1., k + 1., dtype=DTYPE)))
+
+cdef double[::1] log_factorial_ary = np.vectorize(log_factorial)(np.arange(sp_max))
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+@cython.initializedcheck(False)
+cdef double log_poisson_int(double mean, int k) nogil:
+    return -mean + k*log(mean) - log_factorial_ary[k]
+
+def log_likelihood_poissonian(double[::1] back, int[::1] data):
+    return log_likelihood_poissonian_int(back,data)
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+@cython.initializedcheck(False)
+cdef double log_likelihood_poissonian_int(double[::1] back, int[::1] data):
+    cdef double ll = 0.0
+    cdef Py_ssize_t i
+    cdef Py_ssize_t n = len(back)
+    for i in range(n):
+        ll += log_poisson_int(back[i], data[i])
     return ll
