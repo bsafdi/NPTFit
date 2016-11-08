@@ -5,12 +5,12 @@
 ## Creates a Boolean mask where pixels labelled as true are masked and those
 ## labelled false are unmasked
 ##
-## Note throughout we adjust from b to theta = 90+b, as this is what healpy
+## Note throughout we adjust from b to theta = 90-b, as this is what healpy
 ## uses
 ##
+## Note also all inputes are in degrees
+##
 #------------------------------------------------------------------------------
-
-# Note throughout healpy uses theta = 90+b
 
 import numpy as np
 import healpy as hp
@@ -34,8 +34,8 @@ def make_lat_mask(b_deg_min, b_deg_max, nside):
     """
     mask_none = np.arange(hp.nside2npix(nside))
     return np.logical_not( \
-           (np.radians(90+b_deg_min) < hp.pix2ang(nside, mask_none)[0]) * \
-           (hp.pix2ang(nside, mask_none)[0] < np.radians(90+b_deg_max)))
+           (np.radians(90-b_deg_max) < hp.pix2ang(nside, mask_none)[0]) * \
+           (hp.pix2ang(nside, mask_none)[0] < np.radians(90-b_deg_min)))
 
 def make_ring_mask(inner, outer, ring_b, ring_l, nside):
     """ Masks outside inner < r < outer, of a ring centred at (ring_b,ring_l)
@@ -43,9 +43,9 @@ def make_ring_mask(inner, outer, ring_b, ring_l, nside):
     mask_none = np.arange(hp.nside2npix(nside))
     return np.logical_not( \
            (np.cos(np.radians(inner)) >= \
-           np.dot(hp.ang2vec(np.radians(90+ring_b), 
+           np.dot(hp.ang2vec(np.radians(90-ring_b), 
            np.radians(ring_l)), hp.pix2vec(nside, mask_none))) * \
-           (np.dot(hp.ang2vec(np.radians(90+ring_b), 
+           (np.dot(hp.ang2vec(np.radians(90-ring_b), 
            np.radians(ring_l)), hp.pix2vec(nside, mask_none)) \
            >= np.cos(np.radians(outer))))
 
