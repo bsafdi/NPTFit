@@ -16,7 +16,6 @@ import healpy as hp
 # from astropy.io import fits
 # import time
 
-import pulsars.special as spc
 # import pulsars.masks as masks
 # import pulsars.CTB as CTB
 # import pulsars.psf as psf
@@ -28,7 +27,6 @@ cimport numpy as np
 cimport cython
 #from libcpp cimport bool
 
-import pulsars.special as spc
 
 import logging
 logger = logging.getLogger(__name__)

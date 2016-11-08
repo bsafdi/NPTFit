@@ -543,6 +543,7 @@ class bayesian_scan(config):
 
         for energy_bin in range(self.number_energy_bins):
             self.NPTF_inst_array[energy_bin].theta_PS = self.model_parameters_edep_nbreak(theta_PS, energy_bin)
+            print 'theta_PS is', self.NPTF_inst_array[energy_bin].theta_PS
             self.NPTF_inst_array[energy_bin].xbg_PSF_compressed = xbg_PSF_compressed[energy_bin]
             self.NPTF_inst_array[energy_bin].set_xbg()
 

@@ -4,9 +4,7 @@ import healpy as hp
 import numpy as np
 
 from config.bayesian_scan import bayesian_scan
-
-sys.path.append("/group/hepheno/smsharma/NPTFit/Testing")
-from NPLL import log_like
+from config.NPLL import log_like
 
 class bayesian_scan_NPTF(bayesian_scan):
     """ The file that sets up and executes the scan """
@@ -48,3 +46,7 @@ class NPTF_ps():
                                                        self.df_rho_div_f_ary, self.PS_dist_compressed,
                                                        np.array(self.CTB_map_compressed, dtype='int32'))
         return ll
+
+    def set_xbg(self):
+        # Dummy function -- delete once bayesian_scan is cleaned up!
+        pass
