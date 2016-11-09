@@ -78,12 +78,12 @@ class bayesian_scan(config):
             self.non_poiss_models[template_name]['n_params_total'] += len(
                 self.non_poiss_models[template_name]['fixed_params'])
 
-    def configure_priors(self, number_energy_bins=1):
+    def configure_priors(self):
 
         self.configure_poissonian_priors()
         self.configure_non_poissonian_priors()
-        self.theta_min = self.theta_min_poiss + self.theta_min_non_poiss  # *number_energy_bins
-        self.theta_max = self.theta_max_poiss + self.theta_max_non_poiss  # *number_energy_bins
+        self.theta_min = self.theta_min_poiss + self.theta_min_non_poiss 
+        self.theta_max = self.theta_max_poiss + self.theta_max_non_poiss  
         self.theta_interval = list(np.array(self.theta_max) - np.array(self.theta_min))
 
         self.lp = self.log_prior
@@ -151,7 +151,7 @@ class bayesian_scan(config):
 
         self.dnds_model_array = [self.non_poiss_models[key]['dnds_model'] for key in self.non_poiss_models_keys]
         self.model_decompression_key = [[key, self.poiss_models[key]['log_prior']] for key in
-                                        self.poiss_model_keys]  # *self.number_energy_bins
+                                        self.poiss_model_keys]  
         for key in self.non_poiss_models.keys():
             for j in range(self.non_poiss_models[key]['n_params']):
                 print j, self.non_poiss_models[key]['log_prior']
@@ -160,7 +160,7 @@ class bayesian_scan(config):
 
         self.n_params = len(self.model_decompression_key)
 
-        self.configure_priors(number_energy_bins=self.number_energy_bins)
+        self.configure_priors()
 
         print 'The number of parameters is ', self.n_params
 
@@ -205,7 +205,7 @@ class bayesian_scan(config):
 
             A_theta = self.sort_list(
                 [self.convert_log(self.model_decompression_key[i], theta_list[i]) for i in range(self.n_poiss)],
-                self.n_poiss / self.number_energy_bins)
+                self.n_poiss)
 
         if self.n_non_poiss > 0:
             theta_PS = [self.convert_log(self.model_decompression_key[i], theta_list[i]) for i in
@@ -218,10 +218,10 @@ class bayesian_scan(config):
                             theta_PS.insert(int(fixed[0]) + index, [key, fixed[1]])
                     index += self.non_poiss_models[key]['n_params_total']  # n_params
 
-        xbg_PSF_compressed = [np.sum(map(lambda i: A_theta[en][i][1] *
-                                                    self.templates_dict_nested[A_theta[en][i][0]][
-                                                        'templates_masked_compressed'][en], range(len(A_theta[en]))),
-                                        axis=0) for en in range(self.number_energy_bins)]
+        xbg_PSF_compressed = [np.sum(map(lambda i: A_theta[0][i][1] *
+                                                    self.templates_dict_nested[A_theta[0][i][0]][
+                                                        'templates_masked_compressed'][0], range(len(A_theta[0]))),
+                                        axis=0)] # [en][i][1], en set to 0 -- remove when axed en
 
         return xbg_PSF_compressed, theta_PS
 
@@ -233,7 +233,7 @@ class bayesian_scan(config):
         if self.n_poiss > 0:
             A_theta = self.sort_list(
                 [self.convert_log(self.model_decompression_key[i], theta_list[i]) for i in range(self.n_poiss)],
-                self.n_poiss / self.number_energy_bins)
+                self.n_poiss)
 
         if self.n_non_poiss > 0:
             theta_PS = [self.convert_log(self.model_decompression_key[i], theta_list[i]) for i in
@@ -246,24 +246,20 @@ class bayesian_scan(config):
                             theta_PS.insert(int(fixed[0]) + index, [key, fixed[1]])
                     index += self.non_poiss_models[key]['n_params_total']  # n_params
 
-        xbg_PSF_compressed = [[np.sum(map(lambda i: A_theta[en][i][1] *
-                                                    self.templates_dict_nested[A_theta[en][i][0]][
-                                                        'templates_masked_compressed_exposure'][region][en], range(len(A_theta[en]))), axis=0)
-                                    for region in range(self.nexp)] for en in range(self.number_energy_bins)]
+        xbg_PSF_compressed = [[np.sum(map(lambda i: A_theta[0][i][1] *
+                                                    self.templates_dict_nested[A_theta[0][i][0]][
+                                                        'templates_masked_compressed_exposure'][region][0], range(len(A_theta[0]))), axis=0)
+                                    for region in range(self.nexp)]]
 
         return xbg_PSF_compressed, theta_PS
 
     def log_like_poisson_edep(self, theta, ndim, nparams):
         xbg_PSF_compressed = self.make_xbg_edep(theta)[0]
 
-        ll = np.sum([log_like.log_likelihood_poissonian(xbg_PSF_compressed[i],
-                                                   np.array(self.CTB_masked_compressed[i], dtype='int32')) for i in
-                     range(self.number_energy_bins)])
+        ll = log_like.log_likelihood_poissonian(xbg_PSF_compressed[0],
+                                                   np.array(self.CTB_masked_compressed[0], dtype='int32')) # 0 index is energy -- remove when not axed
 
         return ll
-
-    def single_model_parameters_edep(self, params, energy_bin=0):
-        return [params[0] / params[3 + energy_bin], params[1], params[2], params[3 + energy_bin]]
 
     def single_model_parameters_edep_nbreak(self, params, energy_bin=0):
         nbreak = self.nbreak
@@ -272,25 +268,7 @@ class bayesian_scan(config):
             params[nfix_index + energy_bin] * np.product(params[i:nfix_index]) for i in range(nfix_index - nbreak + 1, nfix_index)] + [
                    params[nfix_index + energy_bin]]
 
-    def model_parameters_edep(self, theta_PS, energy_bin):
-        if self.n_non_poiss_models == 1:
-            return self.single_model_parameters_edep(theta_PS[0:3] + [theta_PS[3 + energy_bin]])
-        elif self.n_non_poiss_models == 2:
-            off_set = self.non_poiss_models[self.model_decompression_key[self.n_poiss][0]]['n_params_total']
-            return self.single_model_parameters_edep(
-                theta_PS[0:3] + [theta_PS[3 + energy_bin]]) + self.single_model_parameters_edep(
-                theta_PS[0 + off_set:3 + off_set] + [theta_PS[3 + energy_bin + off_set]])
-        else:
-            off_set = self.non_poiss_models[self.model_decompression_key[self.n_poiss][0]]['n_params_total']
-            off_set_2 = off_set + self.non_poiss_models[self.model_decompression_key[self.n_poiss + off_set][0]][
-                'n_params_total']
-            return self.single_model_parameters_edep(
-                theta_PS[0:3] + [theta_PS[3 + energy_bin]]) + self.single_model_parameters_edep(
-                theta_PS[0 + off_set:3 + off_set] + [
-                    theta_PS[3 + energy_bin + off_set]]) + self.single_model_parameters_edep(
-                theta_PS[0 + off_set_2:3 + off_set_2] + [theta_PS[3 + energy_bin + off_set_2]])
-
-    def model_parameters_edep_nbreak(self, theta_PS, energy_bin):
+    def model_parameters_edep_nbreak(self, theta_PS, energy_bin = 0):
         nbreak = self.nbreak
         nfix_index = (nbreak - 1) * 2 + 3
         if self.n_non_poiss_models == 1:
@@ -323,11 +301,10 @@ class bayesian_scan(config):
 
         ll = 0.0
 
-        for energy_bin in range(self.number_energy_bins):
-            self.NPTF_inst_array[energy_bin].theta_PS = self.model_parameters_edep_nbreak(theta_PS, energy_bin)
-            self.NPTF_inst_array[energy_bin].xbg_PSF_compressed = xbg_PSF_compressed[energy_bin]
+        self.NPTF_inst_array[0].theta_PS = self.model_parameters_edep_nbreak(theta_PS) # Remove [0] when NPTF_inst_array is no longer an array
+        self.NPTF_inst_array[0].xbg_PSF_compressed = xbg_PSF_compressed[0] # Remove [0] when xbg_PSF_compressed is no longer an array
 
-            ll += self.NPTF_inst_array[energy_bin].make_ll_PDF_PSF()
+        ll = self.NPTF_inst_array[0].make_ll_PDF_PSF()
 
         self.index += 1
 
@@ -432,7 +409,7 @@ class bayesian_scan(config):
             self.poiss_comp_numbers = {self.poiss_model_keys[i]: i for i in range(self.n_poiss)}.copy()
             self.test_array = self.poiss_comp_numbers.copy()
             self.poiss_list_is_log_prior = np.array(
-                [self.poiss_models[key]['log_prior'] for key in self.poiss_model_keys])  # *self.number_energy_bins )
+                [self.poiss_models[key]['log_prior'] for key in self.poiss_model_keys])  
             self.poiss_params = np.array([self.poiss_models[key]['model_tag'] for key in self.poiss_model_keys])
         else:
             self.poiss_comp_numbers = {self.poiss_models.keys()[i]: i for i in range(self.n_poiss)}
