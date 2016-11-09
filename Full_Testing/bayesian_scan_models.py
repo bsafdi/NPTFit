@@ -19,12 +19,8 @@ class bayesian_scan_NPTF(bayesian_scan):
         self.df_rho_div_f_ary = df_rho_div_f_ary
         self.nexp = nexp
 
-        self.use_exposure = True
-
         # self.exposure_pixels_compressed()
         self.configure_for_edep_scan()
-
-        self.use_exposure = True
 
         self.NPT_dist_compressed_ary = [self.templates_dict_nested[self.non_poiss_models.keys()[i]]['summed_templates'] for i in range(self.n_non_poiss_models)] 
         
@@ -32,7 +28,7 @@ class bayesian_scan_NPTF(bayesian_scan):
 
         self.NPTF_inst_array = [
                 NPTF_ps(self.NPT_dist_compressed_exp_ary, self.f_ary, self.df_rho_div_f_ary, np.array(self.CTB_masked_compressed_exposure), 
-                                    nside=self.nside, nbreak=self.nbreak, nexp = self.nexp, use_exposure=True, exposure_mean_list=self.exposure_means_list, exposure_mean=self.exposure_mean)]
+                                    nside=self.nside, nbreak=self.nbreak, nexp = self.nexp, exposure_mean_list=self.exposure_means_list, exposure_mean=self.exposure_mean)]
 
         self.ll = self.log_like_NPTF_edep
 
@@ -42,7 +38,7 @@ class bayesian_scan_NPTF(bayesian_scan):
 
 class NPTF_ps():
     def __init__(self, PS_dist_compressed, f_ary, df_rho_div_f_ary, CTB_map_compressed,  
-                                    nside, nbreak, nexp, use_exposure, exposure_mean_list, exposure_mean):
+                                    nside, nbreak, nexp, exposure_mean_list, exposure_mean):
         self.PS_dist_compressed = PS_dist_compressed
         self.f_ary = f_ary
         self.df_rho_div_f_ary = df_rho_div_f_ary

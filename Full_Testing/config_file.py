@@ -5,10 +5,11 @@ from set_dirs import set_dirs as sd
 class config(sd):
     """The configuration file """
 
-    def __init__(self, nside=128, nexp=1, use_exposure=False, *args, **kwargs):
+    def __init__(self, nside=128, nexp=1, *args, **kwargs):
 
         self.kwargs = kwargs
         self.nside = nside
+        self.nexp = nexp
 
         # setup the directories - TODO: come back and fix this up!
         sd.__init__(self, *args, **kwargs)
@@ -16,14 +17,6 @@ class config(sd):
         # Initialise template dictionary and array
         self.templates = []
         self.templates_dict = {}
-
-        # TODO: Always use exposure regions, remove below once setup
-        #self.nexp = nexp
-        #self.use_exposure = use_exposure
-        #if self.nexp > 1:
-        #    self.use_exposure = True
-        self.nexp = 1
-        self.use_exposure = True
 
     def load_data(self, count_map, exposure_map):
         """ Function to input analysis data

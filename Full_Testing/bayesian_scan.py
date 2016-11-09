@@ -316,18 +316,9 @@ class bayesian_scan(config):
                 theta_PS[0 + off_set_2:nfix_index + off_set_2] + theta_PS[
                                                                  nfix_index + energy_bin + off_set_2: nfix_index + nbreak + energy_bin + off_set_2])
 
-            # @jit
-
-    def prepare_log_like_NPTF_edep(self, theta):
-        xbg_PSF_compressed, theta_PS_marked = self.make_xbg_edep(theta)
-        theta_PS = list(np.vectorize(float)(np.array(theta_PS_marked)[::, 1]))
-        return xbg_PSF_compressed, theta_PS
 
     def log_like_NPTF_edep(self, theta, ndim, nparams):
-        if self.use_exposure:
-            xbg_PSF_compressed, theta_PS_marked = self.make_xbg_edep_exposure(theta)
-        else:
-            xbg_PSF_compressed, theta_PS_marked = self.make_xbg_edep(theta)
+        xbg_PSF_compressed, theta_PS_marked = self.make_xbg_edep_exposure(theta)
         theta_PS = list(np.vectorize(float)(np.array(theta_PS_marked)[::, 1]))
 
         ll = 0.0
