@@ -257,7 +257,7 @@ class bayesian_scan(config):
         xbg_PSF_compressed = self.make_xbg_edep(theta)[0]
 
         ll = log_like.log_likelihood_poissonian(xbg_PSF_compressed[0],
-                                                   np.array(self.masked_compressed_data[0], dtype='int32')) # 0 index is energy -- remove when not axed
+                                                   np.array(self.masked_compressed_data, dtype='int32')) # 0 index is energy -- remove when not axed
         return ll
 
     def single_model_parameters_edep_nbreak(self, params, energy_bin=0):

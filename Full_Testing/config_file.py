@@ -69,7 +69,7 @@ class config(sd):
         keys = self.templates_dict.keys()
 
         #divide into exposure regions
-        pixel_list, exposure_list = self.dividing_exposure(self.exposure_map, self.nexp)
+        pixel_list, exposure_list = self.dividing_exposure(self.exposure_map)
         self.pixel_list = pixel_list
         self.exposure_list = exposure_list
 
@@ -136,31 +136,29 @@ class config(sd):
         Compresses the data, which means masks the data with the given overall maskS
         """
 
-        self.CTB_masked = [hp.ma(self.count_map)]
-        for the_map in self.CTB_masked:
-            the_map.mask = self.mask_total
-        self.masked_compressed_data = [the_map.compressed() for the_map in self.CTB_masked]
+        temp_data = hp.ma(self.count_map)
+        temp_data.mask = self.mask_total
+        self.masked_compressed_data = temp_data.compressed()
 
     def compress_data_exposure(self):
         """
         Compresses the data and break it by exposure, which means masks the data with the given overall mask and
         exposure map masks
         """
-        temp = hp.ma(self.exposure_map)
-        temp.mask = self.mask_total
-        self.exposure_map_masked_compressed = [temp.compressed()]
-        self.exposure_map_masked_compressed_mean = np.mean(self.exposure_map_masked_compressed,axis=0)
-        self.pixel_list_compressed, self.exposure_list_compressed = self.dividing_exposure(self.exposure_map_masked_compressed_mean, self.nexp)
-        self.pixel_list, self.exposure_list = self.dividing_exposure(self.exposure_map, self.nexp)
+        temp_exposure = hp.ma(self.exposure_map)
+        temp_exposure.mask = self.mask_total
+        exposure_map_masked_compressed = temp_exposure.compressed()
+        self.pixel_list_compressed, self.exposure_list_compressed = self.dividing_exposure(exposure_map_masked_compressed)
+        self.pixel_list, self.exposure_list = self.dividing_exposure(self.exposure_map)
 
         self.exposure_means_list = [np.mean(self.exposure_list_compressed[i]) for i in range(len(self.exposure_list_compressed))]
         self.masked_compressed_data_expcorr = []
         for i in range(self.nexp):
-            for the_map in self.CTB_masked:
-                the_map.mask = np.logical_or(self.mask_total, self.making_mask(self.pixel_list[i], self.exposure_map))
-            self.masked_compressed_data_expcorr.append([the_map.compressed() for the_map in self.CTB_masked])
+            temp_data = hp.ma(self.count_map)
+            temp_data.mask = np.logical_or(self.mask_total, self.making_mask(self.pixel_list[i], self.exposure_map))
+            self.masked_compressed_data_expcorr.append([temp_data.compressed()])
 
-    def dividing_exposure(self, exposure_array, nexp):
+    def dividing_exposure(self, exposure_array):
         """
         This function divides the sky into nexp "almost" equal parts and returns an array of lists of pixels
         :param exposure_array: This should be the exposure array (before masking). It's called here CTB_exposure_map
@@ -171,7 +169,7 @@ class config(sd):
         new_array = np.array([[pix_array[i], exposure_array[i]] for i in range(len(exposure_array))])
         col = 1
         array_sorted = new_array[np.argsort(new_array[:, col])]
-        array_split = np.array_split(array_sorted, nexp)
+        array_split = np.array_split(array_sorted, self.nexp)
         just_pixels = [[array_split[i][j][0] for j in range(len(array_split[i]))] for i in range(len(array_split))]
         just_exposures = [[array_split[i][j][1] for j in range(len(array_split[i]))] for i in range(len(array_split))]
         return just_pixels, just_exposures

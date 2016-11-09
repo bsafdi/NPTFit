@@ -37,12 +37,12 @@ class bayesian_scan_NPTF(bayesian_scan):
         self.ll = self.log_like_poisson_edep
 
 class NPTF_ps():
-    def __init__(self, PS_dist_compressed, f_ary, df_rho_div_f_ary, CTB_map_compressed,  
+    def __init__(self, PS_dist_compressed, f_ary, df_rho_div_f_ary, compressed_data_array,  
                                     nside, nbreak, nexp, exposure_mean_list, exposure_mean):
         self.PS_dist_compressed = PS_dist_compressed
         self.f_ary = f_ary
         self.df_rho_div_f_ary = df_rho_div_f_ary
-        self.CTB_map_compressed = CTB_map_compressed
+        self.compressed_data_array = compressed_data_array
         self.nside = nside
         self.nbreak = nbreak
         self.nexp = nexp
@@ -60,9 +60,9 @@ class NPTF_ps():
                 self.theta_PS[1:self.nbreak+2]) + \
                        [self.theta_PS[3+i] * self.exposure_means_list[i] / self.exposure_mean for i in range(self.nbreak)]
 
-            if len(np.array(self.CTB_map_compressed.T[0][i], dtype='int32')) == 0: continue
+            if len(np.array(self.compressed_data_array.T[0][i], dtype='int32')) == 0: continue
 
             ll += log_like(self.xbg_PSF_compressed[i], self.theta_PS, self.f_ary,
                                                        self.df_rho_div_f_ary, [self.PS_dist_compressed[0][i]],
-                                                       np.array(self.CTB_map_compressed.T[0][i], dtype='int32'))
+                                                       np.array(self.compressed_data_array.T[0][i], dtype='int32'))
         return ll
