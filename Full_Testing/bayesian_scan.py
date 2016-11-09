@@ -257,7 +257,7 @@ class bayesian_scan(config):
         xbg_PSF_compressed = self.make_xbg_edep(theta)[0]
 
         ll = np.sum([log_like.log_likelihood_poissonian(xbg_PSF_compressed[i],
-                                                   np.array(self.CTB_masked_compressed[i], dtype='int32')) for i in
+                                                   np.array(self.masked_compressed_data[i], dtype='int32')) for i in
                      range(self.number_energy_bins)])
 
         return ll
