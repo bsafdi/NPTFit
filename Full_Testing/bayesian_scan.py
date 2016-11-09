@@ -1,37 +1,16 @@
-import sys, os
-
-import healpy as hp
 import numpy as np
-import set_dirs as sd
-
 import pymultinest
 from mpi4py import MPI
-import triangle
-import matplotlib.pyplot as plt
 import copy
-
-import inspect
-import types
-
 import NPLL as log_like
-
-import logging
-
 from config_file import config
-
-import time as time
-
-import datetime
 
 
 class bayesian_scan(config):
     """ The file that sets up and executes the scan """
 
-    def __init__(self, nlive=100, k_max='False', Sc='False', *args, **kwargs):
+    def __init__(self, nlive=100, *args, **kwargs):
         config.__init__(self, *args, **kwargs)
-
-        self.k_max = k_max
-        self.Sc = Sc
 
         self.priors = []
         self.is_log_prior = []
@@ -64,51 +43,6 @@ class bayesian_scan(config):
         ###temp
         self.index = 0
 
-    def set_params(self, params):
-        self.params = params
-        self.n_params = len(params)
-
-    def set_is_log_priors(self, is_logs):
-        # prior should be of the form [[min, max]] or [[min, max],[min, max]], etc.
-        for is_log in is_logs:
-            self.is_log_prior.append(is_log)
-
-    def adding_energy_bins(self, array1):
-        new_array = []
-        energy_array = [i * self.energy_bin_spacing for i in range(self.number_energy_bins)]
-        for i in range(len(self.templates)):
-            new_array.append(
-                [np.sum(array1[i][energy_array[j]:energy_array[j] + self.energy_bin_spacing], axis=0) for j in
-                 range(len(energy_array))])
-        return new_array
-
-    def make_poiss_models_edep(self):
-        self.poiss_list_template_number_edep = []
-        self.poiss_list_prior_range_edep = []
-        self.poiss_list_model_tag_edep = []
-        self.poiss_list_is_log_prior_edep = []
-        self.templates_edep = []
-        self.templates_edep_masked_compressed = []
-
-
-        # Need to add compression and masking to templates_edep
-        for i in range(len(self.templates)):
-            for j in range(self.number_energy_bins):
-                self.templates_edep.append(self.templates[i][j])
-
-        self.templates_masked_compressed_organized = self.adding_energy_bins(self.templates_masked_compressed)
-
-        for i in range(len(self.templates)):
-            for j in range(self.number_energy_bins):
-                self.templates_edep_masked_compressed.append(self.templates_masked_compressed_organized[i][j])
-
-        for i in range(len(self.poiss_list_template_number)):
-            for j in range(self.number_energy_bins):
-                self.poiss_list_template_number_edep.append(self.poiss_list_template_number[i] + j)
-                self.poiss_list_prior_range_edep.append(self.poiss_list_prior_range[i])
-                self.poiss_list_model_tag_edep.append(self.poiss_list_model_tag[i] + '$^{(' + str(j) + ')}$')
-                self.poiss_list_is_log_prior_edep.append(self.poiss_list_is_log_prior[i])
-
     def add_poiss_model(self, template_name, model_tag, prior_range, log_prior=False):
         self.poiss_models[template_name] = {'prior_range': prior_range, 'log_prior': log_prior, 'model_tag': model_tag,
                                             'poiss': True}
@@ -134,8 +68,6 @@ class bayesian_scan(config):
             not_fixed_params = np.where(~mask)[0]
             fixed_params = np.array(fixed_params)
 
-            # prior_range = list( np.array(prior_range)[not_fixed_params] )
-            # log_prior_list = list( np.array(log_prior_list)[not_fixed_params] )
 
         self.non_poiss_models[template_name] = {'prior_range': prior_range, 'log_prior': log_prior_list,
                                                 'model_tag': model_tag, 'n_params': n_params, 'poiss': False,
@@ -145,15 +77,6 @@ class bayesian_scan(config):
         if fixed_params is not None:
             self.non_poiss_models[template_name]['n_params_total'] += len(
                 self.non_poiss_models[template_name]['fixed_params'])
-
-    def set_is_poissonian(self, is_poiss):
-        # prior should be of the form [[min, max]] or [[min, max],[min, max]], etc.
-        for is_pois in is_poiss:
-            self.is_poissonian.append(is_pois)
-
-    def set_priors(self, prior):
-        for pri in prior:
-            self.priors.append(pri)
 
     def configure_priors(self, number_energy_bins=1):
 
@@ -178,15 +101,6 @@ class bayesian_scan(config):
     def log_prior(self, cube, ndim, nparams):
         for i in range(ndim):
             cube[i] = cube[i] * self.theta_interval[i] + self.theta_min[i]
-
-    def log_prior_polychord(self, cube):
-        for i in range(len(cube)):
-            cube[i] = cube[i] * self.theta_interval[i] + self.theta_min[i]
-        return cube
-
-    def set_ll(self, mode='Poisson'):
-        if mode == 'Poisson':
-            self.ll = self.log_like_poisson
 
     def configure_for_edep_scan(self):
 
@@ -214,7 +128,6 @@ class bayesian_scan(config):
         self.poiss_models = self.edep_poiss_models.copy()
 
 
-        # self.n_poiss = len(self.poiss_models.keys())*self.number_energy_bins
         self.n_poiss = len(self.poiss_models.keys())
 
         self.non_poiss_list_num_model_params = [d['n_params'] for d in self.non_poiss_models.values()]
@@ -247,61 +160,9 @@ class bayesian_scan(config):
 
         self.n_params = len(self.model_decompression_key)
 
-        self.set_k_max_edep()
         self.configure_priors(number_energy_bins=self.number_energy_bins)
 
         print 'The number of parameters is ', self.n_params
-
-    def configure_for_scan(self):
-
-        self.compress_data()
-        # self.sum_data_over_energy_range()
-        self.compress_templates()
-        # self.sum_templates_over_energy_range()
-
-
-        self.n_poiss = len(self.poiss_models.keys())
-
-        self.non_poiss_list_num_model_params = [d['n_params'] for d in self.non_poiss_models.values()]
-
-        self.n_non_poiss = np.sum(self.non_poiss_list_num_model_params)
-        self.n_non_poiss_models = len(self.non_poiss_models.keys())
-
-        self.model_decompression_key = [[key, self.poiss_models[key]['log_prior']] for key in self.poiss_models.keys()]
-        for key in self.non_poiss_models.keys():
-            for j in range(self.non_poiss_models[key]['n_params']):
-                self.model_decompression_key += [
-                    [key, self.non_poiss_models[key]['log_prior'][j]]]  # False means non-poiss template
-
-        self.poiss_model_keys = self.poiss_models.keys()
-
-        self.n_params = len(self.model_decompression_key)
-
-        self.set_k_max()
-
-        self.priors = self.poiss_list_prior_range + self.non_poiss_list_prior_range
-        self.configure_priors()
-
-        print 'The number of parameters is ', self.n_params
-        print 'The dynamical k_max is ', self.k_max
-
-    def set_k_max(self):
-        if self.k_max != False:
-            if np.max(self.CTB_masked_compressed_summed) < self.k_max:
-                self.k_max = np.max(self.CTB_masked_compressed_summed) + 1
-
-    def set_k_max_edep(self):
-        if self.k_max != False:
-            self.k_max_array = []
-            for en in range(self.number_energy_bins):
-                if np.max(self.CTB_masked_compressed[en]) < self.k_max:
-                    self.k_max_array.append(np.max(self.CTB_masked_compressed[en]) + 1)
-                else:
-                    self.k_max_array.append(self.k_max)
-        else:
-            self.k_max_array = [False for en in range(self.number_energy_bins)]
-
-        print 'The k_max_array is ', self.k_max_array
 
     def convert_log(self, key, val):
         tag, log_prior = key
@@ -310,7 +171,6 @@ class bayesian_scan(config):
         else:
             return [tag, val]
 
-    # @autojit
     def make_xbg(self, theta):
         theta_list = theta
         A_theta = []
@@ -331,18 +191,15 @@ class bayesian_scan(config):
 
         return xbg_PSF_compressed, theta_PS
 
-    # @autojit
     def sort_list(self, the_list, num):
         indices = range(0, len(the_list) + 1, num)
         new_list = [the_list[indices[i]:indices[i + 1]] for i in range(len(indices) - 1)]
         return new_list
 
-    # @autojit
     def make_xbg_edep(self, theta):
         theta_list = theta
         A_theta = []
         theta_PS = []
-        # print [ self.convert_log(self.model_decompression_key[i],theta_list[i]) for i in range(self.n_poiss) ]
 
         if self.n_poiss > 0:
 
@@ -396,16 +253,6 @@ class bayesian_scan(config):
 
         return xbg_PSF_compressed, theta_PS
 
-    def log_like_poisson(self, theta, ndim, nparams):
-
-        xbg_PSF_compressed = self.make_xbg(theta)[0]
-
-        # mt.make_xbg_PSF([A_diff, A_bubs, A_iso],x_vec)
-
-        ll = log_like.log_poisson(xbg_PSF_compressed, np.array(self.CTB_masked_compressed_summed, dtype='int32'))
-
-        return ll
-
     def log_like_poisson_edep(self, theta, ndim, nparams):
         xbg_PSF_compressed = self.make_xbg_edep(theta)[0]
 
@@ -413,18 +260,6 @@ class bayesian_scan(config):
                                                    np.array(self.CTB_masked_compressed[i], dtype='int32')) for i in
                      range(self.number_energy_bins)])
 
-        return ll
-
-    def log_like_NPTF(self, theta, ndim, nparams):
-        xbg_PSF_compressed, theta_PS = self.make_xbg(theta)
-
-        self.NPTF_inst.theta_PS = list(np.vectorize(float)(np.array(theta_PS)[::, 1]))
-        self.NPTF_inst.xbg_PSF_compressed = xbg_PSF_compressed
-        self.NPTF_inst.set_xbg()
-
-        ll = self.NPTF_inst.make_ll_PDF_PSF()
-
-        del xbg_PSF_compressed, self.NPTF_inst.xbg_PSF_compressed, self.NPTF_inst.xbg_k_bins
         return ll
 
     def single_model_parameters_edep(self, params, energy_bin=0):
@@ -436,14 +271,6 @@ class bayesian_scan(config):
         return [params[0] / float(params[nfix_index + energy_bin])] + params[1:nfix_index - nbreak + 1] + [
             params[nfix_index + energy_bin] * np.product(params[i:nfix_index]) for i in range(nfix_index - nbreak + 1, nfix_index)] + [
                    params[nfix_index + energy_bin]]
-        # return [params[0] / float(params[nfix_index + energy_bin])] + params[1:nfix_index - nbreak + 1] + [
-        #     params[nfix_index + energy_bin] * params[i] for i in range(nfix_index - nbreak + 1, nfix_index)] + [
-        #            params[nfix_index + energy_bin]]
-
-    # def single_model_parameters_specify_nbreak(self, params):
-    #     nbreak = self.nbreak
-    #     nfix_index = (nbreak - 1) * 2 + 3
-    #     return [params[0] / float(params[-1])] + params[1:]
 
     def model_parameters_edep(self, theta_PS, energy_bin):
         if self.n_non_poiss_models == 1:
@@ -508,17 +335,8 @@ class bayesian_scan(config):
         for energy_bin in range(self.number_energy_bins):
             self.NPTF_inst_array[energy_bin].theta_PS = self.model_parameters_edep_nbreak(theta_PS, energy_bin)
             self.NPTF_inst_array[energy_bin].xbg_PSF_compressed = xbg_PSF_compressed[energy_bin]
-            self.NPTF_inst_array[energy_bin].set_xbg()
 
             ll += self.NPTF_inst_array[energy_bin].make_ll_PDF_PSF()
-
-        # print 'On index = ', self.index
-        # print 'theta_PS: ', theta_PS
-        # print 'theta: ', np.asarray(theta)
-        # print 'min: ', np.min(xbg_PSF_compressed)
-        # print 'max: ',np.max(xbg_PSF_compressed)
-        # print 'mean: ', np.mean(xbg_PSF_compressed)
-        # print 'll: ',ll
 
         self.index += 1
 
@@ -540,122 +358,19 @@ class bayesian_scan(config):
                         outputfiles_basename=self.chains_dir_for_run, init_MPI=False,
                         evidence_tolerance=evidence_tolerance, const_efficiency_mode=const_efficiency_mode,log_zero=log_zero)
 
-    def lp_pc(self, params):
-        return self.lp(np.array(params), self.n_params, self.n_params)
-
-    def ll_pc(self, params):
-        temp = self.ll(np.array(params), self.n_params, self.n_params)
-        return temp
-
-    def perform_scan_polychord(self, run_tag='test', edep=False, nlive='False', n_chords=1):
-        self.make_dirs_for_run(run_tag, polychord=True)
-        if nlive != 'False':
-            self.nlive = nlive
-        import pypolychord
-        print 'Performing scan with polychord.  The number of parameters is ', self.n_params
-        pypolychord.run(self.ll_pc, self.log_prior_polychord, self.n_params, n_live=self.nlive, n_chords=n_chords,
-                        output_basename=self.chains_dir_for_run)
-
-        # self.load_scan(run_tag = run_tag, edep = edep)
-
-    def perform_scan_minuit(self, run_tag='test', edep=False, print_level=1, **kwargs):
-        self.run_tag = run_tag
-        self.prepare_for_minuit(print_level=print_level, **kwargs)
-        self.m.migrad()
-
-    def save_minuit(self):
-        self.matrix = self.m.matrix()
-        self.fitarg = self.m.fitarg.copy()
-        self.fitarg['ll_value'] = self.m.fval
-        # print self.fitarg
-        import json
-        with open(self.plots_dir_for_run + 'fitarg.txt', 'wb') as f:
-            json.dump(self.fitarg, f)
-
-        with open(self.plots_dir_for_run + 'll.txt', 'wb') as f:
-            json.dump(self.fitarg['ll_value'], f)
-        # np.savetxt(self.plots_dir_for_run + 'fitarg.txt',self.fitarg,delimiter=" ", fmt="%s")
-
-        with open(self.plots_dir_for_run + 'covariance.txt', 'wb') as f: json.dump(self.matrix, f)
-
-        self.calculate_samples_minuit()
-        np.savetxt(self.chains_dir_for_run + '.txt', self.samples)
-
-    def load_minuit(self, run_tag='test', print_level=1, **kwargs):
-        self.run_tag = run_tag
-        self.prepare_for_minuit(print_level=print_level, **kwargs)
-        print 'fitarg file for loading minuit: ', self.plots_dir_for_run + 'fitarg.txt'
-        import json
-        with open(self.plots_dir_for_run + 'fitarg.txt', 'r') as f:
-            self.fitarg = json.load(f)
-
-        print 'fitarg is ', self.fitarg
-
-        with open(self.plots_dir_for_run + 'll.txt', 'r') as f:
-            self.fitarg['ll_value'] = json.load(f)
-
-        with open(self.plots_dir_for_run + 'covariance.txt', 'r') as f:
-            self.matrix = json.load(f)
-
-        self.m.fitarg = self.fitarg.copy()
-
-        self.samples = np.loadtxt(self.chains_dir_for_run + '.txt')
-
-    def plot_ll_profile(self, param='All'):
-        if param == 'All':
-            for param in self.params:
-                self.m.draw_mnprofile(param)
-                plt.savefig(self.plots_dir_for_run + param + '.pdf')
-                plt.close()
-        else:
-            self.m.draw_mnprofile(param)
-            plt.savefig(self.plots_dir_for_run + param + '.pdf')
-            plt.close()
-
-    def prepare_for_minuit(self, print_level=1, **kwargs):
-        self.prepare_minuit_params()
-        self.make_dirs_for_run(self.run_tag, polychord=True)
-        from iminuit import Minuit, describe, Struct, util
-        import config.iminuit_functions as imf
-        self.ll_minuit = imf.call_ll(self.n_params, self.ll_pc, self.params)
-        kwdargs = {'limit_' + self.params[i]: (self.theta_min[i], self.theta_max[i]) for i in range(self.n_params)}
-        other_kwargs = {'print_level': print_level}
-        z = kwdargs.copy()
-        z.update(other_kwargs)
-        z.update(kwargs)
-        self.m = Minuit(self.ll_minuit, **z)
-
-    def prepare_minuit_params(self):
-        self.poiss_params = np.array([self.poiss_models[key]['model_tag'] for key in self.poiss_model_keys])
-        if len(self.non_poiss_models.values()) > 0:
-            self.non_poiss_params = self.flatten(np.array([val['model_tag'] for val in self.non_poiss_models.values()]))
-            self.params = np.array(list(self.poiss_params) + list(self.non_poiss_params))
-        else:
-            self.params = np.array(self.poiss_params)
-
-    def load_scan(self, run_tag='test', edep=False, polychord=False, minuit=False, *args, **kwargs):
+    def load_scan(self, run_tag='test', edep=False, *args, **kwargs):
         if self.already_loaded:
             pass
         else:
             self.run_tag = run_tag
             self.make_dirs_for_run(run_tag)
 
-            print 'In load_scan: polychord, minuit:', polychord, minuit
-
-            if polychord:
-                pass    
-            elif minuit:
-                self.load_minuit(run_tag=run_tag, *args, **kwargs)
-            else:
-                self.a = pymultinest.Analyzer(n_params=self.n_params, outputfiles_basename=self.chains_dir_for_run)
-                self.s = self.a.get_stats()
-                self.chain_file = self.chains_dir_for_run + '/post_equal_weights.dat'
-                self.samples = np.array(np.loadtxt(self.chain_file)[:, :-1])
-            # self.samples
-            if not minuit:
-                self.calculate_medians()
-            else:
-                self.calculate_best_fit_minuit()
+            self.a = pymultinest.Analyzer(n_params=self.n_params, outputfiles_basename=self.chains_dir_for_run)
+            self.s = self.a.get_stats()
+            self.chain_file = self.chains_dir_for_run + '/post_equal_weights.dat'
+            self.samples = np.array(np.loadtxt(self.chain_file)[:, :-1])
+            
+            self.calculate_medians()
 
             print 'Len of fixed params list: ', len(self.fixed_params_list)
             self.calculate_norms(edep)
@@ -670,7 +385,6 @@ class bayesian_scan(config):
         self.fix_medians()
         self.n_params += len(self.fixed_params_list)
         self.fix_model_decompression()
-        # self.save_dictionary()
 
     def fix_model_decompression(self):
         index = int(self.n_poiss)
@@ -707,24 +421,25 @@ class bayesian_scan(config):
         print 'the medians (from chains) are ', np.median(self.samples, axis=0)
         print 'the number of parameters is ', self.n_params
 
-    def calculate_best_fit_minuit(self):
-        # self.medians = [self.m.values[param] for param in self.params]
-        self.medians = [self.m.fitarg[param] for param in self.params]
+    @staticmethod
+    def convert_log_list(the_list, is_log):
+        new_list = []
+        for i in range(len(the_list)):
+            if is_log[i]:
+                new_list.append(10 ** the_list[i])
+            else:
+                new_list.append(the_list[i])
+        return new_list
 
-        # Lina: Calculate errors for minuit
-
-    def calculate_samples_minuit(self, n_eval=1000):
-        self.calculate_best_fit_minuit()
-        # covariance = np.array(np.loadtxt(self.plots_dir_for_run + 'covariance.txt'))
-        self.samples = np.random.multivariate_normal(self.medians, self.matrix, n_eval)
+    def flatten(self, the_list):
+        the_list = list(the_list)
+        return [item for sublist in the_list for item in list(sublist)]
 
     def calculate_norms(self, edep):
         if edep:
-            # self.calculate_norms_edep()
             self.n_poiss_base = len(self.poiss_models.keys())
             self.poiss_comp_numbers = {self.poiss_model_keys[i]: i for i in range(self.n_poiss)}.copy()
             self.test_array = self.poiss_comp_numbers.copy()
-            # print 'comp #s: ', self.poiss_comp_numbers
             self.poiss_list_is_log_prior = np.array(
                 [self.poiss_models[key]['log_prior'] for key in self.poiss_model_keys])  # *self.number_energy_bins )
             self.poiss_params = np.array([self.poiss_models[key]['model_tag'] for key in self.poiss_model_keys])
@@ -734,7 +449,6 @@ class bayesian_scan(config):
             self.poiss_params = np.array([val['model_tag'] for val in self.poiss_models.values()])
         self.non_poiss_params = self.flatten(np.array([val['model_tag'] for val in self.non_poiss_models.values()]))
         self.params = np.array(list(self.poiss_params) + list(self.non_poiss_params))
-        # self.poiss_list_is_log_prior = np.array( [val['log_prior'] for val in self.poiss_models.values() ] )
         self.non_poiss_list_is_log_prior = np.array(
             self.flatten([val['log_prior'] for val in self.non_poiss_models.values()]))
         self.medians_not_log = self.convert_log_list(self.medians, np.concatenate(
@@ -750,14 +464,3 @@ class bayesian_scan(config):
                                                                                'n_params'])]
             k += self.non_poiss_models[self.non_poiss_models.keys()[i]]['n_params']
         print 'self.poiss_comp_numbers: ', self.poiss_comp_numbers
-
-    def save_dictionary(self):
-        self.the_dict = {k: v for k, v in self.__dict__.items() if not (k.startswith('__') and k.endswith('__'))}
-        for key, item in self.the_dict.items():
-            if inspect.ismethod(item) or isinstance(item, types.InstanceType) or isinstance(item, types.FunctionType):
-                del self.the_dict[key]
-
-        self.keys = np.array(list(self.the_dict.keys()))
-        self.values = np.array(list(self.the_dict.values()))
-        np.savez_compressed(self.dict_dir + self.run_tag + '-keys', self.keys)
-        np.savez_compressed(self.dict_dir + self.run_tag + '-values', self.values)

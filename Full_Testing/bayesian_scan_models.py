@@ -70,7 +70,3 @@ class NPTF_ps():
                                                        self.df_rho_div_f_ary, [self.PS_dist_compressed[0][i]],
                                                        np.array(self.CTB_map_compressed.T[0][i], dtype='int32'))
         return ll
-
-    def set_xbg(self):
-        # Dummy function -- delete once bayesian_scan is cleaned up!
-        pass

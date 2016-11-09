@@ -18,26 +18,12 @@ class config(sd):
         self.templates_dict = {}
 
         # TODO: Always use exposure regions, remove below once setup
-        self.nexp = nexp
-        self.use_exposure = use_exposure
-        if self.nexp > 1:
-            self.use_exposure = True
-
-    # TODO: move below two functions to where they are needed, not this file
-    @staticmethod
-    def convert_log_list(the_list, is_log):
-        new_list = []
-        for i in range(len(the_list)):
-            if is_log[i]:
-                new_list.append(10 ** the_list[i])
-            else:
-                new_list.append(the_list[i])
-        return new_list
-
-    def flatten(self, the_list):
-        the_list = list(the_list)
-        return [item for sublist in the_list for item in list(sublist)]
-
+        #self.nexp = nexp
+        #self.use_exposure = use_exposure
+        #if self.nexp > 1:
+        #    self.use_exposure = True
+        self.nexp = 1
+        self.use_exposure = True
 
     def load_data(self, count_map, exposure_map):
         """ Function to input analysis data
