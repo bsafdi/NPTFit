@@ -27,7 +27,7 @@ class bayesian_scan_NPTF(bayesian_scan):
         self.NPT_dist_compressed_exp_ary = [self.templates_dict_nested[self.non_poiss_models.keys()[i]]['flux_summed_templates_exposure'] for i in range(self.n_non_poiss_models)]
 
         self.NPTF_inst_array = [
-                NPTF_ps(self.NPT_dist_compressed_exp_ary, self.f_ary, self.df_rho_div_f_ary, np.array(self.CTB_masked_compressed_exposure), 
+                NPTF_ps(self.NPT_dist_compressed_exp_ary, self.f_ary, self.df_rho_div_f_ary, np.array(self.masked_compressed_data_expcorr), 
                                     nside=self.nside, nbreak=self.nbreak, nexp = self.nexp, exposure_mean_list=self.exposure_means_list, exposure_mean=self.exposure_mean)]
 
         self.ll = self.log_like_NPTF_edep

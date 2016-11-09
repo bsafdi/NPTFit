@@ -12,6 +12,7 @@ class config(sd):
         self.nexp = nexp
 
         # setup the directories - TODO: come back and fix this up!
+        # Remove run_tag
         sd.__init__(self, *args, **kwargs)
 
         # Initialise template dictionary and array
@@ -133,25 +134,18 @@ class config(sd):
     def compress_data(self):
         """
         Compresses the data, which means masks the data with the given overall maskS
-        :return: self.CTB_masked_compressed_summed where it is summed over energy bins? Not sure...
         """
-        # TODO: Streamline this to have the same function for templates and data
-        # TODO: Make energy dependent by changing exposure_map[0]
 
         self.CTB_masked = [hp.ma(self.count_map)]
         for the_map in self.CTB_masked:
             the_map.mask = self.mask_total
-        self.CTB_masked_compressed = [the_map.compressed() for the_map in self.CTB_masked]
-
-        self.CTB_masked_compressed_summed = np.sum(self.CTB_masked_compressed, axis=0)
+        self.masked_compressed_data = [the_map.compressed() for the_map in self.CTB_masked]
 
     def compress_data_exposure(self):
         """
         Compresses the data and break it by exposure, which means masks the data with the given overall mask and
         exposure map masks
-        :return: self.CTB_masked_compressed_summed where it is summed over ?
         """
-        # Reverting back here to find bug
         temp = hp.ma(self.exposure_map)
         temp.mask = self.mask_total
         self.exposure_map_masked_compressed = [temp.compressed()]
@@ -160,13 +154,11 @@ class config(sd):
         self.pixel_list, self.exposure_list = self.dividing_exposure(self.exposure_map, self.nexp)
 
         self.exposure_means_list = [np.mean(self.exposure_list_compressed[i]) for i in range(len(self.exposure_list_compressed))]
-        self.CTB_masked_compressed_exposure = []
+        self.masked_compressed_data_expcorr = []
         for i in range(self.nexp):
             for the_map in self.CTB_masked:
                 the_map.mask = np.logical_or(self.mask_total, self.making_mask(self.pixel_list[i], self.exposure_map))
-            self.CTB_masked_compressed_exposure.append([the_map.compressed() for the_map in self.CTB_masked])
-
-        self.CTB_masked_compressed_summed_exposure = np.sum(self.CTB_masked_compressed_exposure, axis=1)
+            self.masked_compressed_data_expcorr.append([the_map.compressed() for the_map in self.CTB_masked])
 
     def dividing_exposure(self, exposure_array, nexp):
         """
