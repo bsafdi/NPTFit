@@ -5,3 +5,5 @@ Folders that need to be created at outset of code:
 Remove run_tag, so that just have tag
 
 Remove dependency on use fixed template
+
+Make sure that exposure regions are defined with respect to the ROI and not the full sky

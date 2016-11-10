@@ -33,7 +33,6 @@ class config(sd):
         """ Function to input analysis mask
         """
         
-        # Append the mask to self
         self.mask_total = external_mask
 
     def add_template(self, template, label):
@@ -46,47 +45,24 @@ class config(sd):
         self.templates_dict.update({label: template})
         self.templates.append(template)
 
-    def return_masked(self, map_to_mask, compressed=False):
+    def return_masked_compressed(self, map_to_mask, expreg = False):
+        """ Takes input healpix map, returns masked compressed version and if 
+            expreg = True a set of such maps broken into exposure regions.
         """
-        Masking arrays without the number of exposure regions.
-        :param arrays: array to be masked (generally templates)
-        :param compressed: whether or not to compress the array
-        :param summed: whether or not to sum that array
-        :return: returns a masked array of the same length, then may be compressed and/or summed
-        """
-        temp_masked_map = hp.ma(map_to_mask)
-        temp_masked_map.mask = self.mask_total
-        if not compressed:
-            return temp_masked_map
-        else:
+        
+        if not expreg:
+            temp_masked_map = hp.ma(map_to_mask)
+            temp_masked_map.mask = self.mask_total
             return temp_masked_map.compressed()
-
-    def return_masked_exposure(self, map_to_mask, compressed=False, summed=False, flux=False):
-        """
-        Takes an array and masks with the usual mask + exposure mask.
-        :param arrays: Array to mask
-        :param compressed: compresses the masked array
-        :param summed:  sums the elements of the masked array
-        :return: returns a list of self.nexp elements, each masked by total mask+ exposure, and compressed/summed
-        """
-
-        arrays = [map_to_mask]
-        masked_arrays_list = []
-        for i in range(self.nexp):
-            if flux:
-                masked_arrays = [hp.ma((array/flux_map)*np.mean(flux_map)) for array, flux_map in map(None, arrays, [self.exposure_map])]
-            else:
-                masked_arrays = [hp.ma(array) for array in arrays]
-            for array in masked_arrays:
-                array.mask = np.logical_or(self.mask_total, self.making_mask(self.pixel_list[i], self.exposure_map))
-            masked_arrays_list.append(masked_arrays)
-        if not compressed:
-            return masked_arrays_list
         else:
-            masked_arrays_compressed = np.array([[arr.compressed() for arr in array] for array in masked_arrays_list])
-        if summed:
-            masked_arrays_compressed = np.sum(masked_arrays_compressed, axis=1)
-        return masked_arrays_compressed
+            temp_masked_map_list = []
+            for i in range(self.nexp):
+                temp_masked_map = hp.ma(map_to_mask)
+                temp_masked_map.mask = np.logical_or(self.mask_total, 
+                                       self.making_mask(self.pixel_list[i], 
+                                       self.exposure_map))
+                temp_masked_map_list.append(temp_masked_map.compressed())
+            return temp_masked_map_list
 
     def compress_data_and_templates(self):
         """
@@ -94,7 +70,7 @@ class config(sd):
         Does a version for poissonian and non-poissonian scans
         """
 
-        # Compress data
+        # Compress data - this is used for a Poissonian scan
         temp_data = hp.ma(self.count_map)
         temp_data.mask = self.mask_total
         self.masked_compressed_data = temp_data.compressed()
@@ -104,37 +80,36 @@ class config(sd):
         total_exposure_map_masked.mask = self.mask_total
         self.exposure_mean = np.mean(total_exposure_map_masked.compressed())
 
+        # Divide the map into exposure regions
         temp_exposure = hp.ma(self.exposure_map)
         temp_exposure.mask = self.mask_total
         exposure_map_masked_compressed = temp_exposure.compressed()
-        self.pixel_list_compressed, self.exposure_list_compressed = self.dividing_exposure(exposure_map_masked_compressed)
-        self.pixel_list, self.exposure_list = self.dividing_exposure(self.exposure_map)
-
-        self.exposure_means_list = [np.mean(self.exposure_list_compressed[i]) for i in range(len(self.exposure_list_compressed))]
-        self.masked_compressed_data_expcorr = []
+        
+        self.pixel_list_compressed, self.exposure_list_compressed = \
+        self.dividing_exposure(exposure_map_masked_compressed)
+        
+        self.pixel_list, self.exposure_list = \
+        self.dividing_exposure(self.exposure_map)
+        self.exposure_means_list = [np.mean(self.exposure_list_compressed[i]) \
+                            for i in range(len(self.exposure_list_compressed))]
+        
+        self.masked_compressed_data_expreg = []
         for i in range(self.nexp):
-            temp_data_expcorr = hp.ma(self.count_map)
-            temp_data_expcorr.mask = np.logical_or(self.mask_total, self.making_mask(self.pixel_list[i], self.exposure_map))
-            self.masked_compressed_data_expcorr.append([temp_data_expcorr.compressed()])
+            temp_data_expreg = hp.ma(self.count_map)
+            temp_data_expreg.mask = np.logical_or(self.mask_total, \
+                        self.making_mask(self.pixel_list[i], self.exposure_map))
+            self.masked_compressed_data_expreg.append(temp_data_expreg.compressed())
 
-        # Now compress templates
-        self.templates_masked = [hp.ma(temp) for temp in self.templates]
-        for temp in self.templates_masked:
-            temp.mask = self.mask_total
-        self.templates_masked_compressed = [temp.compressed() for temp in self.templates_masked]
-
+        # Create a nested dictionary of different versions of the templates
         the_dict = self.templates_dict
         keys = self.templates_dict.keys()
-
         self.templates_dict_nested = {
-            key: {'template': the_dict[key], 
-                  'template_masked_compressed': self.return_masked(the_dict[key], compressed=True),
-                  'templates_masked_exposure': self.return_masked_exposure(the_dict[key]),
-                  'flux_templates_masked_exposure': self.return_masked_exposure(the_dict[key],flux=True),
-                  'template_masked_compressed_exposure': self.return_masked_exposure(the_dict[key], compressed=True),
-                  'flux_templates_masked_compressed_exposure': self.return_masked_exposure(the_dict[key],compressed=True,flux=True),
-                  'summed_templates_exposure': self.return_masked_exposure(the_dict[key], compressed=True, summed=True),
-                  'flux_summed_templates_exposure': self.return_masked_exposure(the_dict[key], compressed=True, summed=True,flux=True)}
+            key: {'template': 
+                  the_dict[key], 
+                  'template_masked_compressed': 
+                  self.return_masked_compressed(the_dict[key]),
+                  'template_masked_compressed_expreg': 
+                  self.return_masked_compressed(the_dict[key], expreg=True)}
             for key in keys}
 
     def dividing_exposure(self, exposure_array):

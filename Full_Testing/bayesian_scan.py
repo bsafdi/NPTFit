@@ -134,7 +134,6 @@ class bayesian_scan(config):
                                         self.poiss_model_keys]  
         for key in self.non_poiss_models.keys():
             for j in range(self.non_poiss_models[key]['n_params']):
-                print j, self.non_poiss_models[key]['log_prior']
                 self.model_decompression_key += [
                     [key, self.non_poiss_models[key]['log_prior'][j]]]  # False means non-poiss template
 
@@ -180,7 +179,7 @@ class bayesian_scan(config):
 
         xbg_PSF_compressed = [np.sum(map(lambda i: A_theta[0][i][1] *
                                                     self.templates_dict_nested[A_theta[0][i][0]][
-                                                        'template_masked_compressed'][0], range(len(A_theta[0]))),
+                                                        'template_masked_compressed'], range(len(A_theta[0]))),
                                         axis=0)] # [en][i][1], en set to 0 -- remove when axed en
 
         return xbg_PSF_compressed, theta_PS
@@ -208,7 +207,7 @@ class bayesian_scan(config):
 
         xbg_PSF_compressed = [[np.sum(map(lambda i: A_theta[0][i][1] *
                                                     self.templates_dict_nested[A_theta[0][i][0]][
-                                                        'template_masked_compressed_exposure'][region][0], range(len(A_theta[0]))), axis=0)
+                                                        'template_masked_compressed_expreg'][region], range(len(A_theta[0]))), axis=0)
                                     for region in range(self.nexp)]]
 
         return xbg_PSF_compressed, theta_PS
