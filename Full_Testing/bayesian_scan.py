@@ -259,10 +259,10 @@ class bayesian_scan(config):
 
         ll = 0.0
 
-        self.NPTF_inst_array[0].theta_PS = self.model_parameters_edep_nbreak(theta_PS) # Remove [0] when NPTF_inst_array is no longer an array
-        self.NPTF_inst_array[0].xbg_PSF_compressed = xbg_PSF_compressed[0] # Remove [0] when xbg_PSF_compressed is no longer an array
+        self.NPTF_inst_array.theta_PS = self.model_parameters_edep_nbreak(theta_PS) # Remove [0] when NPTF_inst_array is no longer an array
+        self.NPTF_inst_array.xbg_PSF_compressed = xbg_PSF_compressed[0] # Remove [0] when xbg_PSF_compressed is no longer an array
 
-        ll = self.NPTF_inst_array[0].make_ll_PDF_PSF()
+        ll = self.NPTF_inst_array.make_ll_PDF_PSF()
 
         self.index += 1
 

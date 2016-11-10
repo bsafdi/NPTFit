@@ -292,6 +292,9 @@ class config(sd):
             return masked_arrays_list
         else:
             masked_arrays_compressed = np.array([[arr.compressed() for arr in array] for array in masked_arrays_list])
+            print np.shape(masked_arrays_list), masked_arrays_list
+            print np.shape(masked_arrays_compressed),masked_arrays_compressed
+            np.load('Fake')
         if summed:
             masked_arrays_compressed = np.sum(masked_arrays_compressed, axis=1)
         return masked_arrays_compressed
