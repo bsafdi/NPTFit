@@ -104,29 +104,9 @@ class bayesian_scan(config):
 
     def configure_for_edep_scan(self):
 
-        self.compress_data()
-        self.compress_data_exposure()
-        self.compress_templates()
-        self.number_energy_bins = 1
+        self.compress_data_and_templates()
 
-        for en in range(self.number_energy_bins):
-            for key in self.templates_dict_nested.keys():
-                self.templates_dict_nested[key + '-' + str(en)] = self.templates_dict_nested[key]
-                self.templates_dict[key + '-' + str(en)] = self.templates_dict[key]
-
-        self.edep_poiss_models = {}
-        for en in range(self.number_energy_bins):
-            for key in self.poiss_models.keys():
-                self.edep_poiss_models[key + '-' + str(en)] = self.poiss_models[key].copy()
-                print self.edep_poiss_models[key + '-' + str(en)]['model_tag']
-                self.edep_poiss_models[key + '-' + str(en)]['model_tag'] += '$^{' + str(en) + '}$'
-        self.poiss_models_bare_keys = self.poiss_models.keys()
-        self.poiss_model_keys = []
-        for en in range(self.number_energy_bins):
-            for key in self.poiss_models_bare_keys:
-                self.poiss_model_keys.append(key + '-' + str(en))
-        self.poiss_models = self.edep_poiss_models.copy()
-
+        self.poiss_model_keys = self.poiss_models.keys()
 
         self.n_poiss = len(self.poiss_models.keys())
 
@@ -171,26 +151,6 @@ class bayesian_scan(config):
         else:
             return [tag, val]
 
-    def make_xbg(self, theta):
-        theta_list = theta
-        A_theta = []
-        theta_PS = []
-        if self.n_poiss > 0:
-            A_theta = [self.convert_log(self.model_decompression_key[i], theta_list[i]) for i in range(self.n_poiss)]
-
-        if self.n_non_poiss > 0:
-            theta_PS = [self.convert_log(self.model_decompression_key[i], theta_list[i]) for i in
-                        range(self.n_poiss, self.n_params)]
-        else:
-            theta_PS = 0
-
-        xbg_PSF_compressed = np.sum(
-            map(lambda i: A_theta[i][1] * self.templates_dict_nested[A_theta[i][0]]['summed_templates'],
-                range(len(A_theta))), axis=0)
-
-
-        return xbg_PSF_compressed, theta_PS
-
     def sort_list(self, the_list, num):
         indices = range(0, len(the_list) + 1, num)
         new_list = [the_list[indices[i]:indices[i + 1]] for i in range(len(indices) - 1)]
@@ -220,7 +180,7 @@ class bayesian_scan(config):
 
         xbg_PSF_compressed = [np.sum(map(lambda i: A_theta[0][i][1] *
                                                     self.templates_dict_nested[A_theta[0][i][0]][
-                                                        'templates_masked_compressed'][0], range(len(A_theta[0]))),
+                                                        'template_masked_compressed'][0], range(len(A_theta[0]))),
                                         axis=0)] # [en][i][1], en set to 0 -- remove when axed en
 
         return xbg_PSF_compressed, theta_PS
@@ -248,7 +208,7 @@ class bayesian_scan(config):
 
         xbg_PSF_compressed = [[np.sum(map(lambda i: A_theta[0][i][1] *
                                                     self.templates_dict_nested[A_theta[0][i][0]][
-                                                        'templates_masked_compressed_exposure'][region][0], range(len(A_theta[0]))), axis=0)
+                                                        'template_masked_compressed_exposure'][region][0], range(len(A_theta[0]))), axis=0)
                                     for region in range(self.nexp)]]
 
         return xbg_PSF_compressed, theta_PS

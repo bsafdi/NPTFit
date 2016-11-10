@@ -127,10 +127,10 @@ class compute_spectra(mfa.mask_for_analysis):
     def return_template_intensity(self,mask,comp):
         b = self.b
         if self.edep:
-            summed_template = b.templates_dict_nested[comp]['templates'][self.ebin]
+            summed_template = b.templates_dict_nested[comp]['template']
             mean_exposure = [b.exposure_map][self.ebin]
         else:
-            summed_template = b.templates_dict_nested[comp]['summed_templates_not_compressed']
+            summed_template = b.templates_dict_nested[comp]['template']
             mean_exposure = np.mean([b.exposure_map],axis=0)
 
         summed_template_masked_compressed = self.mask_and_compress(summed_template,mask)
@@ -376,7 +376,7 @@ class compute_edep_spectra(mfa.mask_for_analysis):
 
     def return_template_intensity(self,mask,comp,ebin):
         b = self.b
-        summed_template = b.templates_dict_nested[comp]['summed_templates_not_compressed']
+        summed_template = b.templates_dict_nested[comp]['template']
         mean_exposure = [b.exposure_map][ebin]
 
         summed_template_masked_compressed = self.mask_and_compress(summed_template,mask)
@@ -469,7 +469,7 @@ class save_ps_template_info:
         b = self.b
         save_vec=[]
         save_vec.append(b.norms_non_poiss[ps_tag])
-        save_vec.append(b.templates_dict_nested[ps_tag]['summed_templates_not_compressed'])
+        save_vec.append(b.templates_dict_nested[ps_tag]['template'])
         # ps_results_dir = b.data_dir_base + 'ps_results/'
         # b.make_dirs([ps_results_dir])
         # with open(ps_results_dir + save_tag,'w') as thefile:
@@ -994,10 +994,7 @@ class plot_dnds(mfa.mask_for_analysis):
         self.mask_compress_exposure_map()
 
         #deal with the template
-        # if edep:
-        #     summed_template = b.templates_dict_nested[comp]['templates'][ebin]
-        # else:
-        summed_template = b.templates_dict_nested[comp]['summed_templates_not_compressed']
+        summed_template = b.templates_dict_nested[comp]['template']
         #mean_exposure = np.mean(self.the_dict['exposure_map'],axis=0)
         summed_template_masked_compressed = self.mask_and_compress(summed_template,self.mask_total)
         self.template_sum = np.sum(summed_template_masked_compressed)
@@ -1055,7 +1052,7 @@ class plot_dnds(mfa.mask_for_analysis):
 
     def calculate_minuit_dnds_arrays(self,comp,smin=0.01,smax=1000,nsteps=1000,ebin=0,spow=0):
         medians=self.b.norms_non_poiss[comp]
-        summed_template = self.b.templates_dict_nested[comp]['summed_templates_not_compressed']
+        summed_template = self.b.templates_dict_nested[comp]['template']
         self.calculate_static_dnds_arrays(comp,summed_template,medians,smin=smin,smax=smax,nsteps=nsteps,ebin=ebin,spow=spow)
 
     def calculate_static_dnds_arrays(self,comp,summed_template,medians,smin=0.01,smax=1000,nsteps=1000,ebin=0,spow=0):
@@ -1254,7 +1251,7 @@ class plot_flux_fraction(mfa.mask_for_analysis):
         self.mask_compress_data()
 
         #deal with the template
-        summed_template = b.templates_dict_nested[comp]['summed_templates_not_compressed']
+        summed_template = b.templates_dict_nested[comp]['template']
         #mean_exposure = np.mean(self.the_dict['exposure_map'],axis=0)
         summed_template_masked_compressed = self.mask_and_compress(summed_template,self.mask_total)
         self.template_sum = np.sum(summed_template_masked_compressed)
@@ -1279,7 +1276,7 @@ class plot_flux_fraction(mfa.mask_for_analysis):
         self.mask_compress_data()
 
         #deal with the template
-        summed_template = b.templates_dict_nested[comp]['summed_templates_not_compressed']
+        summed_template = b.templates_dict_nested[comp]['template']
         #mean_exposure = np.mean(self.the_dict['exposure_map'],axis=0)
         summed_template_masked_compressed = self.mask_and_compress(summed_template,self.mask_total)
         self.template_sum = np.sum(summed_template_masked_compressed)

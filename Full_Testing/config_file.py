@@ -36,11 +36,6 @@ class config(sd):
         # Append the mask to self
         self.mask_total = external_mask
 
-        # Calculate mean exposure after masking - used in exposure corrections
-        total_exposure_map_masked = hp.ma(self.exposure_map)
-        total_exposure_map_masked.mask = self.mask_total
-        self.exposure_mean = np.mean(total_exposure_map_masked.compressed())
-
     def add_template(self, template, label):
         """ Function to add a template to the template dictionary and array
 
@@ -51,42 +46,7 @@ class config(sd):
         self.templates_dict.update({label: template})
         self.templates.append(template)
 
-
-
-
-
-
-
-    def compress_templates(self):
-        self.templates_masked = [[hp.ma(temp_2) for temp_2 in temp_1] for temp_1 in self.templates]
-        for temp_masked in self.templates_masked:
-            for temp_2 in temp_masked:
-                temp_2.mask = self.mask_total
-        self.templates_masked_compressed = [[temp_2.compressed() for temp_2 in temp_1] for temp_1 in
-                                            self.templates_masked]
-
-        the_dict = self.templates_dict
-        keys = self.templates_dict.keys()
-
-        #divide into exposure regions
-        pixel_list, exposure_list = self.dividing_exposure(self.exposure_map)
-        self.pixel_list = pixel_list
-        self.exposure_list = exposure_list
-
-        self.templates_dict_nested = {
-            key: {'templates': the_dict[key], 'templates_masked': self.return_masked(the_dict[key]),
-                  'templates_masked_compressed': self.return_masked(the_dict[key], compressed=True),
-                  'summed_templates': self.return_masked(the_dict[key], compressed=True, summed=True),
-                  'summed_templates_not_compressed': np.sum(the_dict[key], axis=0),
-                  'templates_masked_exposure': self.return_masked_exposure(the_dict[key]),
-                  'flux_templates_masked_exposure': self.return_masked_exposure(the_dict[key],flux=True),
-                  'templates_masked_compressed_exposure': self.return_masked_exposure(the_dict[key], compressed=True),
-                  'flux_templates_masked_compressed_exposure': self.return_masked_exposure(the_dict[key],compressed=True,flux=True),
-                  'summed_templates_exposure': self.return_masked_exposure(the_dict[key], compressed=True, summed=True),
-                  'flux_summed_templates_exposure': self.return_masked_exposure(the_dict[key], compressed=True, summed=True,flux=True)}
-            for key in keys}
-
-    def return_masked(self, arrays, compressed=False, summed=False):
+    def return_masked(self, map_to_mask, compressed=False):
         """
         Masking arrays without the number of exposure regions.
         :param arrays: array to be masked (generally templates)
@@ -94,18 +54,14 @@ class config(sd):
         :param summed: whether or not to sum that array
         :return: returns a masked array of the same length, then may be compressed and/or summed
         """
-        masked_arrays = [hp.ma(array) for array in arrays]
-        for array in masked_arrays:
-            array.mask = self.mask_total
+        temp_masked_map = hp.ma(map_to_mask)
+        temp_masked_map.mask = self.mask_total
         if not compressed:
-            return masked_arrays
+            return temp_masked_map
         else:
-            masked_arrays_compressed = np.array([array.compressed() for array in masked_arrays])
-        if summed:
-            masked_arrays_compressed = np.sum(masked_arrays_compressed, axis=0)
-        return masked_arrays_compressed
+            return temp_masked_map.compressed()
 
-    def return_masked_exposure(self, arrays, compressed=False, summed=False, flux=False):
+    def return_masked_exposure(self, map_to_mask, compressed=False, summed=False, flux=False):
         """
         Takes an array and masks with the usual mask + exposure mask.
         :param arrays: Array to mask
@@ -114,6 +70,7 @@ class config(sd):
         :return: returns a list of self.nexp elements, each masked by total mask+ exposure, and compressed/summed
         """
 
+        arrays = [map_to_mask]
         masked_arrays_list = []
         for i in range(self.nexp):
             if flux:
@@ -131,20 +88,22 @@ class config(sd):
             masked_arrays_compressed = np.sum(masked_arrays_compressed, axis=1)
         return masked_arrays_compressed
 
-    def compress_data(self):
+    def compress_data_and_templates(self):
         """
-        Compresses the data, which means masks the data with the given overall maskS
+        Compresses the data, which means masks the data with the given overall masks
+        Does a version for poissonian and non-poissonian scans
         """
 
+        # Compress data
         temp_data = hp.ma(self.count_map)
         temp_data.mask = self.mask_total
         self.masked_compressed_data = temp_data.compressed()
 
-    def compress_data_exposure(self):
-        """
-        Compresses the data and break it by exposure, which means masks the data with the given overall mask and
-        exposure map masks
-        """
+        # Calculate mean exposure after masking - used in exposure corrections
+        total_exposure_map_masked = hp.ma(self.exposure_map)
+        total_exposure_map_masked.mask = self.mask_total
+        self.exposure_mean = np.mean(total_exposure_map_masked.compressed())
+
         temp_exposure = hp.ma(self.exposure_map)
         temp_exposure.mask = self.mask_total
         exposure_map_masked_compressed = temp_exposure.compressed()
@@ -154,14 +113,34 @@ class config(sd):
         self.exposure_means_list = [np.mean(self.exposure_list_compressed[i]) for i in range(len(self.exposure_list_compressed))]
         self.masked_compressed_data_expcorr = []
         for i in range(self.nexp):
-            temp_data = hp.ma(self.count_map)
-            temp_data.mask = np.logical_or(self.mask_total, self.making_mask(self.pixel_list[i], self.exposure_map))
-            self.masked_compressed_data_expcorr.append([temp_data.compressed()])
+            temp_data_expcorr = hp.ma(self.count_map)
+            temp_data_expcorr.mask = np.logical_or(self.mask_total, self.making_mask(self.pixel_list[i], self.exposure_map))
+            self.masked_compressed_data_expcorr.append([temp_data_expcorr.compressed()])
+
+        # Now compress templates
+        self.templates_masked = [hp.ma(temp) for temp in self.templates]
+        for temp in self.templates_masked:
+            temp.mask = self.mask_total
+        self.templates_masked_compressed = [temp.compressed() for temp in self.templates_masked]
+
+        the_dict = self.templates_dict
+        keys = self.templates_dict.keys()
+
+        self.templates_dict_nested = {
+            key: {'template': the_dict[key], 
+                  'template_masked_compressed': self.return_masked(the_dict[key], compressed=True),
+                  'templates_masked_exposure': self.return_masked_exposure(the_dict[key]),
+                  'flux_templates_masked_exposure': self.return_masked_exposure(the_dict[key],flux=True),
+                  'template_masked_compressed_exposure': self.return_masked_exposure(the_dict[key], compressed=True),
+                  'flux_templates_masked_compressed_exposure': self.return_masked_exposure(the_dict[key],compressed=True,flux=True),
+                  'summed_templates_exposure': self.return_masked_exposure(the_dict[key], compressed=True, summed=True),
+                  'flux_summed_templates_exposure': self.return_masked_exposure(the_dict[key], compressed=True, summed=True,flux=True)}
+            for key in keys}
 
     def dividing_exposure(self, exposure_array):
         """
         This function divides the sky into nexp "almost" equal parts and returns an array of lists of pixels
-        :param exposure_array: This should be the exposure array (before masking). It's called here CTB_exposure_map
+        :param exposure_array: This should be the exposure array (before masking). It's called here exposure_map
         :param nexp: Number of divisions required
         :return: [ [list of pixels], [list of pixels]... ] with nexp list of pixels of almost equal exposure
         """

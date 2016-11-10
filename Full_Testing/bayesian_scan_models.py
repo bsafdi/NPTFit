@@ -22,7 +22,7 @@ class bayesian_scan_NPTF(bayesian_scan):
         # self.exposure_pixels_compressed()
         self.configure_for_edep_scan()
 
-        self.NPT_dist_compressed_ary = [self.templates_dict_nested[self.non_poiss_models.keys()[i]]['summed_templates'] for i in range(self.n_non_poiss_models)] 
+        self.NPT_dist_compressed_ary = [self.templates_dict_nested[self.non_poiss_models.keys()[i]]['template_masked_compressed'] for i in range(self.n_non_poiss_models)] 
         
         self.NPT_dist_compressed_exp_ary = [self.templates_dict_nested[self.non_poiss_models.keys()[i]]['flux_summed_templates_exposure'] for i in range(self.n_non_poiss_models)]
 
