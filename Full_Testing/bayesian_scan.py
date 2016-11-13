@@ -3,14 +3,14 @@ import pymultinest
 from mpi4py import MPI
 import copy
 import NPLL as log_like
-from config_file import config
+from config_maps import config_maps
 
 
-class bayesian_scan(config):
+class bayesian_scan(config_maps):
     """ The file that sets up and executes the scan """
 
     def __init__(self, nlive=100, *args, **kwargs):
-        config.__init__(self, *args, **kwargs)
+        config_maps.__init__(self, *args, **kwargs)
 
         self.priors = []
         self.is_log_prior = []

@@ -13,7 +13,8 @@ class bayesian_scan_NPTF(bayesian_scan):
 
         bayesian_scan.__init__(self, *args, **kwargs)
 
-    def initiate_ps_from_f_ary(self, f_ary, df_rho_div_f_ary, nbreak=1, nexp=2):
+    # TODO: This code only works for a single 1 break NPTF at present, remove nbreak
+    def initiate_ps_from_f_ary(self, f_ary, df_rho_div_f_ary, nbreak=1, nexp=1):
         self.nbreak = nbreak
         self.f_ary = f_ary
         self.df_rho_div_f_ary = df_rho_div_f_ary
@@ -52,14 +53,14 @@ class NPTF_ps():
 
         for i in range(self.nexp):
 
+            # TODO: Fix this - currently just works for 1 single break NPTF template
             theta_PS = [self.theta_PS[0] * self.exposure_mean / self.exposure_means_list[i]] + list(
                 self.theta_PS[1:self.nbreak+2]) + \
-                       [self.theta_PS[3+i] * self.exposure_means_list[i] / self.exposure_mean for i in range(self.nbreak)]
-            # TODO: figure out transpose - can we remove it?
-            # TODO: the [0] in PS_dist_compressed has me concerned, are we just pulling out 1 NPTF template?
-            if len(np.array(self.compressed_data_array.T[i], dtype='int32')) == 0: continue
+                    [self.theta_PS[self.nbreak+2] * self.exposure_means_list[i] / self.exposure_mean]
+            # TODO: the [0] in PS_dist_compressed has me concerned, are we just pulling out 1 NPTF template? - Need to fix this up in the context of having multiple NPTF templates
+            if len(np.array(self.compressed_data_array[i], dtype='int32')) == 0: continue
 
             ll += log_like(self.xbg_PSF_compressed[i], self.theta_PS, self.f_ary,
                                                        self.df_rho_div_f_ary, [self.PS_dist_compressed[0][i]],
-                                                       np.array(self.compressed_data_array.T[i], dtype='int32'))
+                                                       np.array(self.compressed_data_array[i], dtype='int32'))
         return ll
