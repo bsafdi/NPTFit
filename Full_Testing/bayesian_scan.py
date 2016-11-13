@@ -210,29 +210,17 @@ class bayesian_scan(config):
     def model_parameters_edep_nbreak(self, theta_PS, energy_bin = 0):
         nbreak = self.nbreak
         nfix_index = (nbreak - 1) * 2 + 3
-        if self.n_non_poiss_models == 1:
-            if self.dnds_model_array[0] == 'specify_breaks': #only works for energy_bin=0 for now
-                return [theta_PS[0] / float(theta_PS[-1])] + theta_PS[1:]
-            else:
-                return self.single_model_parameters_edep_nbreak(
-                    theta_PS[0:nfix_index] + theta_PS[nfix_index + energy_bin: nfix_index + nbreak + energy_bin])
-        elif self.n_non_poiss_models == 2:
-            off_set = self.non_poiss_models[self.model_decompression_key[self.n_poiss][0]]['n_params_total']
-            return self.single_model_parameters_edep_nbreak(theta_PS[0:nfix_index] + theta_PS[
-                                                                                     nfix_index + energy_bin: nfix_index + nbreak + energy_bin]) + self.single_model_parameters_edep_nbreak(
-                theta_PS[0 + off_set:nfix_index + off_set] + theta_PS[
-                                                             nfix_index + energy_bin + off_set: nfix_index + nbreak + energy_bin + off_set])
-        else:
-            off_set = self.non_poiss_models[self.model_decompression_key[self.n_poiss][0]]['n_params_total']
-            off_set_2 = off_set + self.non_poiss_models[self.model_decompression_key[self.n_poiss + off_set][0]][
-                'n_params_total']
-            return self.single_model_parameters_edep_nbreak(theta_PS[0:nfix_index] + theta_PS[
-                                                                                     nfix_index + energy_bin: nfix_index + nbreak + energy_bin]) + self.single_model_parameters_edep_nbreak(
-                theta_PS[0 + off_set:nfix_index + off_set] + theta_PS[
-                                                             nfix_index + energy_bin + off_set: nfix_index + nbreak + energy_bin + off_set]) + self.single_model_parameters_edep_nbreak(
-                theta_PS[0 + off_set_2:nfix_index + off_set_2] + theta_PS[
-                                                                 nfix_index + energy_bin + off_set_2: nfix_index + nbreak + energy_bin + off_set_2])
+        offsets = [0]
+        for i in range(1,self.n_non_poiss_models):
+            # offsets.append(offsets[i-1] + self.non_poiss_models[self.model_decompression_key[self.n_poiss + offsets[i-1]][i]][
+            #         'n_params_total'])
+            offsets.append(offsets[i-1] + val['n_params_total'] for val in self.non_poiss_models.values())
 
+        if self.dnds_model_array[0] == 'specify_breaks':
+            return [[theta_PS[offset] / float(theta_PS[offset + 2*nbreak + 1])] + theta_PS[1 + offset: offset + 2*nbreak + 2] for offset in offsets][0] # TODO: remove 0 when fixed multiple NPT!
+        else:
+            return [self.single_model_parameters_edep_nbreak(theta_PS[offset:nfix_index+offset] + theta_PS[
+                                                                                     nfix_index + energy_bin + offset: nfix_index + nbreak + energy_bin + offset]) for offset in offsets][0]
 
     def log_like_NPTF_edep(self, theta, ndim, nparams):
         xbg_PSF_compressed, theta_PS_marked = self.make_xbg_edep_exposure(theta)
