@@ -60,8 +60,6 @@ def log_like(PT_sum_compressed, theta, f_ary, df_rho_div_f_ary, NPT_compressed,
     cdef double[:,::1] x_m_ary_out = np.zeros((npixROI,k_max + 1), dtype=DTYPE)
     cdef double[::1] x_m_sum_out = np.zeros(npixROI, dtype=DTYPE)
 
-    theta = np.array_split(theta,len(NPT_compressed)) # Split PS theta array into sub-arrays for different PS templates
-
     for i in range(len(theta)):
         # Check theta has the correct length
         assert(len(theta[i]) % 2 == 0), "theta has an invalid length!"
