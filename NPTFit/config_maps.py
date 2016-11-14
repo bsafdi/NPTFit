@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Configure Maps
+# configure_maps.py
 #------------------------------------------------------------------------------
 ##
 ## Configure the maps - data, exposure and templates - required to perform the
@@ -13,12 +13,13 @@
 
 import numpy as np
 import healpy as hp
+
 from set_dirs import set_dirs as sd
 
 class config_maps(sd):
     def __init__(self, nside=128, nexp=1, *args, **kwargs):
-        #TODO if possible get rid of args/kwargs
 
+        #TODO if possible get rid of args/kwargs
         self.kwargs = kwargs
         self.nside = nside
         self.nexp = nexp
