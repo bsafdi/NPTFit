@@ -5,7 +5,6 @@ import copy
 import NPLL as log_like
 from config_maps import config_maps
 
-
 class bayesian_scan(config_maps):
     """ The file that sets up and executes the scan """
 
@@ -29,11 +28,10 @@ class bayesian_scan(config_maps):
         self.nlive = nlive
         self.resume = False
 
-
-
         # new stuff
         self.non_poiss_models = {}
         self.poiss_models = {}
+        self.poiss_models_fixed = {}
 
         ###
         self.already_loaded = False
@@ -43,9 +41,13 @@ class bayesian_scan(config_maps):
         ###temp
         self.index = 0
 
-    def add_poiss_model(self, template_name, model_tag, prior_range, log_prior=False):
-        self.poiss_models[template_name] = {'prior_range': prior_range, 'log_prior': log_prior, 'model_tag': model_tag,
-                                            'poiss': True}
+    def add_poiss_model(self, template_name, model_tag, prior_range, log_prior=False, fixed=False, fixed_norm=1.0):
+        
+        if fixed:
+            self.poiss_models_fixed[template_name] = {'fixed_norm': fixed_norm}
+        else:
+            self.poiss_models[template_name] = {'prior_range': prior_range, 'log_prior': log_prior, 'model_tag': model_tag,
+                                            'poiss': True }
 
     def add_non_poiss_model(self, template_name, model_tag, prior_range, log_prior=False, dnds_model='specify_relative_breaks',
                             fixed_params=None):
@@ -110,6 +112,7 @@ class bayesian_scan(config_maps):
 
         self.n_poiss = len(self.poiss_models.keys())
 
+
         self.non_poiss_list_num_model_params = [d['n_params'] for d in self.non_poiss_models.values()]
 
         self.n_non_poiss = np.sum(self.non_poiss_list_num_model_params)
@@ -150,49 +153,14 @@ class bayesian_scan(config_maps):
         else:
             return [tag, val]
 
-    def sort_list(self, the_list, num):
-        indices = range(0, len(the_list) + 1, num)
-        new_list = [the_list[indices[i]:indices[i + 1]] for i in range(len(indices) - 1)]
-        return new_list
-
-    def make_xbg_edep(self, theta):
-        theta_list = theta
-        A_theta = []
-        theta_PS = []
-
-        if self.n_poiss > 0:
-
-            A_theta = self.sort_list(
-                [self.convert_log(self.model_decompression_key[i], theta_list[i]) for i in range(self.n_poiss)],
-                self.n_poiss)
-
-        if self.n_non_poiss > 0:
-            theta_PS = [self.convert_log(self.model_decompression_key[i], theta_list[i]) for i in
-                        range(self.n_poiss, self.n_params)]
-            if len(self.fixed_params_list) > 0:
-                index = 0
-                for key in self.non_poiss_models_keys:
-                    if self.non_poiss_models[key]['fixed_params'] is not None:
-                        for fixed in self.non_poiss_models[key]['fixed_params']:
-                            theta_PS.insert(int(fixed[0]) + index, [key, fixed[1]])
-                    index += self.non_poiss_models[key]['n_params_total']  # n_params
-
-        xbg_PSF_compressed = [np.sum(map(lambda i: A_theta[0][i][1] *
-                                                    self.templates_dict_nested[A_theta[0][i][0]][
-                                                        'template_masked_compressed'], range(len(A_theta[0]))),
-                                        axis=0)] # [en][i][1], en set to 0 -- remove when axed en
-
-        return xbg_PSF_compressed, theta_PS
-
     def make_xbg_edep_exposure(self, theta):
         theta_list = theta
         A_theta = []
         theta_PS = []
 
         if self.n_poiss > 0:
-            A_theta = self.sort_list(
-                [self.convert_log(self.model_decompression_key[i], theta_list[i]) for i in range(self.n_poiss)],
-                self.n_poiss)
+            A_theta = [self.convert_log(self.model_decompression_key[i], theta_list[i]) for i in
+                        range(self.n_poiss)]
 
         if self.n_non_poiss > 0:
             theta_PS = [self.convert_log(self.model_decompression_key[i], theta_list[i]) for i in
@@ -205,10 +173,22 @@ class bayesian_scan(config_maps):
                             theta_PS.insert(int(fixed[0]) + index, [key, fixed[1]])
                     index += self.non_poiss_models[key]['n_params_total']  # n_params
 
-        xbg_PSF_compressed = [[np.sum(map(lambda i: A_theta[0][i][1] *
-                                                    self.templates_dict_nested[A_theta[0][i][0]][
-                                                        'template_masked_compressed_expreg'][region], range(len(A_theta[0]))), axis=0)
-                                    for region in range(self.nexp)]]
+
+        xbg_PSF_compressed_model = np.array([[np.sum(map(lambda i: A_theta[i][1] *
+                                                    self.templates_dict_nested[A_theta[i][0]][
+                                                        'template_masked_compressed_expreg'][region], range(len(A_theta))), axis=0)
+                                    for region in range(self.nexp)]])
+
+
+        xbg_PSF_compressed_fixed = np.array([[np.sum(map(lambda key: self.poiss_models_fixed[key]['fixed_norm'] *
+                                                    self.templates_dict_nested[key][
+                                                        'template_masked_compressed_expreg'][region], self.poiss_models_fixed.keys()), axis=0)
+                                    for region in range(self.nexp)]])
+
+        if len(self.poiss_models_fixed) != 0:
+            xbg_PSF_compressed = xbg_PSF_compressed_model + xbg_PSF_compressed_fixed
+        else:
+            xbg_PSF_compressed = xbg_PSF_compressed_model
 
         return xbg_PSF_compressed, theta_PS
 
@@ -229,29 +209,17 @@ class bayesian_scan(config_maps):
     def model_parameters_edep_nbreak(self, theta_PS, energy_bin = 0):
         nbreak = self.nbreak
         nfix_index = (nbreak - 1) * 2 + 3
-        if self.n_non_poiss_models == 1:
-            if self.dnds_model_array[0] == 'specify_breaks': #only works for energy_bin=0 for now
-                return [theta_PS[0] / float(theta_PS[-1])] + theta_PS[1:]
-            else:
-                return self.single_model_parameters_edep_nbreak(
-                    theta_PS[0:nfix_index] + theta_PS[nfix_index + energy_bin: nfix_index + nbreak + energy_bin])
-        elif self.n_non_poiss_models == 2:
-            off_set = self.non_poiss_models[self.model_decompression_key[self.n_poiss][0]]['n_params_total']
-            return self.single_model_parameters_edep_nbreak(theta_PS[0:nfix_index] + theta_PS[
-                                                                                     nfix_index + energy_bin: nfix_index + nbreak + energy_bin]) + self.single_model_parameters_edep_nbreak(
-                theta_PS[0 + off_set:nfix_index + off_set] + theta_PS[
-                                                             nfix_index + energy_bin + off_set: nfix_index + nbreak + energy_bin + off_set])
-        else:
-            off_set = self.non_poiss_models[self.model_decompression_key[self.n_poiss][0]]['n_params_total']
-            off_set_2 = off_set + self.non_poiss_models[self.model_decompression_key[self.n_poiss + off_set][0]][
-                'n_params_total']
-            return self.single_model_parameters_edep_nbreak(theta_PS[0:nfix_index] + theta_PS[
-                                                                                     nfix_index + energy_bin: nfix_index + nbreak + energy_bin]) + self.single_model_parameters_edep_nbreak(
-                theta_PS[0 + off_set:nfix_index + off_set] + theta_PS[
-                                                             nfix_index + energy_bin + off_set: nfix_index + nbreak + energy_bin + off_set]) + self.single_model_parameters_edep_nbreak(
-                theta_PS[0 + off_set_2:nfix_index + off_set_2] + theta_PS[
-                                                                 nfix_index + energy_bin + off_set_2: nfix_index + nbreak + energy_bin + off_set_2])
+        offsets = [0]
+        for i in range(1,self.n_non_poiss_models):
+            # offsets.append(offsets[i-1] + self.non_poiss_models[self.model_decompression_key[self.n_poiss + offsets[i-1]][i]][
+            #         'n_params_total'])
+            offsets.append(offsets[i-1] + val['n_params_total'] for val in self.non_poiss_models.values())
 
+        if self.dnds_model_array[0] == 'specify_breaks':
+            return [[theta_PS[offset] / float(theta_PS[offset + 2*nbreak + 1])] + theta_PS[1 + offset: offset + 2*nbreak + 2] for offset in offsets][0] # TODO: remove 0 when fixed multiple NPT!
+        else:
+            return [self.single_model_parameters_edep_nbreak(theta_PS[offset:nfix_index+offset] + theta_PS[
+                                                                                     nfix_index + energy_bin + offset: nfix_index + nbreak + energy_bin + offset]) for offset in offsets][0]
 
     def log_like_NPTF_edep(self, theta, ndim, nparams):
         xbg_PSF_compressed, theta_PS_marked = self.make_xbg_edep_exposure(theta)
