@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 ###############################################################################
 # nptfit.py
 ###############################################################################
@@ -6,6 +5,8 @@ from __future__ import absolute_import
 # Head file for performing bayesian scans using (non-)Poissonian template fits.
 #
 ###############################################################################
+
+from __future__ import absolute_import
 
 import numpy as np
 

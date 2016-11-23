@@ -1,5 +1,3 @@
-from __future__ import print_function
-from __future__ import absolute_import
 ###############################################################################
 # config_maps.py
 ###############################################################################
@@ -12,6 +10,9 @@ from __future__ import absolute_import
 # required divide it into exposure regions.
 #
 ###############################################################################
+
+from __future__ import print_function
+from __future__ import absolute_import
 
 import numpy as np
 import numpy.ma as ma

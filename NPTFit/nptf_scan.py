@@ -1,5 +1,3 @@
-from __future__ import print_function
-from __future__ import absolute_import
 ###############################################################################
 # nptf_scan.py
 ###############################################################################
@@ -14,6 +12,9 @@ from __future__ import absolute_import
 # dnds_analysis
 #
 ###############################################################################
+
+from __future__ import print_function
+from __future__ import absolute_import
 
 import copy
 import numpy as np

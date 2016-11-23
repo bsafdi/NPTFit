@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 ###############################################################################
 # psf_compute.py
 ###############################################################################
@@ -8,6 +7,8 @@ from __future__ import absolute_import
 # correction for an arbitrary user specified PSF.
 #
 ###############################################################################
+
+from __future__ import absolute_import
 
 import numpy as np
 import healpy as hp
