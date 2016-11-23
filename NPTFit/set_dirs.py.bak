@@ -52,6 +52,6 @@ class set_dirs:
             if not os.path.exists(d):
                 try:
                     os.mkdir(d)
-                except OSError as e:
+                except OSError, e:
                     if e.errno != 17:
                         raise   

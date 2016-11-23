@@ -76,9 +76,9 @@ class dnds_analysis():
         # \int(dS*S*dN/dS). Note that the APS parameter is a
         # rescaling of the counts, which is why to get the
         # intensity this is multiplied by the total counts
-        self.intensity_array_non_poiss = map(lambda sample:
+        self.intensity_array_non_poiss = list(map(lambda sample:
             np.sum(self.template_sum*self.dnds(comp, sample, self.sarray) *
-                   self.sarray*self.ds), self.nptf.samples)
+                   self.sarray*self.ds), self.nptf.samples))
 
         return self.intensity_array_non_poiss
 
@@ -102,9 +102,9 @@ class dnds_analysis():
 
         # Get PT intensities by scaling the compressed mask intensity
         # by the relevant normalizations from chains
-        self.intensity_array_poiss = map(lambda sample:
+        self.intensity_array_poiss = list(map(lambda sample:
             self.template_sum*self.return_poiss_samples(comp, sample),
-            self.nptf.samples)
+            self.nptf.samples))
 
         return self.intensity_array_poiss
 
@@ -307,7 +307,7 @@ class dnds_analysis():
         """
 
         self.samples_reduced_ary = [self.return_non_poiss_samples(comp, sample) for sample in self.nptf.samples]
-        self.samples_reduced_param_ary = zip(*self.samples_reduced_ary)
+        self.samples_reduced_param_ary = list(zip(*self.samples_reduced_ary))
 
         nbreak = int((len(self.samples_reduced_ary[0]) - 2)/2.)
 

@@ -11,13 +11,10 @@
 #
 ###############################################################################
 
-from __future__ import print_function
-from __future__ import absolute_import
-
 import numpy as np
 import numpy.ma as ma
 
-from .set_dirs import set_dirs as sd  # Module for creating directories
+from set_dirs import set_dirs as sd  # Module for creating directories
 
 
 class config_maps(sd):
@@ -79,7 +76,7 @@ class config_maps(sd):
 
         # If no mask inserted, set to blank mask
         if (len(self.mask_total) == 0):
-            print("No mask set; defaulting to a blank mask")
+            print "No mask set; defaulting to a blank mask"
             self.mask_total = np.zeros(self.npix, dtype=bool)
 
         # Check all inputs have the same length
@@ -137,8 +134,8 @@ class config_maps(sd):
 
         # Stop code from dividing by more pixels than there are in the ROI
         if (self.nexp > len(array_sorted)):
-            print("nexp cannot be larger than the number of pixels in the ROI")
-            print("Setting nexp = ROI size")
+            print "nexp cannot be larger than the number of pixels in the ROI"
+            print "Setting nexp = ROI size"
             self.nexp = len(array_sorted)
 
         # Convert from list of exreg pixels to masks (int as used to index)

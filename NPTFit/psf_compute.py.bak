@@ -8,11 +8,9 @@
 #
 ###############################################################################
 
-from __future__ import absolute_import
-
 import numpy as np
 import healpy as hp
-from . import pdf_sampler
+import pdf_sampler
 
 
 def psf_corr(nside, num_f_bins, n_psf, n_pts_per_psf, f_trunc, psf_r_func,

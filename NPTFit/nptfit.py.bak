@@ -6,11 +6,9 @@
 #
 ###############################################################################
 
-from __future__ import absolute_import
-
 import numpy as np
 
-from .nptf_scan import nptf_scan  # Sets up and performs the scan
+from nptf_scan import nptf_scan  # Sets up and performs the scan
 
 
 class NPTF(nptf_scan):

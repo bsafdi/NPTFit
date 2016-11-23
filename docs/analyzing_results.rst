@@ -139,7 +139,7 @@ where
 - ``n_non_poiss_post`` is a 2-d array, each sub-array containing posteriors for a given slope parameter, starting from the highest to the lowest
 - ``Sb_non_poiss_post`` is a 2-d array, each sub-array containing posteriors for a given break parameter, starting from the highest to the lowest
 
-Geting Bayesian log-evidences
+Getting Bayesian log-evidences
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Bayesian log-evidence and associated error can be accessed as follows:

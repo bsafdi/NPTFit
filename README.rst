@@ -1,7 +1,7 @@
 NPTFit
 ======
 
-**Non-Poissonian template fitting in python/cython**
+**Non-Poissonian template fitting in Python/Cython**
 
 |Documentation Status| |License: MIT|
 
@@ -19,26 +19,28 @@ here:
 If you make use of NPTFit in a publication, please cite
 `1612.0xxxx <https://arxiv.org/>`__.
 
-INSTALLATION
-------------
+INSTALLATION AND DEPENDENCIES
+-----------------------------
+
 
 Out of the box, NPTFit relies on `MultiNest <https://ccpforge.cse.rl.ac.uk/gf/project/multinest/>`_ for Bayesian inference, which must be
 installed and linked prior to use. 
 
-NPTFit along with it's dependent python packages can be installed with 
+NPTFit supports both Python 2 and 3, specifically 2.7 and 3.5. It may work with earlier 3.* versions, although this has not been tested.
+Make sure Cython is installed (*e.g.* :code:`pip install Cython`). NPTFit along with it's dependent Python packages can then be installed with 
 
 .. code:: sh
 
-  $ python setup.py install
+  $ Python setup.py install
 
-To just compile the cython modules locally:
+which also builds the Cython modules. To just compile the Cython modules locally
 
 .. code:: sh
 
   $ make build
 
 The code is parallelizable through MPI (*e.g.* `OpenMPI <https://www.open-mpi.org/software/ompi/v2.0/>`_), which can
-considerably speed up computationally intensive scans. This requires the MPI4py python package for use with MultiNest, which
+considerably speed up computationally intensive scans. This requires the MPI4py Python package for use with MultiNest, which
 can be installed, for example, with ``pip``:
 
 .. code:: sh
@@ -60,7 +62,7 @@ BASIC USAGE
 Here's how easy it is to perform a non-Poissonian template fit with
 NPTFit.
 
-.. code:: python
+.. code:: Python
 
 
     # Import modules
