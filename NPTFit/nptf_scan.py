@@ -241,7 +241,7 @@ class nptf_scan(config_maps):
         # templates - each element is an array of the compressed template in
         # the various exposure regions
         self.NPT_dist_compressed_exp_ary = \
-            [self.templates_dict_nested[self.non_poiss_models.keys()[i]]
+            [self.templates_dict_nested[list(self.non_poiss_models.keys())[i]]
              ['template_masked_compressed_expreg']
              for i in range(self.n_non_poiss_models)]
 
@@ -304,17 +304,17 @@ class nptf_scan(config_maps):
         # Using this form a compressed map of the sum of all poissonian
         # templates. If there are fixed Poissonian templates add them in too
 
-        PT_sum_compressed_float = np.array([np.sum(map(lambda i: A_theta[i][1] *
+        PT_sum_compressed_float = np.array([np.sum(list(map(lambda i: A_theta[i][1] *
                                   self.templates_dict_nested[A_theta[i][0]]
                                   ['template_masked_compressed_expreg'][region],
-                                  range(len(A_theta))), axis=0)
+                                  range(len(A_theta)))), axis=0)
                                   for region in range(self.nexp)])
 
-        PT_sum_compressed_fixed = np.array([np.sum(map(lambda key:
+        PT_sum_compressed_fixed = np.array([np.sum(list(map(lambda key:
                                   self.poiss_models_fixed[key]['fixed_norm']
                                   * self.templates_dict_nested[key]
                                   ['template_masked_compressed_expreg'][region],
-                                  self.poiss_models_fixed.keys()), axis=0)
+                                  self.poiss_models_fixed.keys())), axis=0)
                                   for region in range(self.nexp)])
 
         # Combine the two if necessary to build the full PT map
@@ -555,11 +555,11 @@ class nptf_scan(config_maps):
         self.norms_non_poiss = OrderedDict()
         index = 0  # Multiple parameters for each NPT, index counts these
         for i in range(len(self.non_poiss_models.keys())):
-            self.norms_non_poiss[self.non_poiss_models.keys()[i]] = \
+            self.norms_non_poiss[list(self.non_poiss_models.keys())[i]] = \
             [self.medians_not_log[self.n_poiss + index + j] for j in range(
-            self.non_poiss_models[self.non_poiss_models.keys()[i]]['n_params'])]
+            self.non_poiss_models[list(self.non_poiss_models.keys())[i]]['n_params'])]
             index += self.non_poiss_models[
-                     self.non_poiss_models.keys()[i]]['n_params']
+                     list(self.non_poiss_models.keys())[i]]['n_params']
 
     def fix_samples(self):
         """ Account for fixed parameters in the samples

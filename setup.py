@@ -1,4 +1,3 @@
-# from distutils.core import setup
 from setuptools import setup
 from distutils.extension import Extension
 from Cython.Build import cythonize
@@ -17,8 +16,8 @@ extensions = [
 
 setup(
     name='NPTFit',
-    version='0.0.1.dev1',
-    description='A Python package for Non-Poissoian Template Fitting',
+    version='0.1dev',
+    description='A Python package for Non-Poissonian Template Fitting',
     url='https://github.com/bsafdi/NPTFit',
     author='Benjamin Safdi',
     author_email='bsafdi@princeton.edu',
