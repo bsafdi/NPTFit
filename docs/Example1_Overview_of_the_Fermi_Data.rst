@@ -77,12 +77,20 @@ in the data.
     hp.mollview(counts,title='Data counts (no max)')
 
 
+.. parsed-literal::
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_8_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
 
 
 
 .. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_8_1.png
+
+
+
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_8_2.png
 
 
 To see the detailed structure in the map, we also mock up a logarithmic
@@ -98,8 +106,14 @@ version of the data.
     hp.mollview(counts_log,title='Data counts - Log')
 
 
+.. parsed-literal::
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_10_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
+
+
+
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_10_1.png
 
 
 Exposure Map - Map of where *Fermi*-LAT looks
@@ -124,8 +138,14 @@ exposure map, which has units of [cm:math:`^2` s].
     hp.mollview(exposure,title='Fermi Exposure [cm$^2$ s]')
 
 
+.. parsed-literal::
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_13_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
+
+
+
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_13_1.png
 
 
 When performing an NPTF, technically the non-Poissonian templates should
@@ -168,12 +188,18 @@ within the specified ROI, not the entire sky
         hp.mollview(expreg_mask[ne],title='Fermi Exposure Region '+str(ne+1),min=0,max=1)
 
 
+.. parsed-literal::
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_15_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
 
 
 
 .. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_15_1.png
+
+
+
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_15_2.png
 
 
 Point Source Catalog Mask
@@ -195,8 +221,14 @@ Note that with the NPTF it is not always desirable to mask point sources
     hp.mollview(pscmask,title='Point Source Catalog Mask')
 
 
+.. parsed-literal::
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_18_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
+
+
+
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_18_1.png
 
 
 Templates - Spatial Models for the Fermi Data
@@ -240,12 +272,18 @@ data.
     hp.mollview(np.log10(dif),title='Diffuse Model Template (p6v11) - Log')
 
 
+.. parsed-literal::
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_23_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
 
 
 
 .. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_23_1.png
+
+
+
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_23_2.png
 
 
 Isotropic Emission
@@ -262,8 +300,14 @@ map makes the fact the template has been exposure corrected manifest.
     hp.mollview(iso,title='Isotropic Emission Template')
 
 
+.. parsed-literal::
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_26_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
+
+
+
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_26_1.png
 
 
 *Fermi* Bubbles
@@ -280,8 +324,14 @@ becomes non-uniform in counts after exposure correction.
     hp.mollview(bub,title='Fermi Bubbles Template')
 
 
+.. parsed-literal::
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_29_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
+
+
+
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_29_1.png
 
 
 Point Source Catalog Model
@@ -305,12 +355,18 @@ spread due to the Fermi PSF.
     hp.mollview(np.log10(psc),title='Point Source Catalog Template - Log')
 
 
+.. parsed-literal::
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_32_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
 
 
 
 .. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_32_1.png
+
+
+
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_32_2.png
 
 
 Model for the Galactic Center Excess
@@ -344,12 +400,18 @@ center.
     hp.mollview(np.log10(gce),title='Galactic Center Excess Template - Log')
 
 
+.. parsed-literal::
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_35_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
 
 
 
 .. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_35_1.png
+
+
+
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_35_2.png
 
 
 Model for Disk Correlated Point Sources
@@ -374,10 +436,16 @@ from the Galactic Center.
     hp.mollview(np.log10(disk),title='Thin Disk - Log')
 
 
+.. parsed-literal::
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_38_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
 
 
 
 .. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_38_1.png
+
+
+
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_38_2.png
 

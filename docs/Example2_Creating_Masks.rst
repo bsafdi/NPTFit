@@ -47,8 +47,14 @@ plot here and for those below, blue represents unmasked, red masked.
     hp.mollview(example1, title='', cbar=False, min=0,max=1)
 
 
+.. parsed-literal::
 
-.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_6_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
+
+
+
+.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_6_1.png
 
 
 Example 2: Band Mask
@@ -63,8 +69,14 @@ Here we show an example of how to mask a region either side of the plane
     hp.mollview(example2, title='', cbar = False, min=0, max=1)
 
 
+.. parsed-literal::
 
-.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_9_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
+
+
+
+.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_9_1.png
 
 
 Example 3: Mask outside a band in *b* and *l*
@@ -90,8 +102,10 @@ combination of both.
     hp.mollview(example3c,title='',cbar=False,min=0,max=1)
 
 
+.. parsed-literal::
 
-.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_12_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
 
 
 
@@ -100,6 +114,10 @@ combination of both.
 
 
 .. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_12_2.png
+
+
+
+.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_12_3.png
 
 
 Example 4: Ring and Annulus Mask
@@ -123,8 +141,10 @@ example demonstrates that the ring need not be at the galactic center.
     hp.mollview(example4d,title='',cbar=False,min=0,max=1)
 
 
+.. parsed-literal::
 
-.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_15_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
 
 
 
@@ -137,6 +157,10 @@ example demonstrates that the ring need not be at the galactic center.
 
 
 .. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_15_3.png
+
+
+
+.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_15_4.png
 
 
 Example 5: Custom Mask
@@ -152,8 +176,14 @@ this example we highlight this by adding a random mask.
     hp.mollview(example5,title='',cbar=False,min=0,max=1)
 
 
+.. parsed-literal::
 
-.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_18_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
+
+
+
+.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_18_1.png
 
 
 Example 6: Full Analysis Mask including Custom Point Source Catalog Mask
@@ -177,6 +207,12 @@ to be downloaded. See details in Example 1.
     hp.mollview(example6,title='',cbar=False,min=0,max=1)
 
 
+.. parsed-literal::
 
-.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_21_0.png
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/numpy/core/numeric.py:190: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+      a = empty(shape, dtype, order)
+
+
+
+.. image:: Example2_Creating_Masks_files/Example2_Creating_Masks_21_1.png
 

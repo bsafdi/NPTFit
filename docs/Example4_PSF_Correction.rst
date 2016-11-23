@@ -41,6 +41,8 @@ PSF corrections for the runs are stored.
     from matplotlib import rcParams
     
     from NPTFit import psf_correction as pc # Module for determining the PSF correction
+    
+    from __future__ import print_function
 
 .. code:: python
 
@@ -72,8 +74,8 @@ dataset we will use in later examples.
     f_ary_1 = pc_inst.f_ary
     df_rho_div_f_ary_1 = pc_inst.df_rho_div_f_ary
     
-    print 'f_ary:', f_ary_1
-    print 'df_rho_div_f_ary:', df_rho_div_f_ary_1
+    print('f_ary:', f_ary_1)
+    print('df_rho_div_f_ary:', df_rho_div_f_ary_1)
     
     plt.plot(f_ary_1,f_ary_1**2*df_rho_div_f_ary_1/(f_ary_1[1]-f_ary_1[0]),color='black')
     plt.xlabel('$f$')
@@ -83,17 +85,17 @@ dataset we will use in later examples.
 
 .. parsed-literal::
 
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
     f_ary: [ 0.05  0.15  0.25  0.35  0.45  0.55  0.65  0.75  0.85  0.95]
-    df_rho_div_f_ary: [ 65.46944526   6.86615652   2.47401808   1.29651177   0.81097819
-       0.54213866   0.0950746    0.           0.           0.        ]
+    df_rho_div_f_ary: [ 65.45710654   6.85017574   2.47905624   1.30067185   0.80406424
+       0.54398629   0.09603811   0.           0.           0.        ]
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x2b99f2400ed0>
+    <matplotlib.text.Text at 0x2afd2e5bf550>
 
 
 
@@ -132,15 +134,15 @@ out, leading to a :math:`\rho(f)` peaked at lower flux values.
 
 .. parsed-literal::
 
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.05_10_50000_1000_0.01.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.4_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.05_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.4_10_50000_1000_0.01.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x2b99f252b510>
+    <matplotlib.text.Text at 0x2afd30d70da0>
 
 
 
@@ -217,17 +219,17 @@ must be pursued in calculating :math:`\rho(f)`.
 
 .. parsed-literal::
 
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_20_50000_1000_0.01.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_5000_100_0.01.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.1.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_64_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_20_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_5000_100_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.1.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_64_0.181_10_50000_1000_0.01.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x2b99f2632e90>
+    <matplotlib.legend.Legend at 0x2afd30a21a58>
 
 
 
@@ -342,15 +344,15 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 
 .. parsed-literal::
 
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.235_10_50000_1000_0.01.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/Fermi_PSF_2GeV.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.235_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/Fermi_PSF_2GeV.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x2b99f2725d10>
+    <matplotlib.legend.Legend at 0x2afd3c01aa58>
 
 
 
@@ -403,15 +405,15 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 
 .. parsed-literal::
 
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.055_10_50000_1000_0.01.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/Fermi_PSF_20GeV.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.055_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/Fermi_PSF_20GeV.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x2b99f27f6250>
+    <matplotlib.legend.Legend at 0x2afd3c08c4e0>
 
 
 

@@ -143,7 +143,7 @@ of the code.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
     The number of parameters to be fit is 3
 
 
@@ -163,13 +163,12 @@ so takes longer to evaluate.
 
 .. parsed-literal::
 
-    /group/hepheno/smsharma/NPTFit/examples/notebooks/chains/non-Poissonian_Example/
+    /group/hepheno/smsharma/NPTFit-Python3/examples/chains/non-Poissonian_Example/
 
 
 .. parsed-literal::
 
-    ../../NPTFit/nptf_scan.py:354: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
-      for j in range(len(self.NPT_dist_compressed_exp_ary))]
+    /group/hepheno/venv_astropy/lib/python2.7/site-packages/NPTFit-0.1.dev0-py2.7-linux-x86_64.egg/NPTFit/nptf_scan.py:418: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
 
 
 Step 5: Analyze the Output
@@ -187,7 +186,7 @@ example.
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/non-Poissonian_Example/.txt
+      analysing data from /group/hepheno/smsharma/NPTFit-Python3/examples/chains/non-Poissonian_Example/.txt
 
 
 .. parsed-literal::
@@ -228,7 +227,7 @@ explanation of the details here are deferred until Example 8.
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x2b5185d27c90>
+    <matplotlib.text.Text at 0x6d691b801590>
 
 
 

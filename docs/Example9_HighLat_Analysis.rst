@@ -44,6 +44,8 @@ and also explains why the run needs MPI.
     from NPTFit import create_mask as cm # module for creating the mask
     from NPTFit import dnds_analysis # module for analysing the output
     from NPTFit import psf_correction as pc # module for determining the PSF correction
+    
+    from __future__ import print_function
 
 .. code:: python
 
@@ -111,7 +113,7 @@ performed using MPI.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
 .. code:: python
@@ -133,7 +135,7 @@ Finally, load the completed scan performed using MPI.
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/HighLat_Example/.txt
+      analysing data from /group/hepheno/smsharma/NPTFit-Python3/examples/chains/HighLat_Example/.txt
 
 
 Analysis
@@ -164,9 +166,9 @@ option is provided.
 
 .. code:: python
 
-    print "Iso NPT Intensity",corner.quantile(an.return_intensity_arrays_non_poiss('iso'),[0.16,0.5,0.84]), "ph/cm^2/s"
-    print "Iso PT Intensity",corner.quantile(an.return_intensity_arrays_poiss('iso'),[0.16,0.5,0.84]), "ph/cm^2/s"
-    print "Dif PT Intensity",corner.quantile(an.return_intensity_arrays_poiss('dif'),[0.16,0.5,0.84]), "ph/cm^2/s"
+    print("Iso NPT Intensity",corner.quantile(an.return_intensity_arrays_non_poiss('iso'),[0.16,0.5,0.84]), "ph/cm^2/s")
+    print("Iso PT Intensity",corner.quantile(an.return_intensity_arrays_poiss('iso'),[0.16,0.5,0.84]), "ph/cm^2/s")
+    print("Dif PT Intensity",corner.quantile(an.return_intensity_arrays_poiss('dif'),[0.16,0.5,0.84]), "ph/cm^2/s")
 
 
 .. parsed-literal::
@@ -199,7 +201,7 @@ option is provided.
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x2b3e3e637310>
+    <matplotlib.text.Text at 0x2b1724a1a290>
 
 
 
@@ -215,7 +217,7 @@ option is provided.
     an.plot_intensity_fraction_non_poiss('iso', bins=800, color='tomato', label='Iso PS')
     an.plot_intensity_fraction_poiss('iso', bins=800, color='cornflowerblue', label='Iso')
     an.plot_intensity_fraction_poiss('dif', bins=800, color='plum', label='Dif')
-    plt.xlabel('Flux fraction (\%)')
+    plt.xlabel('Flux fraction (%)')
     plt.legend(fancybox = True)
     plt.xlim(0,80)
 

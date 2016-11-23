@@ -304,27 +304,17 @@ make a triangle plot.
 .. code:: python
 
     n.load_scan()
-    an=dnds_analysis.dnds_analysis(n)
+    an = dnds_analysis.dnds_analysis(n)
     an.make_triangle()
 
 
 .. parsed-literal::
 
-      analysing data from /zfs/nrodd/NPTFit/examples/chains/Poissonian_Example/.txt
-
-
-.. parsed-literal::
-
-    /zfs/nrodd/anaconda/lib/python2.7/site-packages/matplotlib/collections.py:650: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
-      if self._edgecolors_original != str('face'):
-    /zfs/nrodd/anaconda/lib/python2.7/site-packages/matplotlib/font_manager.py:1282: UserWarning: findfont: Font family [u'serif'] not found. Falling back to Bitstream Vera Sans
-      (prop.get_family(), self.defaultFamily[fontext]))
-    /zfs/nrodd/anaconda/lib/python2.7/site-packages/matplotlib/collections.py:590: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
-      if self._edgecolors == str('face'):
+      analysing data from /group/hepheno/smsharma/NPTFit-Python3/examples/chains/Poissonian_Example/.txt
 
 
 
-.. image:: Example3_Running_Poissonian_Scans_files/Example3_Running_Poissonian_Scans_27_2.png
+.. image:: Example3_Running_Poissonian_Scans_files/Example3_Running_Poissonian_Scans_27_1.png
 
 
 The triangle plot makes it clear that a non-zero value of the GCE
@@ -356,4 +346,5 @@ by the diffuse model.
 
 
 .. image:: Example3_Running_Poissonian_Scans_files/Example3_Running_Poissonian_Scans_30_1.png
+
 

@@ -28,12 +28,12 @@ results below should be interpreted only as approximate.
     import matplotlib.pyplot as plt
     from matplotlib import rcParams
     
-    import sys
-    sys.path.append("../NPTFit/")
-    import nptfit # module for performing scan
-    import create_mask as cm # module for creating the mask
-    import dnds_analysis # module for analysing the output
-    import psf_correction as pc # module for determining the PSF correction
+    from NPTFit import nptfit # module for performing scan
+    from NPTFit import create_mask as cm # module for creating the mask
+    from NPTFit import dnds_analysis # module for analysing the output
+    from NPTFit import psf_correction as pc # module for determining the PSF correction
+    
+    from __future__ import print_function
 
 .. code:: python
 
@@ -115,7 +115,7 @@ loaded with ``n.load_scan()``.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
 .. code:: python
@@ -138,7 +138,7 @@ performed in Example 7.
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/GCE_Example/.txt
+      analysing data from /group/hepheno/smsharma/NPTFit-Python3/examples/chains/GCE_Example/.txt
 
 
 Analysis
@@ -149,8 +149,8 @@ used to access the posterior chains with ``n.samples``:
 
 .. code:: python
 
-    print np.shape(n.samples)
-    print n.samples
+    print(np.shape(n.samples))
+    print(n.samples)
 
 
 .. parsed-literal::
@@ -253,9 +253,9 @@ well as that of the GCE PT:
 
 .. code:: python
 
-    print "GCE NPT Intensity", corner.quantile(an.return_intensity_arrays_non_poiss('gce'),[0.16,0.5,0.84]), "ph/cm^2/s"
-    print "Disk NPT Intensity", corner.quantile(an.return_intensity_arrays_non_poiss('dsk'),[0.16,0.5,0.84]), "ph/cm^2/s"
-    print "GCE PT Intensity", corner.quantile(an.return_intensity_arrays_poiss('gce'),[0.16,0.5,0.84]), "ph/cm^2/s"
+    print("GCE NPT Intensity", corner.quantile(an.return_intensity_arrays_non_poiss('gce'),[0.16,0.5,0.84]), "ph/cm^2/s")
+    print("Disk NPT Intensity", corner.quantile(an.return_intensity_arrays_non_poiss('dsk'),[0.16,0.5,0.84]), "ph/cm^2/s")
+    print("GCE PT Intensity", corner.quantile(an.return_intensity_arrays_poiss('gce'),[0.16,0.5,0.84]), "ph/cm^2/s")
 
 
 .. parsed-literal::
@@ -282,8 +282,8 @@ middle 68% and medians for the GCE and disk non-Poissonian templates:
 
 .. code:: python
 
-    print corner.quantile(an.return_dNdF_arrays('gce',1e-12),[0.16,0.5,0.84])
-    print corner.quantile(an.return_dNdF_arrays('dsk',1e-12),[0.16,0.5,0.84])
+    print(corner.quantile(an.return_dNdF_arrays('gce',1e-12),[0.16,0.5,0.84]))
+    print(corner.quantile(an.return_dNdF_arrays('dsk',1e-12),[0.16,0.5,0.84]))
 
 
 .. parsed-literal::
@@ -330,7 +330,7 @@ return the dN/dF band.
 .. image:: Example8_Analysis_files/Example8_Analysis_35_0.png
 
 
-As some references also show :math:`dN/dF` we give an example of it
+As some references also show :math:`dN/dF`, and we give an example of it
 below, also demonstrating the use of ``spow``.
 
 .. code:: python
@@ -357,7 +357,7 @@ below, also demonstrating the use of ``spow``.
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x2b3480296550>
+    <matplotlib.legend.Legend at 0x2b5e6d4d37d0>
 
 
 
@@ -501,7 +501,7 @@ as follows.
 .. code:: python
 
     lBE, lBE_error = an.get_log_evidence()
-    print lBE, lBE_error
+    print(lBE, lBE_error)
 
 
 .. parsed-literal::
