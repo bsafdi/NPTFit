@@ -16,8 +16,8 @@ class NPTF(nptf_scan):
         # Initialise nptf_scan
         nptf_scan.__init__(self, tag=tag, work_dir=work_dir, psf_dir=psf_dir)
 
-    def configure_for_scan(self, f_ary=[1.0], df_rho_div_f_ary=[1.0],
-                           nexp=1):
+    def configure_for_scan(self, f_ary=np.array([1.0]), 
+                           df_rho_div_f_ary=np.array([1.0]), nexp=1):
         """ Set up a non-poissonian scan (or poissonian if no NP templates)
 
             Takes psf parameters as input - determined in psf_correction

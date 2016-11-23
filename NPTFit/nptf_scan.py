@@ -177,7 +177,41 @@ class nptf_scan(config_maps):
         # At this stage we have the mean exposure, so if non-Poissonian
         # templates are defined in terms of flux, adjust this now
         for key in self.non_poiss_models_keys:
-            if self.non_poiss_models[key]['units'] == 'flux':
+            is_flux = self.non_poiss_models[key]['units'] == 'flux'
+            is_relative = self.non_poiss_models[key]['dnds_model'] == \
+                          'specifiy_relative_breaks'
+            # If relative, just adjust the highest break
+            if is_flux and is_relative:
+                NPT_params = self.non_poiss_models[key]['n_params_total']
+                NPT_breaks = (NPT_params-2)/2
+                break_locs = range(NPT_breaks+2,2*NPT_breaks+2)
+                highest_break = NPT_breaks+2
+
+                # Check if highest break is fixed and if so adjust
+                fixed_breaks = 0
+                highest_floated = True
+                fp_list = self.non_poiss_models[key]['fixed_params']
+                if fp_list is not None:
+                    for fp in range(len(fp_list)):
+                        if fp_list[fp][0] == highest_break:
+                            self.non_poiss_models[key]['fixed_params'][fp][1] \
+                            *= self.exposure_mean
+                            highest_floated = False
+                        if fp_list[fp][0] in break_locs:
+                            fixed_breaks += 1
+
+                # If floated then adjust
+                if highest_floated:
+                    floated_breaks = NPT_breaks - fixed_breaks
+                    floated_params = self.non_poiss_models[key]['n_params']
+                    hloc = floated_params-floated_breaks
+                    self.non_poiss_models[key]['prior_range'][hloc][0] *= \
+                        self.exposure_mean
+                    self.non_poiss_models[key]['prior_range'][hloc][1] *= \
+                        self.exposure_mean
+            
+            # If not relative, adjust all breaks
+            if is_flux and not is_relative:
                 NPT_params = self.non_poiss_models[key]['n_params_total']
                 NPT_breaks = (NPT_params-2)/2
                 break_locs = range(NPT_breaks+2,2*NPT_breaks+2)
@@ -187,7 +221,7 @@ class nptf_scan(config_maps):
                 fp_list = self.non_poiss_models[key]['fixed_params']
                 if fp_list is not None:
                     for fp in range(len(fp_list)):
-                        if fp_list[fp,0] in break_locs:
+                        if fp_list[fp][0] in break_locs:
                             self.non_poiss_models[key]['fixed_params'][fp][1] \
                             *= self.exposure_mean
                             fixed_breaks += 1
