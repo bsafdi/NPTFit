@@ -5,7 +5,7 @@ psf_dir
 chains
 fermi_data
 
-# Build directories
+# Package and build directories
 NPTFit.egg-info
 build
 dist
