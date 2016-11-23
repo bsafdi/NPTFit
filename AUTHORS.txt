@@ -1,0 +1,15 @@
+Authors:
+========
+
+Benjamin Safdi <bsafdi@mit.edu>
+Nicholas Rodd <nrodd@mit.edu>
+Siddharth Mishra-Sharma <smsharma@princeton.edu>
+
+Major contributions:
+====================
+
+Lina Necib
+Samuel Lee
+
+Bug reports:
+============

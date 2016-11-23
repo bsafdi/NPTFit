@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH -N 1   # node count
+#SBATCH --ntasks-per-node=12
+#SBATCH -t 24:00:00
+##SBATCH --mem=48000
+
+# This is an example slurm script for running nptfit with MPI
+
+# In addition to the usual setup commands to run python with slurm appropriate
+# to the server it is being run on, at this stage the user needs to point the
+# code to MultiNest and openmpi also
+# At this stage the user needs to point the code to MultiNest and openmpi
+
+cd NPTFit/Examples/Notebooks
+
+# The below syntax shows how to call the code with MPI
+mpirun -n 12 python Example9_HighLat_Run.py
