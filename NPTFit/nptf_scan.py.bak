@@ -1,5 +1,3 @@
-from __future__ import print_function
-from __future__ import absolute_import
 ###############################################################################
 # nptf_scan.py
 ###############################################################################
@@ -20,9 +18,9 @@ import numpy as np
 import pymultinest
 from collections import OrderedDict
 
-from . import PLL  # The Poissonian likelihood function
-from . import NPLL  # The non-Poissonian likelihood function
-from .config_maps import config_maps  # Setup maps and templates for the run
+import PLL  # The Poissonian likelihood function
+import NPLL  # The non-Poissonian likelihood function
+from config_maps import config_maps  # Setup maps and templates for the run
 
 
 class nptf_scan(config_maps):
@@ -274,7 +272,7 @@ class nptf_scan(config_maps):
 
         self.configure_priors()
 
-        print('The number of parameters to be fit is', self.n_params)
+        print 'The number of parameters to be fit is', self.n_params
 
     def convert_log(self, key, val):
         """ Convert values to physical values if a log prior is used

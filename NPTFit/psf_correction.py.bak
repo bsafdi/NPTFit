@@ -1,5 +1,3 @@
-from __future__ import print_function
-from __future__ import absolute_import
 ###############################################################################
 # psf_correction.py
 ###############################################################################
@@ -20,7 +18,7 @@ from __future__ import absolute_import
 
 import os
 import numpy as np
-from . import psf_compute
+import psf_compute
 
 
 class psf_correction:
@@ -118,9 +116,9 @@ class psf_correction:
             # Check again if exists, for multicore runs
             if not os.path.exists(self.psf_corr_file):
                 np.save(self.psf_corr_file, tosave)
-                print("File saved as:", self.psf_corr_file)
+                print "File saved as:", self.psf_corr_file
         else:
-            print("Loading the psf correction from:", self.psf_corr_file)
+            print "Loading the psf correction from:", self.psf_corr_file
             loadpsf = np.load(self.psf_corr_file)
             self.f_ary = loadpsf[0]
             self.df_rho_div_f_ary = loadpsf[1]
@@ -133,6 +131,6 @@ class psf_correction:
             if not os.path.exists(d):
                 try:
                     os.mkdir(d)
-                except OSError as e:
+                except OSError, e:
                     if e.errno != 17:
                         raise
