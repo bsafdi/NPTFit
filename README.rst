@@ -31,7 +31,7 @@ Make sure Cython is installed (*e.g.* :code:`pip install Cython`). NPTFit along 
 
 .. code:: sh
 
-  $ Python setup.py install
+  $ python setup.py install
 
 which also builds the Cython modules. To just compile the Cython modules locally
 
