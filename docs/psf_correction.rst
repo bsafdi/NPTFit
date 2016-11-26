@@ -5,13 +5,13 @@ Fundamentally the presence of a non-zero PSF implies that the photons from any p
 
 If the angular reconstruction of the data is perfect, then :math:`\rho(f) = \delta(f-1)`. In many situations, such as for the Fermi data at higher energies, a Gaussian approximation of the PSF will suffice. Even then there are a number of variables that go into evaluating the correction, as shown below. Finally we will show how the code can be used for the case of non-Gaussian PSFs.
 
-The module ``PSFCorrection`` is used to account for the instrument point spread function (PSF).
+The class ``PSFCorrection`` in  module ``psf_correction`` is used to account for the instrument point spread function (PSF).
 
 By default, the correction for a Gaussian PSF can be determined as follows:
 
 .. code:: python
 
-    >>> import PSFCorrection as pc
+    >>> import psf_correction as pc
     >>> pc_inst = pc.PSFCorrection(psf_sigma_deg)
     >>> f_ary, df_rho_div_f_ary = pc_inst.f_ary, pc_inst.df_rho_div_f_ary
 

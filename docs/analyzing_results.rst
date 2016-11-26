@@ -6,7 +6,7 @@ Analyzing results of a scan
 
 
 While the chain samples of a non-Poissonian fit performed using MultiNest can be readily 
-accessed, a basic analysis module ``Analysis.py`` is provided which includes the
+accessed, a basic analysis module ``dnds_analysis.py`` is provided which includes the
 basic functions described below.
 
 Initializing the analysis module
@@ -27,7 +27,7 @@ An instance of the analysis module can then be created as follows:
 
 .. code:: python
 
-    >>> an = Analysis.Analysis(nptf)
+    >>> an = dnds_analysis.Analysis(nptf)
 
 Making triangle plots
 ~~~~~~~~~~~~~~~~~~~~~
@@ -55,7 +55,7 @@ Template intensities [counts/cm\ :sup:`2`/s/sr] can be calculated with
 .. code:: python
 
     >>> an.return_intensity_arrays_poiss(comp)
-    >>> an.Analysis.return_intensity_arrays_non_poiss(comp)
+    >>> an.return_intensity_arrays_non_poiss(comp)
 
 for Poissonian and non-Poissonian templates with the key ``comp`` respectively. This returns a list of intensities corresponding to the posterior parameters
 for the given template.
