@@ -291,10 +291,10 @@ class Analysis:
         """ Return posterior samples corresponding to individual parameters.
 
             Returns:
-                self.APS_ary: sample normalization values
+                self.aps_ary: sample normalization values
                 self.n_ary_ary: sampled slopes, each sub-array corresponding to
                     samples for that slope (highest to lowest).
-                self.Sb_ary_ary: sampled breaks, each sub-array corresponding to
+                self.sb_ary_ary: sampled breaks, each sub-array corresponding to
                     samples for that break (highest to lowest).
         """
 
@@ -306,10 +306,10 @@ class Analysis:
         """ Return posterior samples corresponding to individual parameters.
 
             Returns:
-                self.APS_ary: sample normalization values
+                self.aps_ary: sample normalization values
                 self.n_ary_ary: sampled slopes, each sub-array corresponding to
                     samples for that slope (highest to lowest).
-                self.Sb_ary_ary: sampled breaks, each sub-array corresponding to
+                self.sb_ary_ary: sampled breaks, each sub-array corresponding to
                     samples for that break (highest to lowest).
         """
 
@@ -319,18 +319,18 @@ class Analysis:
 
         nbreak = int((len(self.samples_reduced_ary[0]) - 2)/2.)
 
-        self.APS_ary = self.samples_reduced_param_ary[0]
+        self.aps_ary = self.samples_reduced_param_ary[0]
 
         self.n_ary_ary = [[] for _ in range(nbreak+1)]
-        self.Sb_ary_ary = [[] for _ in range(nbreak)]
+        self.sb_ary_ary = [[] for _ in range(nbreak)]
 
         for i in range(nbreak+1):
             self.n_ary_ary[i] = self.samples_reduced_param_ary[i+1]
 
         for i in range(nbreak):
-            self.Sb_ary_ary[i] = self.samples_reduced_param_ary[i+nbreak+2]
+            self.sb_ary_ary[i] = self.samples_reduced_param_ary[i+nbreak+2]
 
-        return self.APS_ary, self.n_ary_ary, self.Sb_ary_ary
+        return self.aps_ary, self.n_ary_ary, self.sb_ary_ary
 
     def dnds(self, comp, sample, s):
         """ dN/dS values for NPT comp associated with a chain sample

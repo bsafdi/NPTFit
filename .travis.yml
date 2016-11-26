@@ -1,6 +1,8 @@
 language: python
+
 python:
     - 2.7
+    - 3.5
 
 addons:
   apt:
@@ -12,37 +14,41 @@ addons:
       - gfortran-4.8
       - swig
 
-env:
-    - NUMPY_VERSION=1.11
-
 cache:
     directories:
         - $HOME/.cache/pip
         - $HOME/.conda
 
 before_install:
+    # Set up a conda environment for faster set-up of standard libraries
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
     - chmod +x miniconda.sh
     - ./miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
     - conda update --yes conda
-    
-    # set the c++ and fortran compilers 
+    # Set the C++ and Fortran compilers 
     - export CXX=g++-4.8 
     - export F90=gfortran-4.8
 
 install:
+    # Create and activate a test environment
     - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
     - source activate test
-    
-    # base python setup
-    - conda install --yes numpy=$NUMPY_VERSION cython mpi4py scipy astropy
-    - pip install -r requirements.txt    
+    # Python setup
+    - conda install --yes numpy Cython mpi4py scipy
+    - pip install numpy matplotlib healpy pymultinest jupyter corner mpmath pytest pytest-cov codecov coverage
+    - make build  # Build Cython
+    # Download and install MultiNest
+    - git clone http://github.com/JohannesBuchner/MultiNest
+    - cd MultiNest
+    - cmake -DCMAKE_Fortran_COMPILER=gfortran-4.8
+    - make
+    - export LD_LIBRARY_PATH=$(pwd)/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    # Download Fermi data
+    - cd ..
+    - wget http://physics.princeton.edu/~smsharma/fermi_data.tar.gz
+    - tar -xvf fermi_data.tar.gz
 script:
-    - python notebooks/test.py
-
-# after_success:
-#     - coveralls
-    
-#notifications:
-#  email: false
+    - coverage run tests/test_scan.py
+after_success:
+    - codecov
