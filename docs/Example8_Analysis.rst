@@ -4,7 +4,7 @@ Example 8: Analyzing the Results of an NPTFit Run
 
 While the chain samples of a non-Poissonian fit performed using
 MultiNest can be readily accessed, we provide a basic analysis module,
-``Analysis.py`` that contains helper functions to: 1. Make triangle
+``dnds_analysis.py`` that contains helper functions to: 1. Make triangle
 plots; 2. Get template intensities; 3. Plot source count distributions;
 4. Plot flux fractions; 5. Access individual posteriors; and 6. Get
 Bayesian log-evidences.
@@ -30,8 +30,8 @@ results below should be interpreted only as approximate.
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
-    from NPTFit import Analysis # module for analysing the output
-    from NPTFit import PSFCorrection as pc # module for determining the PSF correction
+    from NPTFit import dnds_analysis # module for analysing the output
+    from NPTFit import psf_correction as pc # module for determining the PSF correction
     
     from __future__ import print_function
 
@@ -178,15 +178,15 @@ to load in and manipulate these chain samples.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The first thing to do is initialize an instance of the analysis module,
-``Analysis`` from ``Analysis.py`` with a provided instance of
+``dnds_analysis`` from ``dnds_analysis.py`` with a provided instance of
 ``nptfit.NPTF``. The ``NPTF`` instance should have a scan already loaded
 in, as done with ``n.load_scan()`` above.
 
 .. code:: python
 
-    an = Analysis.Analysis(n)
+    an = dnds_analysis.Analysis(n)
 
-``Analysis`` has an optional argument ``mask``, which if unset
+``dnds_analysis`` has an optional argument ``mask``, which if unset
 defaults to the mask in the passed instance of ``NPTF``. If a mask is
 given, however, then the analysis will be performed in a different ROI
 to the main run.
@@ -223,8 +223,8 @@ Template intensities can be calculated with
 
 .. code:: python
 
-    Analysis.return_intensity_arrays_poiss(comp)
-    Analysis.return_intensity_arrays_non_poiss(comp)
+    dnds_analysis.return_intensity_arrays_poiss(comp)
+    dnds_analysis.return_intensity_arrays_non_poiss(comp)
 
 for the Poissonian and non-Poissonian templates respectively. This
 returns an intensity array corresponding to each chain sample associated
@@ -282,8 +282,8 @@ middle 68% and medians for the GCE and disk non-Poissonian templates:
 
 .. code:: python
 
-    print(corner.quantile(an.return_dndf_arrays('gce',1e-12),[0.16,0.5,0.84]))
-    print(corner.quantile(an.return_dndf_arrays('dsk',1e-12),[0.16,0.5,0.84]))
+    print(corner.quantile(an.return_dNdF_arrays('gce',1e-12),[0.16,0.5,0.84]))
+    print(corner.quantile(an.return_dNdF_arrays('dsk',1e-12),[0.16,0.5,0.84]))
 
 
 .. parsed-literal::
@@ -413,8 +413,8 @@ interfact to access individual parameters:
 
 .. code:: python
 
-    Analysis.return_poiss_parameter_posteriors(comp)
-    Analysis.return_poiss_parameter_posteriors(comp)
+    dnds_analysis.return_poiss_parameter_posteriors(comp)
+    dnds_analysis.return_poiss_parameter_posteriors(comp)
 
 where ``comp`` is the (non-)Poissonian template key.
 

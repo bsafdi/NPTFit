@@ -29,8 +29,8 @@ be installed. See Example 1 for details.
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
-    from NPTFit import PSFCorrection as pc # module for determining the PSF correction
-    from NPTFit import Analysis # module for analysing the output
+    from NPTFit import psf_correction as pc # module for determining the PSF correction
+    from NPTFit import dnds_analysis # module for analysing the output
     
     from __future__ import print_function
 
@@ -46,7 +46,7 @@ be installed. See Example 1 for details.
     rcParams['figure.figsize'] = (7,5)
     rcParams['legend.fontsize'] = 16
     rcParams['lines.linewidth'] = 1.5
-    rcParams['text.usetex'] = True
+    # rcParams['text.usetex'] = True
 
 Setup an identical instance of NPTFit to Example 5
 --------------------------------------------------
@@ -93,7 +93,7 @@ in the previous example.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
 .. code:: python
@@ -130,19 +130,14 @@ parameters:
 
 .. parsed-literal::
 
-    Vary A:  -587.5407712747635 -587.0259112395534 -588.1702296042831
-    Vary n1: -588.4360872673706 -587.0259112395534 -586.8140859359063
+    /group/hepheno/heptools/anaconda3/envs/venv_py27/lib/python2.7/site-packages/NPTFit-0.1.dev0-py2.7-linux-x86_64.egg/NPTFit/nptf_scan.py:427: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
 
 
 .. parsed-literal::
 
-    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/NPTFit-0.1.dev0-py3.5-linux-x86_64.egg/NPTFit/NPTFScan.py:417: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
-      for j in range(len(self.NPT_dist_compressed_exp_ary))]
-
-
-.. parsed-literal::
-
-    Vary n2: -587.1383153079902 -587.0259112395534 -587.0806376259463
+    Vary A:  -587.547654572 -587.028395246 -588.170444658
+    Vary n1: -588.44159824 -587.028395246 -586.816597839
+    Vary n2: -587.142083427 -587.028395246 -587.082731715
 
 
 To make the point clearer we can fix :math:`n_1` and :math:`n_2` to
@@ -155,13 +150,6 @@ us was the best fit point for this parameter.
 
     Avals = np.arange(-5.5,0.5,0.01)
     TSvals_A = np.array([2*(n.ll([-3.52,2.56,-0.48])-n.ll([Avals[i],2.56,-0.48])) for i in range(len(Avals))])
-
-
-.. parsed-literal::
-
-    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/NPTFit-0.1.dev0-py3.5-linux-x86_64.egg/NPTFit/NPTFScan.py:417: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
-      for j in range(len(self.NPT_dist_compressed_exp_ary))]
-
 
 .. code:: python
 
@@ -193,13 +181,6 @@ involves :math:`(n-1)^{-1}`.
 
     n2vals = np.arange(-1.995,1.945,0.01)
     TSvals_n2 = np.array([2*(n.ll([-3.52,2.56,-0.48])-n.ll([-3.52,2.56,n2vals[i]])) for i in range(len(n2vals))])
-
-
-.. parsed-literal::
-
-    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/NPTFit-0.1.dev0-py3.5-linux-x86_64.egg/NPTFit/NPTFScan.py:417: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
-      for j in range(len(self.NPT_dist_compressed_exp_ary))]
-
 
 .. code:: python
 

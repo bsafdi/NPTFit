@@ -42,8 +42,8 @@ and also explains why the run needs MPI.
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
-    from NPTFit import Analysis # module for analysing the output
-    from NPTFit import PSFCorrection as pc # module for determining the PSF correction
+    from NPTFit import dnds_analysis # module for analysing the output
+    from NPTFit import psf_correction as pc # module for determining the PSF correction
     
     from __future__ import print_function
 
@@ -147,7 +147,7 @@ option is provided.
 
 .. code:: python
 
-    an = Analysis.Analysis(n)
+    an = dnds_analysis.Analysis(n)
 
 1. Make triangle plots
 ~~~~~~~~~~~~~~~~~~~~~~

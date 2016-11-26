@@ -3,7 +3,7 @@ Example 4: NPTF Correction for the Point Spread Function (PSF)
 ==============================================================
 
 In this example we show how to account for the PSF correction using
-``PSFCorrection.py``
+``psf_correction.py``
 
 Fundamentally the presence of a non-zero PSF implies that the photons
 from any point source will be smeared out into some region around its
@@ -11,7 +11,7 @@ true location. This effect must be accounted for in the NPTF. This is
 achieved via a function :math:`\rho(f)`. In the code we discretize
 :math:`\rho(f)` as an approximation to the full function.
 
-The two outputs of an instance of ``PSFCorrection`` are: 1. f\_ary, an
+The two outputs of an instance of ``psf_correction`` are: 1. f\_ary, an
 array of f values; and 2. df\_rho\_div\_f\_ary, an associated array of
 :math:`\Delta f \rho(f)/f` values, where :math:`\Delta f` is the width
 of the f\_ary bins.
@@ -40,7 +40,7 @@ PSF corrections for the runs are stored.
     import matplotlib.pyplot as plt
     from matplotlib import rcParams
     
-    from NPTFit import PSFCorrection as pc # Module for determining the PSF correction
+    from NPTFit import psf_correction as pc # Module for determining the PSF correction
     
     from __future__ import print_function
 
@@ -85,17 +85,17 @@ dataset we will use in later examples.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
     f_ary: [ 0.05  0.15  0.25  0.35  0.45  0.55  0.65  0.75  0.85  0.95]
-    df_rho_div_f_ary: [ 65.45710654   6.85017574   2.47905624   1.30067185   0.80406424
-       0.54398629   0.09603811   0.           0.           0.        ]
+    df_rho_div_f_ary: [ 65.29144354   6.87136418   2.51677775   1.29076109   0.81095658
+       0.54394155   0.08991201   0.           0.           0.        ]
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x2afd2e5bf550>
+    <matplotlib.text.Text at 0x2ae635334090>
 
 
 
@@ -134,15 +134,15 @@ out, leading to a :math:`\rho(f)` peaked at lower flux values.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.05_10_50000_1000_0.01.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.4_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.05_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.4_10_50000_1000_0.01.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x2afd30d70da0>
+    <matplotlib.text.Text at 0x2ae632098c90>
 
 
 
@@ -219,17 +219,17 @@ must be pursued in calculating :math:`\rho(f)`.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_20_50000_1000_0.01.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_5000_100_0.01.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.1.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_64_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.181_20_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.181_10_5000_100_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.1.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_64_0.181_10_50000_1000_0.01.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x2afd30a21a58>
+    <matplotlib.legend.Legend at 0x2ae6354b6fd0>
 
 
 
@@ -240,14 +240,14 @@ must be pursued in calculating :math:`\rho(f)`.
 Example 4: Custom PSF
 ---------------------
 
-In addition to the default Gausian PSF, ``PSFCorrection.py`` also has
+In addition to the default Gausian PSF, ``psf_correction.py`` also has
 the option of taking in a custom PSF. In order to use this ability, the
-user needs to initialise ``PSFCorrection`` with ``delay_compute=True``,
+user needs to initialise ``psf_correction`` with ``delay_compute=True``,
 manually define the parameters that define the PSF and then call
 ``make_or_load_psf_corr``.
 
 The variables that need to be redefined in the instance of
-``PSFCorrection`` are:
+``psf_correction`` are:
 
 +----------------+----------------+
 | Argument       | Purpose        |
@@ -344,15 +344,15 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.235_10_50000_1000_0.01.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/Fermi_PSF_2GeV.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.235_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/Fermi_PSF_2GeV.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x2afd3c01aa58>
+    <matplotlib.legend.Legend at 0x2ae635b78850>
 
 
 
@@ -405,15 +405,15 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.055_10_50000_1000_0.01.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/Fermi_PSF_20GeV.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.055_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/Fermi_PSF_20GeV.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x2afd3c08c4e0>
+    <matplotlib.legend.Legend at 0x2ae6400b7c50>
 
 
 

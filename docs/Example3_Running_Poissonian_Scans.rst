@@ -30,7 +30,7 @@ be installed. See Example 1 for details.
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
-    from NPTFit import Analysis # module for analysing the output
+    from NPTFit import dnds_analysis # module for analysing the output
 
 .. code:: python
 
@@ -297,20 +297,20 @@ run. Note that ``load_scan`` can be used to load a run performed in a
 previous instance of ``NPTF``, as long as the various parameters match.
 
 After the scan is loaded we then create an instance of
-``Analysis``, which takes an instance of ``nptfit.NPTF`` as an
+``dnds_analysis``, which takes an instance of ``nptfit.NPTF`` as an
 argument - which must already have a scan loaded. From here we simply
 make a triangle plot.
 
 .. code:: python
 
     n.load_scan()
-    an = Analysis.Analysis(n)
+    an = dnds_analysis.Analysis(n)
     an.make_triangle()
 
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit-Python3/examples/chains/Poissonian_Example/.txt
+      analysing data from /group/hepheno/smsharma/NPTFit-bsafdi/examples/chains/Poissonian_Example/.txt
 
 
 

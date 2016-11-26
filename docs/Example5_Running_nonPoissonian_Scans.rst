@@ -27,8 +27,8 @@ be installed. See Example 1 for details.
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
-    from NPTFit import PSFCorrection as pc # module for determining the PSF correction
-    from NPTFit import Analysis # module for analysing the output
+    from NPTFit import psf_correction as pc # module for determining the PSF correction
+    from NPTFit import dnds_analysis # module for analysing the output
 
 .. code:: python
 
@@ -124,7 +124,7 @@ Step 3: Configure the Scan with the PSF correction
 
 For a non-Poissonian fit, we need to specify the PSF correction at the
 stage of configuring the scan. The details of this are described in
-Example 4. These are calculated using ``PSFCorrection.py`` and then
+Example 4. These are calculated using ``psf_correction.py`` and then
 passed to the ``NPTF`` via ``configure_for_scan``.
 
 At this stage we also specify the number of exposure regions to be used.
@@ -143,7 +143,7 @@ of the code.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
     The number of parameters to be fit is 3
 
 
@@ -160,17 +160,6 @@ so takes longer to evaluate.
 
     n.perform_scan(nlive=500)
 
-
-.. parsed-literal::
-
-    /group/hepheno/smsharma/NPTFit-Python3/examples/chains/non-Poissonian_Example/
-
-
-.. parsed-literal::
-
-    /group/hepheno/venv_astropy/lib/python2.7/site-packages/NPTFit-0.1.dev0-py2.7-linux-x86_64.egg/NPTFit/NPTFScan.py:418: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
-
-
 Step 5: Analyze the Output
 --------------------------
 
@@ -180,22 +169,22 @@ example.
 .. code:: python
 
     n.load_scan()
-    cs=Analysis.Analysis(n)
+    cs=dnds_analysis.Analysis(n)
     cs.make_triangle()
 
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit-Python3/examples/chains/non-Poissonian_Example/.txt
+      analysing data from /group/hepheno/smsharma/NPTFit-bsafdi/examples/chains/non-Poissonian_Example/.txt
 
 
 .. parsed-literal::
 
-    /group/hepheno/venv_astropy/lib/python2.7/site-packages/matplotlib/axes/_base.py:2787: UserWarning: Attempting to set identical left==right results
+    /group/hepheno/heptools/anaconda3/envs/venv_py27/lib/python2.7/site-packages/matplotlib/axes/_base.py:2782: UserWarning: Attempting to set identical left==right results
     in singular transformations; automatically expanding.
     left=22.0, right=22.0
       'left=%s, right=%s') % (left, right))
-    /group/hepheno/venv_astropy/lib/python2.7/site-packages/matplotlib/axes/_base.py:3045: UserWarning: Attempting to set identical bottom==top results
+    /group/hepheno/heptools/anaconda3/envs/venv_py27/lib/python2.7/site-packages/matplotlib/axes/_base.py:3040: UserWarning: Attempting to set identical bottom==top results
     in singular transformations; automatically expanding.
     bottom=22.0, top=22.0
       'bottom=%s, top=%s') % (bottom, top))
@@ -227,10 +216,11 @@ explanation of the details here are deferred until Example 8.
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x6d691b801590>
+    <matplotlib.text.Text at 0x2b61a162d590>
 
 
 
 
 .. image:: Example5_Running_nonPoissonian_Scans_files/Example5_Running_nonPoissonian_Scans_23_1.png
+
 
