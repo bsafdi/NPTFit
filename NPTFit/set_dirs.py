@@ -8,11 +8,12 @@
 
 import os
 
-class set_dirs:
+
+class SetDirs:
     def __init__(self, tag='Untagged', work_dir=None, psf_dir=None):
-        """ tag: label associated with the scan
-            work_dir: location where all output from the run is stored
-            psf_dir: location of the psf_correction
+        """ :param tag: label associated with the scan
+            :param work_dir: location where all output from the run is stored
+            :param psf_dir: location of the PSFCorrection
         """
         
         self.tag = tag
@@ -44,7 +45,8 @@ class set_dirs:
             self.chains_dir_for_run = self.chains_dir + run_tag + '/'
             self.make_dirs([self.chains_dir_for_run])
 
-    def make_dirs(self,dirs):
+    @staticmethod
+    def make_dirs(dirs):
         """ Creates directories if they do not already exist 
         """
 

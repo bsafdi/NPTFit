@@ -20,14 +20,13 @@ import matplotlib.pyplot as plt
 import corner
 
 
-class dnds_analysis():
+class Analysis:
     """ Class to analyze results of an NPTF.
 
-        nptf: an instance of nptfit.NPTF, where load_scan has been performed
+        nptf: an instance of nptfit.NPTF, where load_scan() has been performed
         mask: if analysis is to be performed in a different ROI to run, insert
               the analysis mask here
         pixarea: if using a non-HEALPix map, insert the area of a pixel (in sr)
-
     """
 
     def __init__(self, nptf, mask=None, pixarea=0.):
@@ -76,9 +75,11 @@ class dnds_analysis():
         # \int(dS*S*dN/dS). Note that the APS parameter is a
         # rescaling of the counts, which is why to get the
         # intensity this is multiplied by the total counts
-        self.intensity_array_non_poiss = list(map(lambda sample:
-            np.sum(self.template_sum*self.dnds(comp, sample, self.sarray) *
-                   self.sarray*self.ds), self.nptf.samples))
+        self.intensity_array_non_poiss = \
+            list(map(lambda sample:
+                     np.sum(self.template_sum *
+                            self.dnds(comp, sample, self.sarray) *
+                            self.sarray*self.ds), self.nptf.samples))
 
         return self.intensity_array_non_poiss
 
@@ -102,9 +103,10 @@ class dnds_analysis():
 
         # Get PT intensities by scaling the compressed mask intensity
         # by the relevant normalizations from chains
-        self.intensity_array_poiss = list(map(lambda sample:
-            self.template_sum*self.return_poiss_samples(comp, sample),
-            self.nptf.samples))
+        self.intensity_array_poiss = \
+            list(map(lambda sample: self.template_sum *
+                     self.return_poiss_samples(comp, sample),
+                     self.nptf.samples))
 
         return self.intensity_array_poiss
 
@@ -149,7 +151,7 @@ class dnds_analysis():
 
         return samples_model_not_log
 
-    def return_dNdF_arrays(self, comp, flux):
+    def return_dndf_arrays(self, comp, flux):
         """ Calcualte and return array of dN/dF values for the template comp
             and the given array of flux values (in counts/cm^2/s)
         """
@@ -170,7 +172,7 @@ class dnds_analysis():
         return rf*np.array([self.dnds(comp, sample, s)[0]
                            for sample in self.nptf.samples])
 
-    def calculate_dNdF_arrays(self, comp, smin=0.01, smax=1000, nsteps=1000,
+    def calculate_dndf_arrays(self, comp, smin=0.01, smax=1000, nsteps=1000,
                               qs=[0.16, 0.5, 0.84]):
         """ Calculate dnds for specified quantiles
         """
@@ -215,7 +217,8 @@ class dnds_analysis():
             **kwargs: plotting options
         """
 
-        self.calculate_dNdF_arrays(comp, smin=smin, smax=smax, nsteps=nsteps, qs=qs)
+        self.calculate_dndf_arrays(comp, smin=smin, smax=smax,
+                                   nsteps=nsteps, qs=qs)
         plt.fill_between(self.flux_array, self.flux_array**spow*self.qlow,
                          self.flux_array**spow*self.qhigh, *args, **kwargs)
 
@@ -224,13 +227,15 @@ class dnds_analysis():
         """ Calculate and plot median source count function
         """
 
-        self.calculate_dNdF_arrays(comp, smin=smin, smax=smax, nsteps=nsteps, qs=qs)
-        plt.plot(self.flux_array, self.flux_array**spow*self.qmid, *args, **kwargs)
+        self.calculate_dndf_arrays(comp, smin=smin, smax=smax,
+                                   nsteps=nsteps, qs=qs)
+        plt.plot(self.flux_array, self.flux_array**spow*self.qmid,
+                 *args, **kwargs)
 
     def plot_intensity_fraction_non_poiss(self, comp, smin=0.00001, smax=1000,
-                                     nsteps=1000, qs=[0.16, 0.5, 0.84], bins=50,
-                                     color ='blue', ls_vert='dashed',
-                                     *args, **kwargs):
+                                          nsteps=1000, qs=[0.16, 0.5, 0.84],
+                                          bins=50, color='blue',
+                                          ls_vert='dashed', *args, **kwargs):
         """ Plot flux fraction of a non-Poissonian template
 
             bins: flux fraction bins
@@ -241,17 +246,18 @@ class dnds_analysis():
 
         flux_fraction_array_non_poiss = \
             np.array(self.return_intensity_arrays_non_poiss(comp, smin=smin,
-            smax=smax, nsteps=nsteps, counts=True))/self.total_counts
+                     smax=smax, nsteps=nsteps, counts=True))/self.total_counts
 
         frac_hist_comp, bin_edges_comp = \
             np.histogram(100*np.array(flux_fraction_array_non_poiss), bins=bins,
-                         range = (0, 100))
+                         range=(0, 100))
 
         qs_comp = \
             corner.quantile(100*np.array(flux_fraction_array_non_poiss), qs)
 
         plt.plot(bin_edges_comp[:-1],
-            frac_hist_comp/float(sum(frac_hist_comp)), color=color, *args, **kwargs)
+                 frac_hist_comp/float(sum(frac_hist_comp)),
+                 color=color, *args, **kwargs)
 
         for q in qs_comp:
             plt.axvline(q, ls=ls_vert, color=color)
@@ -292,7 +298,8 @@ class dnds_analysis():
                     samples for that break (highest to lowest).
         """
 
-        self.samples_reduced_ary = [self.return_poiss_samples(comp, sample) for sample in self.nptf.samples]
+        self.samples_reduced_ary = [self.return_poiss_samples(comp, sample)
+                                    for sample in self.nptf.samples]
         return self.samples_reduced_ary
 
     def return_non_poiss_parameter_posteriors(self, comp):
@@ -306,7 +313,8 @@ class dnds_analysis():
                     samples for that break (highest to lowest).
         """
 
-        self.samples_reduced_ary = [self.return_non_poiss_samples(comp, sample) for sample in self.nptf.samples]
+        self.samples_reduced_ary = [self.return_non_poiss_samples(comp, sample)
+                                    for sample in self.nptf.samples]
         self.samples_reduced_param_ary = list(zip(*self.samples_reduced_ary))
 
         nbreak = int((len(self.samples_reduced_ary[0]) - 2)/2.)
@@ -333,35 +341,38 @@ class dnds_analysis():
         nbreak = int((len(samples_reduced) - 2)/2.)
 
         # Get APS (float) and slopes/breaks (arrays)
-        APS, n_ary, Sb_ary = samples_reduced[0], samples_reduced[1:nbreak+2],\
-                             samples_reduced[nbreak+2:]
+        a_ps, n_ary, sb_ary = samples_reduced[0], samples_reduced[1:nbreak+2], \
+            samples_reduced[nbreak+2:]
 
         # If relative breaks, define each break as (except the last one)
         # the multiplicative factor times the previous break
         if self.nptf.non_poiss_models[comp]['dnds_model'] \
-            == 'specify_relative_breaks':
-            for i in reversed(range(len(Sb_ary) - 1)):
-                Sb_ary[i] = Sb_ary[i+1]*Sb_ary[i]
+                == 'specify_relative_breaks':
+            for i in reversed(range(len(sb_ary) - 1)):
+                sb_ary[i] = sb_ary[i+1]*sb_ary[i]
 
         # Determine where the s values fall with respect to the breaks
         where_vecs = [[] for _ in range(nbreak+1)]
-        where_vecs[0] = np.where(s >= Sb_ary[0])[0]
+        where_vecs[0] = np.where(s >= sb_ary[0])[0]
         for i in range(1, nbreak):
-            where_vecs[i] = np.where((s >= Sb_ary[i]) & (s < Sb_ary[i-1]))[0]
-        where_vecs[-1] = np.where(s < Sb_ary[-1])[0]
+            where_vecs[i] = np.where((s >= sb_ary[i]) & (s < sb_ary[i-1]))[0]
+        where_vecs[-1] = np.where(s < sb_ary[-1])[0]
 
         # Calculate dnds values for a broken power law with arbitrary breaks
         dnds = np.zeros(len(s))
-        dnds[where_vecs[0]] = APS*(s[where_vecs[0]]/Sb_ary[0])**(-n_ary[0])
-        dnds[where_vecs[1]] = APS*(s[where_vecs[1]]/Sb_ary[0])**(-n_ary[1])
+        dnds[where_vecs[0]] = a_ps*(s[where_vecs[0]]/sb_ary[0])**(-n_ary[0])
+        dnds[where_vecs[1]] = a_ps*(s[where_vecs[1]]/sb_ary[0])**(-n_ary[1])
 
         for i in range(2, nbreak+1):
-            dnds[where_vecs[i]] = APS*np.prod([(Sb_ary[j+1]/Sb_ary[j])**(-n_ary[j+1])
-                 for j in range(0, i-1)])*(s[where_vecs[i]]/Sb_ary[i-1])**(-n_ary[i])
+            dnds[where_vecs[i]] = \
+                a_ps*np.prod([(sb_ary[j+1]/sb_ary[j])**(-n_ary[j+1])
+                              for j in range(0, i-1)]) * \
+                (s[where_vecs[i]]/sb_ary[i-1])**(-n_ary[i])
 
         return dnds
 
-    def log_to_normal(self, array, is_log):
+    @staticmethod
+    def log_to_normal(array, is_log):
         """ Take array and account for the impact of log priors
         """
 
@@ -373,7 +384,8 @@ class dnds_analysis():
                 array_normal.append(array[i])
         return array_normal
 
-    def mask_and_compress(self, the_map, mask):
+    @staticmethod
+    def mask_and_compress(the_map, mask):
         """ Return compressed version of a map
         """
 
@@ -412,5 +424,5 @@ class dnds_analysis():
         corner.corner(self.nptf.samples, labels=self.nptf.params, smooth=1.5,
                       smooth1d=1, quantiles=[0.16, 0.5, 0.84], show_titles=True,
                       title_fmt='.2f', title_args={'fontsize': 14},
-                      range=[1 for i in range(self.nptf.n_params)],
+                      range=[1 for _ in range(self.nptf.n_params)],
                       plot_datapoints=False, verbose=False)

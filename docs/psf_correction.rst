@@ -5,19 +5,19 @@ Fundamentally the presence of a non-zero PSF implies that the photons from any p
 
 If the angular reconstruction of the data is perfect, then :math:`\rho(f) = \delta(f-1)`. In many situations, such as for the Fermi data at higher energies, a Gaussian approximation of the PSF will suffice. Even then there are a number of variables that go into evaluating the correction, as shown below. Finally we will show how the code can be used for the case of non-Gaussian PSFs.
 
-The module ``psf_correction`` is used to account for the instrument point spread function (PSF). 
+The module ``PSFCorrection`` is used to account for the instrument point spread function (PSF).
 
 By default, the correction for a Gaussian PSF can be determined as follows:
 
 .. code:: python
 
-    >>> import psf_correction as pc
-    >>> pc_inst = pc.psf_correction(psf_sigma_deg)
+    >>> import PSFCorrection as pc
+    >>> pc_inst = pc.PSFCorrection(psf_sigma_deg)
     >>> f_ary, df_rho_div_f_ary = pc_inst.f_ary, pc_inst.df_rho_div_f_ary
 
 where ``psf_sigma_deg`` is the 68% containment of the Gaussian PSF.
 
-The two outputs of an instance of psf_correction are: ``f_ary``, an array of :math:`f` values; and ``df_rho_div_f_ary``, an associated array of :math:`\Delta f \rho(f)/f` values, where :math:`\Delta f` is the width of the ``f_ary`` bins.
+The two outputs of an instance of PSFCorrection are: ``f_ary``, an array of :math:`f` values; and ``df_rho_div_f_ary``, an associated array of :math:`\Delta f \rho(f)/f` values, where :math:`\Delta f` is the width of the ``f_ary`` bins.
 
 Additional PSF options:
 
@@ -47,7 +47,7 @@ Using a custom PSF
 ~~~~~~~~~~~~~~~~~~
 
 To implement a custom (non-Gaussian) PSF create an instance of
-``psf_correction`` with the above parameters (ignore ``psf_sigma_deg``)
+``PSFCorrection`` with the above parameters (ignore ``psf_sigma_deg``)
 setting ``delay_compute`` = True.
 
 Then redefine the following attributes:

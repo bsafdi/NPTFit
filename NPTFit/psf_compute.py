@@ -17,12 +17,11 @@ from . import pdf_sampler
 
 def psf_corr(nside, num_f_bins, n_psf, n_pts_per_psf, f_trunc, psf_r_func,
              sample_psf_max, psf_samples):
-
     # Setup pdf of the psf
-    radial_pdf = lambda r: r*psf_r_func(r)
+    radial_pdf = lambda r: r * psf_r_func(r)
     rvals = np.linspace(0, sample_psf_max, psf_samples)
     pofr = radial_pdf(rvals)
-    dist = pdf_sampler.pdf_sampler(rvals, pofr)
+    dist = pdf_sampler.PDFSampler(rvals, pofr)
 
     # Create an array of n_psf points to put down psfs
     # Establish an array of n_ps unit vectors
@@ -41,9 +40,9 @@ def psf_corr(nside, num_f_bins, n_psf, n_pts_per_psf, f_trunc, psf_r_func,
         # For each point source put down n_pts_per_psf counts
         # Determine where they are placed on the map as determine by the psf
         dr = dist(n_pts_per_psf)
-        dangle = np.random.uniform(0, 2*np.pi, n_pts_per_psf)
-        dtheta = dr*np.sin(dangle)
-        dphi = dr*np.cos(dangle)/(np.sin(theta_c[ps_i]+dtheta/2))
+        dangle = np.random.uniform(0, 2 * np.pi, n_pts_per_psf)
+        dtheta = dr * np.sin(dangle)
+        dphi = dr * np.cos(dangle) / (np.sin(theta_c[ps_i] + dtheta / 2))
 
         # Now combine with position of point source to get the exact location
         theta_base = theta_c[ps_i] + dtheta
@@ -52,13 +51,13 @@ def psf_corr(nside, num_f_bins, n_psf, n_pts_per_psf, f_trunc, psf_r_func,
         # Want 0 <= theta < pi; 0 <= phi < 2pi
         # Carefully map to ensure this is true
         theta_remap_north = np.where(theta_base > np.pi)[0]
-        theta_base[theta_remap_north] = 2*np.pi - theta_base[theta_remap_north]
+        theta_base[theta_remap_north] = 2 * np.pi - theta_base[theta_remap_north]
         theta_remap_south = np.where(theta_base < 0)[0]
         theta_base[theta_remap_south] = -theta_base[theta_remap_south]
 
         phi_base[theta_remap_north] += np.pi
         phi_base[theta_remap_south] += np.pi
-        phi_base = np.mod(phi_base, 2*np.pi)
+        phi_base = np.mod(phi_base, 2 * np.pi)
 
         # As the PSF extends to infinity, if draw a value a long way from the
         # centre can occasionally still have a theta value outside the default
@@ -74,7 +73,8 @@ def psf_corr(nside, num_f_bins, n_psf, n_pts_per_psf, f_trunc, psf_r_func,
         # From this information determine the flux fraction per pixel
         mn = np.min(pixel)
         mx = np.max(pixel) + 1
-        pixel_hist = np.histogram(pixel, bins=mx-mn, range=(mn, mx), normed=1)[0]
+        pixel_hist = np.histogram(pixel, bins=mx - mn, range=(mn, mx), normed=1)[
+            0]
         outlist.append(pixel_hist)
 
     f_values = np.concatenate(outlist)
@@ -83,14 +83,14 @@ def psf_corr(nside, num_f_bins, n_psf, n_pts_per_psf, f_trunc, psf_r_func,
     f_values_trunc = f_values[f_values >= f_trunc]
 
     # Rebin into the user defined number of bins
-    rho_ary, f_bin_edges = np.histogram(f_values_trunc, bins=num_f_bins, range=(0., 1.))
+    rho_ary, f_bin_edges = np.histogram(f_values_trunc, bins=num_f_bins,
+                                        range=(0., 1.))
 
     # Convert to output format
     df = f_bin_edges[1] - f_bin_edges[0]
-    f_ary = (f_bin_edges[:-1] + f_bin_edges[1:])/2.
+    f_ary = (f_bin_edges[:-1] + f_bin_edges[1:]) / 2.
     rho_ary = rho_ary / (df * n_psf)
-    f_ary_edge = f_bin_edges[:-1]
-    rho_ary = rho_ary / np.sum(df*f_ary*rho_ary)
-    df_rho_div_f_ary = df*rho_ary / f_ary
+    rho_ary /= np.sum(df * f_ary * rho_ary)
+    df_rho_div_f_ary = df * rho_ary / f_ary
 
     return f_ary, df_rho_div_f_ary

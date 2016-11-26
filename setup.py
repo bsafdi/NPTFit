@@ -4,9 +4,9 @@ from Cython.Build import cythonize
 import numpy
 
 extensions = [
-    Extension("NPTFit.NPLL", ["NPTFit/NPLL.pyx"],
+    Extension("NPTFit.npll", ["NPTFit/npll.pyx"],
         include_dirs=[numpy.get_include()], extra_compile_args=["-ffast-math",'-O3']),
-    Extension("NPTFit.PLL", ["NPTFit/PLL.pyx"],
+    Extension("NPTFit.pll", ["NPTFit/pll.pyx"],
         include_dirs=[numpy.get_include()], extra_compile_args=["-ffast-math",'-O3']),
     Extension("NPTFit.incgamma_fct", ["NPTFit/incgamma_fct.pyx"],
         include_dirs=[numpy.get_include()], extra_compile_args=["-ffast-math",'-O3']),

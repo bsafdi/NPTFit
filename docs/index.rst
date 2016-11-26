@@ -22,11 +22,12 @@ Out of the box, NPTFit relies on `MultiNest <https://ccpforge.cse.rl.ac.uk/gf/pr
 installed and linked prior to use. 
 
 NPTFit supports both Python 2 and 3, specifically 2.7 and 3.5. It may work with earlier 3.* versions, although this has not been tested.
-Make sure Cython is installed (*e.g.* :code:`pip install Cython`). NPTFit along with it's dependent Python packages can then be installed with 
+
+Make sure Cython is installed (*e.g.* :code:`pip install Cython`). NPTFit along with it's dependent Python packages can then be installed with
 
 .. code:: sh
 
-  $ Python setup.py install
+  $ python setup.py install
 
 which also builds the Cython modules. To just compile the Cython modules locally
 
@@ -56,7 +57,7 @@ Contents
 
    adding_models.rst
 
-   psf_correction.rst
+   PSFCorrection.rst
 
    running_the_scan.rst
 

@@ -27,8 +27,8 @@ be installed. See Example 1 for details.
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
-    from NPTFit import psf_correction as pc # module for determining the PSF correction
-    from NPTFit import dnds_analysis # module for analysing the output
+    from NPTFit import PSFCorrection as pc # module for determining the PSF correction
+    from NPTFit import Analysis # module for analysing the output
 
 .. code:: python
 
@@ -124,7 +124,7 @@ Step 3: Configure the Scan with the PSF correction
 
 For a non-Poissonian fit, we need to specify the PSF correction at the
 stage of configuring the scan. The details of this are described in
-Example 4. These are calculated using ``psf_correction.py`` and then
+Example 4. These are calculated using ``PSFCorrection.py`` and then
 passed to the ``NPTF`` via ``configure_for_scan``.
 
 At this stage we also specify the number of exposure regions to be used.
@@ -134,7 +134,7 @@ of the code.
 
 .. code:: python
 
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.1812)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary = pc_inst.f_ary
     df_rho_div_f_ary = pc_inst.df_rho_div_f_ary
     
@@ -168,7 +168,7 @@ so takes longer to evaluate.
 
 .. parsed-literal::
 
-    /group/hepheno/venv_astropy/lib/python2.7/site-packages/NPTFit-0.1.dev0-py2.7-linux-x86_64.egg/NPTFit/nptf_scan.py:418: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+    /group/hepheno/venv_astropy/lib/python2.7/site-packages/NPTFit-0.1.dev0-py2.7-linux-x86_64.egg/NPTFit/NPTFScan.py:418: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
 
 
 Step 5: Analyze the Output
@@ -180,7 +180,7 @@ example.
 .. code:: python
 
     n.load_scan()
-    cs=dnds_analysis.dnds_analysis(n)
+    cs=Analysis.Analysis(n)
     cs.make_triangle()
 
 

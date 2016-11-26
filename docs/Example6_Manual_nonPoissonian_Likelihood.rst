@@ -29,8 +29,8 @@ be installed. See Example 1 for details.
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
-    from NPTFit import psf_correction as pc # module for determining the PSF correction
-    from NPTFit import dnds_analysis # module for analysing the output
+    from NPTFit import PSFCorrection as pc # module for determining the PSF correction
+    from NPTFit import Analysis # module for analysing the output
     
     from __future__ import print_function
 
@@ -86,7 +86,7 @@ in the previous example.
 
 .. code:: python
 
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.1812)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary = pc_inst.f_ary
     df_rho_div_f_ary = pc_inst.df_rho_div_f_ary
 
@@ -136,7 +136,7 @@ parameters:
 
 .. parsed-literal::
 
-    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/NPTFit-0.1.dev0-py3.5-linux-x86_64.egg/NPTFit/nptf_scan.py:417: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/NPTFit-0.1.dev0-py3.5-linux-x86_64.egg/NPTFit/NPTFScan.py:417: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
       for j in range(len(self.NPT_dist_compressed_exp_ary))]
 
 
@@ -159,7 +159,7 @@ us was the best fit point for this parameter.
 
 .. parsed-literal::
 
-    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/NPTFit-0.1.dev0-py3.5-linux-x86_64.egg/NPTFit/nptf_scan.py:417: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/NPTFit-0.1.dev0-py3.5-linux-x86_64.egg/NPTFit/NPTFScan.py:417: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
       for j in range(len(self.NPT_dist_compressed_exp_ary))]
 
 
@@ -197,7 +197,7 @@ involves :math:`(n-1)^{-1}`.
 
 .. parsed-literal::
 
-    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/NPTFit-0.1.dev0-py3.5-linux-x86_64.egg/NPTFit/nptf_scan.py:417: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+    /group/hepheno/heptools/anaconda3/lib/python3.5/site-packages/NPTFit-0.1.dev0-py3.5-linux-x86_64.egg/NPTFit/NPTFScan.py:417: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
       for j in range(len(self.NPT_dist_compressed_exp_ary))]
 
 

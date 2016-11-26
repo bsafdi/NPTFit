@@ -12,7 +12,7 @@ give examples of how to create various masks.
 
 The masks are created by ``create_mask.py`` and can be passed to an
 instance of ``nptfit`` via the function ``load_mask`` for a run, or an
-instance of ``dnds_analysis`` via ``load_mask_analysis`` for an
+instance of ``Analysis`` via ``load_mask_analysis`` for an
 analysis. If no mask is specified the code defaults to the full sky as
 the ROI.
 

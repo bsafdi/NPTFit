@@ -3,7 +3,7 @@ Example 4: NPTF Correction for the Point Spread Function (PSF)
 ==============================================================
 
 In this example we show how to account for the PSF correction using
-``psf_correction.py``
+``PSFCorrection.py``
 
 Fundamentally the presence of a non-zero PSF implies that the photons
 from any point source will be smeared out into some region around its
@@ -11,7 +11,7 @@ true location. This effect must be accounted for in the NPTF. This is
 achieved via a function :math:`\rho(f)`. In the code we discretize
 :math:`\rho(f)` as an approximation to the full function.
 
-The two outputs of an instance of ``psf_correction`` are: 1. f\_ary, an
+The two outputs of an instance of ``PSFCorrection`` are: 1. f\_ary, an
 array of f values; and 2. df\_rho\_div\_f\_ary, an associated array of
 :math:`\Delta f \rho(f)/f` values, where :math:`\Delta f` is the width
 of the f\_ary bins.
@@ -40,7 +40,7 @@ PSF corrections for the runs are stored.
     import matplotlib.pyplot as plt
     from matplotlib import rcParams
     
-    from NPTFit import psf_correction as pc # Module for determining the PSF correction
+    from NPTFit import PSFCorrection as pc # Module for determining the PSF correction
     
     from __future__ import print_function
 
@@ -70,7 +70,7 @@ dataset we will use in later examples.
 
 .. code:: python
 
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.1812)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary_1 = pc_inst.f_ary
     df_rho_div_f_ary_1 = pc_inst.df_rho_div_f_ary
     
@@ -115,11 +115,11 @@ out, leading to a :math:`\rho(f)` peaked at lower flux values.
 
 .. code:: python
 
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.05)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.05)
     f_ary_2 = pc_inst.f_ary
     df_rho_div_f_ary_2 = pc_inst.df_rho_div_f_ary
     
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.4)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.4)
     f_ary_3 = pc_inst.f_ary
     df_rho_div_f_ary_3 = pc_inst.df_rho_div_f_ary
     
@@ -191,19 +191,19 @@ must be pursued in calculating :math:`\rho(f)`.
 
 .. code:: python
 
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.1812,num_f_bins=20)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812,num_f_bins=20)
     f_ary_4 = pc_inst.f_ary
     df_rho_div_f_ary_4 = pc_inst.df_rho_div_f_ary
     
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.1812,n_psf=5000,n_pts_per_psf=100)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812,n_psf=5000,n_pts_per_psf=100)
     f_ary_5 = pc_inst.f_ary
     df_rho_div_f_ary_5 = pc_inst.df_rho_div_f_ary
     
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.1812,f_trunc=0.1)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812,f_trunc=0.1)
     f_ary_6 = pc_inst.f_ary
     df_rho_div_f_ary_6 = pc_inst.df_rho_div_f_ary
     
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.1812,nside=64)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812,nside=64)
     f_ary_7 = pc_inst.f_ary
     df_rho_div_f_ary_7 = pc_inst.df_rho_div_f_ary
     
@@ -240,14 +240,14 @@ must be pursued in calculating :math:`\rho(f)`.
 Example 4: Custom PSF
 ---------------------
 
-In addition to the default Gausian PSF, ``psf_correction.py`` also has
+In addition to the default Gausian PSF, ``PSFCorrection.py`` also has
 the option of taking in a custom PSF. In order to use this ability, the
-user needs to initialise ``psf_correction`` with ``delay_compute=True``,
+user needs to initialise ``PSFCorrection`` with ``delay_compute=True``,
 manually define the parameters that define the PSF and then call
 ``make_or_load_psf_corr``.
 
 The variables that need to be redefined in the instance of
-``psf_correction`` are:
+``PSFCorrection`` are:
 
 +----------------+----------------+
 | Argument       | Purpose        |
@@ -304,7 +304,7 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
     # Fermi-LAT PSF at 2 GeV
     
     # Calculate the appropriate Gaussian approximation to the PSF for 2 GeV
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.2354)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.2354)
     f_ary_8 = pc_inst.f_ary
     df_rho_div_f_ary_8 = pc_inst.df_rho_div_f_ary
     
@@ -324,7 +324,7 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
         return fcore*king_fn(r/spe,score,gcore) + (1-fcore)*king_fn(r/spe,stail,gtail)
     
     # Modify the relevant parameters in pc_inst and then make or load the PSF
-    pc_inst = pc.psf_correction(delay_compute=True)
+    pc_inst = pc.PSFCorrection(delay_compute=True)
     pc_inst.psf_r_func = lambda r: Fermi_PSF(r)
     pc_inst.sample_psf_max = 10.*spe*(score+stail)/2.
     pc_inst.psf_samples = 10000
@@ -365,7 +365,7 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
     # Fermi-LAT PSF at 20 GeV
     
     # Calculate the appropriate Gaussian approximation to the PSF for 20 GeV
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.05529)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.05529)
     f_ary_10 = pc_inst.f_ary
     df_rho_div_f_ary_10 = pc_inst.df_rho_div_f_ary
     
@@ -385,7 +385,7 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
         return fcore*king_fn(r/spe,score,gcore) + (1-fcore)*king_fn(r/spe,stail,gtail)
     
     # Modify the relevant parameters in pc_inst and then make or load the PSF
-    pc_inst = pc.psf_correction(delay_compute=True)
+    pc_inst = pc.PSFCorrection(delay_compute=True)
     pc_inst.psf_r_func = lambda r: Fermi_PSF(r)
     pc_inst.sample_psf_max = 10.*spe*(score+stail)/2.
     pc_inst.psf_samples = 10000

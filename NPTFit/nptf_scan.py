@@ -9,7 +9,7 @@
 # The file contains two main sections. The first of these sets up the
 # likelihood function (configure_for_scan_internal) and then executes it
 # (perform_scan). The second loads the output of the scan, and is used by
-# dnds_analysis
+# Analysis
 #
 ###############################################################################
 
@@ -21,17 +21,17 @@ import numpy as np
 import pymultinest
 from collections import OrderedDict
 
-from . import PLL  # The Poissonian likelihood function
-from . import NPLL  # The non-Poissonian likelihood function
-from .config_maps import config_maps  # Setup maps and templates for the run
+from . import pll  # The Poissonian likelihood function
+from . import npll  # The non-Poissonian likelihood function
+from .config_maps import ConfigMaps  # Setup maps and templates for the run
 
 
-class nptf_scan(config_maps):
+class NPTFScan(ConfigMaps):
     def __init__(self, tag='Untagged', work_dir=None, psf_dir=None):
-        # Initialise config_maps, creates base directories and allows user
+        # Initialise ConfigMaps, creates base directories and allows user
         # to input maps, masks, and templates
 
-        config_maps.__init__(self, tag=tag, work_dir=work_dir, psf_dir=psf_dir)
+        ConfigMaps.__init__(self, tag=tag, work_dir=work_dir, psf_dir=psf_dir)
 
         self.already_loaded = False
 
@@ -50,20 +50,20 @@ class nptf_scan(config_maps):
                         log_prior=False, fixed=False, fixed_norm=1.0):
         """ Add a Poissonian model corresponding to a template.
 
-            template_name: string corresponding to a template added via
-                           b.add_template
-            model_tag: label (LaTex-ready string) for this model
-            prior_range: [min_prior_value, max_prior_value]
-            log_prior: boolean, = True for log spaced priors
-            fixed: boolean, = True if the template is fixed, not floated
-            fixed_norm: normalization of template, if fixed
+            :param template_name: string corresponding to a template added via
+                   b.add_template
+            :param model_tag: label (LaTeX-ready string) for this model
+            :param prior_range: [min_prior_value, max_prior_value]
+            :param log_prior: boolean, = True for log spaced priors
+            :param fixed: boolean, = True if the template is fixed, not floated
+            :param fixed_norm: normalization of template, if fixed
         """
 
         # Fixed and non-fixed poiss models appended to different dictionaries
         if fixed:
             self.poiss_models_fixed[template_name] = {'fixed_norm': fixed_norm}
         else:
-            assert(len(prior_range) != 0), "Fix template or insert a prior"
+            assert (len(prior_range) != 0), "Fix template or insert a prior"
             self.poiss_models[template_name] = {'prior_range': prior_range,
                                                 'log_prior': log_prior,
                                                 'model_tag': model_tag}
@@ -73,31 +73,31 @@ class nptf_scan(config_maps):
                             fixed_params=None, units='counts'):
         """ Add a non-Poissonian model corresponding to a template.
 
-            template_name: string corresponding to a template added via
-                           b.add_template
-            model_tag: label (LaTex-ready string) for this model
-            prior_range: for nb breaks, priors inserted as:
-                         [A, n_1, n_2, ... n_{nb+1}, S1, S2, ... S_{nb}],
-                         each element a [min, max] list.
-                         e.g. [[-6,6],[2.05,30],[-2,1.95],[0.05,30]]
-            log_prior: boolean, = True for log spaced priors
-                       list corresponding to non-Poissonian parameters,
-                       e.g. [True,False,False,False]
-            dnds_model:
+            :param template_name: string corresponding to a template added via
+                   b.add_template
+            :param model_tag: label (LaTeX-ready string) for this model
+            :param prior_range: for nb breaks, priors inserted as:
+                   [A, n_1, n_2, ... n_{nb+1}, S1, S2, ... S_{nb}],
+                   each element a [min, max] list.
+                   e.g. [[-6,6],[2.05,30],[-2,1.95],[0.05,30]]
+            :param log_prior: boolean, = True for log spaced priors
+                   list corresponding to non-Poissonian parameters,
+                   e.g. [True,False,False,False]
+            :param dnds_model:
                 'specify_breaks': Priors are locations of breaks
-                'specifiy_relative_breaks': Priors are relative locations of
+                'specify_relative_breaks': Priors are relative locations of
                                             breaks
-            fixed_params: whether to fix non-Poissonian parameters, and if so
-                          what value to set them to.
-                          E.g. [[0,1.0],[2,4.5]] will set variable 0 to 1.0
-                          and variable 2 to 4.5, whilst letting the others
-                          float
-            units: The units in which the prior or fixed value for the breaks
-                   is specified. This should be either counts or flux 
+            :param fixed_params: whether to fix non-Poissonian parameters, and if
+                   so what value to set them to.
+                   e.g. [[0,1.0],[2,4.5]] will set variable 0 to 1.0
+                   and variable 2 to 4.5, whilst letting the others
+                   float
+            :param units: The units in which the prior or fixed value for the
+                   breaks is specified. This should be either counts or flux
         """
 
         if log_prior is False:
-            log_prior_list = [False for i in range(len(model_tag))]
+            log_prior_list = [False for _ in range(len(model_tag))]
         else:
             log_prior_list = log_prior
 
@@ -108,8 +108,8 @@ class nptf_scan(config_maps):
             n_params = len(model_tag) - len(fixed_params)
             fixed_params = np.array(fixed_params)
 
-        assert(units == 'counts' or units == 'flux'), \
-        "units can only be counts or flux" 
+        assert (units == 'counts' or units == 'flux'), \
+            "units can only be counts or flux"
 
         # Add template to non_poiss_models dictionary
         self.non_poiss_models[template_name] = {'prior_range': prior_range,
@@ -166,7 +166,7 @@ class nptf_scan(config_maps):
         """
 
         # Take data and templates, and compress, mask and if specified divide
-        # into exposure regions. Function defined in config_maps
+        # into exposure regions. Function defined in ConfigMaps
         self.compress_data_and_templates()
 
         # Setup keys and number of parameters for the scan
@@ -182,13 +182,13 @@ class nptf_scan(config_maps):
         for key in self.non_poiss_models_keys:
             is_flux = self.non_poiss_models[key]['units'] == 'flux'
             is_relative = self.non_poiss_models[key]['dnds_model'] == \
-                          'specifiy_relative_breaks'
+                'specify_relative_breaks'
             # If relative, just adjust the highest break
             if is_flux and is_relative:
-                NPT_params = self.non_poiss_models[key]['n_params_total']
-                NPT_breaks = (NPT_params-2)/2
-                break_locs = range(NPT_breaks+2,2*NPT_breaks+2)
-                highest_break = NPT_breaks+2
+                npt_params = self.non_poiss_models[key]['n_params_total']
+                npt_breaks = (npt_params - 2) / 2
+                break_locs = range(npt_breaks + 2, 2 * npt_breaks + 2)
+                highest_break = npt_breaks + 2
 
                 # Check if highest break is fixed and if so adjust
                 fixed_breaks = 0
@@ -198,27 +198,27 @@ class nptf_scan(config_maps):
                     for fp in range(len(fp_list)):
                         if fp_list[fp][0] == highest_break:
                             self.non_poiss_models[key]['fixed_params'][fp][1] \
-                            *= self.exposure_mean
+                                *= self.exposure_mean
                             highest_floated = False
                         if fp_list[fp][0] in break_locs:
                             fixed_breaks += 1
 
                 # If floated then adjust
                 if highest_floated:
-                    floated_breaks = NPT_breaks - fixed_breaks
+                    floated_breaks = npt_breaks - fixed_breaks
                     floated_params = self.non_poiss_models[key]['n_params']
-                    hloc = floated_params-floated_breaks
+                    hloc = floated_params - floated_breaks
                     self.non_poiss_models[key]['prior_range'][hloc][0] *= \
                         self.exposure_mean
                     self.non_poiss_models[key]['prior_range'][hloc][1] *= \
                         self.exposure_mean
-            
+
             # If not relative, adjust all breaks
             if is_flux and not is_relative:
-                NPT_params = self.non_poiss_models[key]['n_params_total']
-                NPT_breaks = (NPT_params-2)/2
-                break_locs = range(NPT_breaks+2,2*NPT_breaks+2)
-                
+                npt_params = self.non_poiss_models[key]['n_params_total']
+                npt_breaks = (npt_params - 2) / 2
+                break_locs = range(npt_breaks + 2, 2 * npt_breaks + 2)
+
                 # Check if there are any fixed breaks and adjust
                 fixed_breaks = 0
                 fp_list = self.non_poiss_models[key]['fixed_params']
@@ -226,13 +226,13 @@ class nptf_scan(config_maps):
                     for fp in range(len(fp_list)):
                         if fp_list[fp][0] in break_locs:
                             self.non_poiss_models[key]['fixed_params'][fp][1] \
-                            *= self.exposure_mean
+                                *= self.exposure_mean
                             fixed_breaks += 1
-                
+
                 # Adjust floated breaks
-                floated_breaks = NPT_breaks - fixed_breaks
+                floated_breaks = npt_breaks - fixed_breaks
                 floated_params = self.non_poiss_models[key]['n_params']
-                for fp in range(floated_params-floated_breaks,floated_params):
+                for fp in range(floated_params - floated_breaks, floated_params):
                     self.non_poiss_models[key]['prior_range'][fp][0] *= \
                         self.exposure_mean
                     self.non_poiss_models[key]['prior_range'][fp][1] *= \
@@ -263,7 +263,7 @@ class nptf_scan(config_maps):
         self.dnds_model_array = [self.non_poiss_models[key]['dnds_model']
                                  for key in self.non_poiss_models_keys]
         self.model_decompression_key = [[key,
-                                        self.poiss_models[key]['log_prior']]
+                                         self.poiss_models[key]['log_prior']]
                                         for key in self.poiss_model_keys]
 
         for key in self.non_poiss_models.keys():
@@ -277,17 +277,7 @@ class nptf_scan(config_maps):
 
         print('The number of parameters to be fit is', self.n_params)
 
-    def convert_log(self, key, val):
-        """ Convert values to physical values if a log prior is used
-        """
-
-        tag, log_prior = key
-        if log_prior:
-            return [tag, 10 ** val]
-        else:
-            return [tag, val]
-
-    def make_PTsum_theta(self, theta):
+    def make_pt_sum_theta(self, theta):
         """ Take the unfixed parameters being scanned by multinest and convert
             these back into objects needed to evaluate the likelihood
             (including adding back in fixed parameters)
@@ -297,61 +287,66 @@ class nptf_scan(config_maps):
         """
 
         # Setup array of template normalisations (poissonian)
-        A_theta = []
+        a_theta = []
         if self.n_poiss != 0:
-            A_theta = [self.convert_log(self.model_decompression_key[i],
-                       theta[i]) for i in range(self.n_poiss)]
+            a_theta = [self.convert_log(self.model_decompression_key[i],
+                                        theta[i]) for i in range(self.n_poiss)]
 
         # Using this form a compressed map of the sum of all poissonian
         # templates. If there are fixed Poissonian templates add them in too
 
-        PT_sum_compressed_float = np.array([np.sum(list(map(lambda i: A_theta[i][1] *
-                                  self.templates_dict_nested[A_theta[i][0]]
-                                  ['template_masked_compressed_expreg'][region],
-                                  range(len(A_theta)))), axis=0)
-                                  for region in range(self.nexp)])
+        pt_sum_compressed_float = np.array(
+            [np.sum(list(map(lambda i: a_theta[i][1] *
+                             self.templates_dict_nested[a_theta[i][0]]
+                             ['template_masked_compressed_expreg'][region],
+                             range(len(a_theta)))), axis=0)
+             for region in range(self.nexp)])
 
-        PT_sum_compressed_fixed = np.array([np.sum(list(map(lambda key:
-                                  self.poiss_models_fixed[key]['fixed_norm']
-                                  * self.templates_dict_nested[key]
-                                  ['template_masked_compressed_expreg'][region],
-                                  self.poiss_models_fixed.keys())), axis=0)
-                                  for region in range(self.nexp)])
+        pt_sum_compressed_fixed = \
+            np.array([np.sum(list(map(lambda key:
+                                      self.poiss_models_fixed[key][
+                                          'fixed_norm'] *
+                                      self.templates_dict_nested[key][
+                                          'template_masked_compressed_expreg'][
+                                          region],
+                                      self.poiss_models_fixed.keys())), axis=0)
+                      for region in range(self.nexp)])
 
         # Combine the two if necessary to build the full PT map
         if len(self.poiss_models_fixed) != 0:
-            PT_sum_compressed = PT_sum_compressed_float + \
-                                PT_sum_compressed_fixed
+            pt_sum_compressed = pt_sum_compressed_float + \
+                                pt_sum_compressed_fixed
         else:
-            PT_sum_compressed = PT_sum_compressed_float
-       
-        # If no Poissonian templates, PT_sum_compressed set to a zero array
-        if ((self.n_poiss + len(self.poiss_models_fixed)) == 0):
-            PT_sum_compressed = np.array([np.zeros(
-                                len(self.masked_compressed_data_expreg[region]))
-                                for region in range(self.nexp)])
+            pt_sum_compressed = pt_sum_compressed_float
+
+        # If no Poissonian templates, pt_sum_compressed set to a zero array
+        if (self.n_poiss + len(self.poiss_models_fixed)) == 0:
+            pt_sum_compressed = np.array([np.zeros(
+                len(self.masked_compressed_data_expreg[region]))
+                                          for region in range(self.nexp)])
 
         # Setup array of NPT parameters - adding the fixed parameters back in
-        # Note that through the use of convert_log, theta_PS here is an array
+        # Note that through the use of convert_log, theta_ps here is an array
         # of [tag, value]
-        theta_PS = []
+        theta_ps = []
         if self.n_non_poiss != 0:
-            theta_PS = [self.convert_log(self.model_decompression_key[i],
-                        theta[i]) for i in range(self.n_poiss, self.n_params)]
-            # Add the fixed parameters back into theta_PS in the correct spot
+            theta_ps = [self.convert_log(self.model_decompression_key[i],
+                                         theta[i]) for i in
+                        range(self.n_poiss, self.n_params)]
+            # Add the fixed parameters back into theta_ps in the correct spot
             if len(self.fixed_params_list) != 0:
                 index = 0
                 for key in self.non_poiss_models_keys:
                     if self.non_poiss_models[key]['fixed_params'] is not None:
                         for fixed in self.non_poiss_models[key]['fixed_params']:
-                            theta_PS.insert(int(fixed[0]) + index, [key,
+                            theta_ps.insert(int(fixed[0]) + index, [key,
                                                                     fixed[1]])
                     index += self.non_poiss_models[key]['n_params_total']
 
-        return PT_sum_compressed, theta_PS
+        return pt_sum_compressed, theta_ps
 
-    def model_parameters_nbreak(self, theta_PS):
-        """ Take the flat theta_PS array determined in make_PTsum_theta and
+    def model_parameters_nbreak(self, theta_ps):
+        """ Take the flat theta_ps array determined in make_pt_sum_theta and
             convert it into an array of separate NPT parameter arrays
         """
 
@@ -362,25 +357,25 @@ class nptf_scan(config_maps):
         # [0, 1, ..., nb+1, nb+2, ..., 2nb+1]
 
         # Determine the number of breaks and total parameters for each NPT
-        nbreak_ary = [int((val['n_params_total'] - 2)/2.)
+        nbreak_ary = [int((val['n_params_total'] - 2) / 2.)
                       for val in self.non_poiss_models.values()]
         nparams_ary = [int(val['n_params_total'])
                        for val in self.non_poiss_models.values()]
 
-        # Determine where each NPT model begins in the full theta_PS array
+        # Determine where each NPT model begins in the full theta_ps array
         offset_indices_ary = [0]
         for i in range(1, self.n_non_poiss_models):
-            offset_indices_ary.append(offset_indices_ary[i-1] +
-                                      nparams_ary[i-1])
+            offset_indices_ary.append(offset_indices_ary[i - 1] +
+                                      nparams_ary[i - 1])
 
-        theta_PS_ary = []
+        theta_ps_ary = []
 
         # Add in parameters for each NPT separately
         # Account for whether the user specified absolute or relative breaks
         for i in range(self.n_non_poiss_models):
             if self.dnds_model_array[i] == 'specify_breaks':
                 # If absolute, just add the 2nb+2 parameters without alteration
-                theta_PS_ary.append(theta_PS[offset_indices_ary[i]:
+                theta_ps_ary.append(theta_ps[offset_indices_ary[i]:
                                     offset_indices_ary[i] + nparams_ary[i]])
 
             elif self.dnds_model_array[i] == 'specify_relative_breaks':
@@ -391,15 +386,15 @@ class nptf_scan(config_maps):
                 # 2. The adjusted breaks: [S_{1}, ..., S_{nb-1}], which has
                 # length nb-1
                 # 3. The unadjusted break: [S_{nb}], which has length 1
-                theta_PS_ary.append(theta_PS[offset_indices_ary[i]:
+                theta_ps_ary.append(theta_ps[offset_indices_ary[i]:
                     offset_indices_ary[i] + nparams_ary[i]-nbreak_ary[i]] +
-                    [theta_PS[offset_indices_ary[i] + nparams_ary[i] - 1] *
-                    np.product(theta_PS[offset_indices_ary[i] + j:
+                    [theta_ps[offset_indices_ary[i] + nparams_ary[i] - 1] *
+                    np.product(theta_ps[offset_indices_ary[i] + j:
                     offset_indices_ary[i] + nparams_ary[i] - 1]) for j in range(
                     offset_indices_ary[i] + nparams_ary[i] - nbreak_ary[i],
                     offset_indices_ary[i] + nparams_ary[i] - 1)] +
-                    [theta_PS[offset_indices_ary[i]+nparams_ary[i] - 1]])
-        return theta_PS_ary
+                    [theta_ps[offset_indices_ary[i]+nparams_ary[i] - 1]])
+        return theta_ps_ary
 
     def make_ll(self):
         """ Pass all details to the likelihood evaluator, and define the total
@@ -410,47 +405,51 @@ class nptf_scan(config_maps):
         for i in range(self.nexp):
             # For each NPT template adjust the breaks to account for the
             # difference in exposure
-            theta_PS_expreg = [[self.theta_PS[j][0] *
-                       self.exposure_mean / self.exposure_means_list[i]] +
-                       list(self.theta_PS[j][1:self.nbreak_ary[j]+2]) +
-                       list(self.theta_PS[j][self.nbreak_ary[j]+2:] *
-                       self.exposure_means_list[i] / self.exposure_mean)
-                       for j in range(len(self.NPT_dist_compressed_exp_ary))]
+            theta_ps_expreg = [[self.theta_ps[j][0] *
+                                self.exposure_mean / self.exposure_means_list[
+                                    i]] +
+                               list(self.theta_ps[j][1:self.nbreak_ary[j] + 2]) +
+                               list(self.theta_ps[j][self.nbreak_ary[j] + 2:] *
+                                    self.exposure_means_list[
+                                        i] / self.exposure_mean)
+                               for j in
+                               range(len(self.NPT_dist_compressed_exp_ary))]
 
             # In evaluating the likelihood extract the exposure region i
             # version of each parameter
-            ll += NPLL.log_like(self.PT_sum_compressed[i], theta_PS_expreg,
-                        self.f_ary, self.df_rho_div_f_ary,
-                        [NPT[i] for NPT in self.NPT_dist_compressed_exp_ary],
-                        self.masked_compressed_data_expreg[i])
+            ll += npll.log_like(self.PT_sum_compressed[i], theta_ps_expreg,
+                                self.f_ary, self.df_rho_div_f_ary,
+                                [NPT[i] for NPT in
+                                 self.NPT_dist_compressed_exp_ary],
+                                self.masked_compressed_data_expreg[i])
         return ll
 
-    def log_like_NPTF(self, theta, ndim=1, nparams=1):
+    def log_like_nptf(self, theta, ndim=1, nparams=1):
         """ NPTF likelihood function
         """
 
         # Determine PT and NPT contribution and pass to the likelihood function
-        PT_sum_compressed, theta_PS_marked = self.make_PTsum_theta(theta)
-        # theta_PS_marked is an array of [tag, value], extract values
-        theta_PS = list(np.vectorize(float)(np.array(theta_PS_marked)[::, 1]))
-        self.theta_PS = self.model_parameters_nbreak(theta_PS)
-        self.nbreak_ary = [int((len(self.theta_PS[j]) - 2)/2.)
-                           for j in range(len(self.theta_PS))]
-        self.PT_sum_compressed = PT_sum_compressed
+        pt_sum_compressed, theta_ps_marked = self.make_pt_sum_theta(theta)
+        # theta_ps_marked is an array of [tag, value], extract values
+        theta_ps = list(np.vectorize(float)(np.array(theta_ps_marked)[::, 1]))
+        self.theta_ps = self.model_parameters_nbreak(theta_ps)
+        self.nbreak_ary = [int((len(self.theta_ps[j]) - 2) / 2.)
+                           for j in range(len(self.theta_ps))]
+        self.PT_sum_compressed = pt_sum_compressed
 
         return self.make_ll()
 
-    def log_like_PTF(self, theta, ndim=1, nparams=1):
+    def log_like_ptf(self, theta, ndim=1, nparams=1):
         """ PTF likelihood function
         """
 
         # Determine PT and pass to the likelihood function
-        PT_sum_compressed_arr, _ = self.make_PTsum_theta(theta)
+        pt_sum_compressed_arr, _ = self.make_pt_sum_theta(theta)
         # Take out the 0th element as the Poissonian likelihood does not loop
         # through exposure regions
-        PT_sum_compressed = PT_sum_compressed_arr[0]
+        pt_sum_compressed = pt_sum_compressed_arr[0]
 
-        return PLL.log_like_poissonian(PT_sum_compressed,
+        return pll.log_like_poissonian(pt_sum_compressed,
                                        self.masked_compressed_data)
 
     def perform_scan(self, run_tag=None, nlive=100, pymultinest_options=None):
@@ -488,7 +487,7 @@ class nptf_scan(config_maps):
 
     def load_scan(self, run_tag=None):
         """ Load the details of a scan, if not already loaded
-            This sets up the output of the scan in a format useful for dnds_analysis
+            This sets up the output of the scan in a format useful for Analysis
         """
 
         if self.already_loaded:
@@ -498,10 +497,11 @@ class nptf_scan(config_maps):
             self.make_dirs_for_run(run_tag)
 
             # Load the statistics and samples
-            self.a = pymultinest.Analyzer(n_params=self.n_params,
-                     outputfiles_basename=self.chains_dir_for_run)
+            self.a = \
+                pymultinest.Analyzer(n_params=self.n_params,
+                                     outputfiles_basename=self.chains_dir_for_run)
             self.s = self.a.get_stats()
-            self.chain_file = self.chains_dir_for_run+'/post_equal_weights.dat'
+            self.chain_file = self.chains_dir_for_run + '/post_equal_weights.dat'
             self.samples = np.array(np.loadtxt(self.chain_file)[:, :-1])
 
             # Determine the median value of each parameter
@@ -538,29 +538,32 @@ class nptf_scan(config_maps):
         # Determine which parameters had log priors and combine the list
         self.poiss_list_is_log_prior = np.array(
             [self.poiss_models[key]['log_prior']
-            for key in self.poiss_model_keys])
+             for key in self.poiss_model_keys])
 
         self.non_poiss_list_is_log_prior = np.array(
             self.flatten([val['log_prior']
-            for val in self.non_poiss_models.values()]))
+                          for val in self.non_poiss_models.values()]))
 
-        self.medians_not_log = self.convert_log_list(self.medians,
-            np.concatenate([self.poiss_list_is_log_prior,
-            self.non_poiss_list_is_log_prior]))
+        self.medians_not_log = \
+            self.convert_log_list(self.medians,
+                                  np.concatenate([self.poiss_list_is_log_prior,
+                                                  self.non_poiss_list_is_log_prior]))
 
         # In terms of these extract the P and NP norms
         self.norms_poiss = {self.model_decompression_key[i][0]:
-                            self.medians_not_log[i]
-                            for i in range(self.n_poiss)}
+                            self.medians_not_log[i] for i in range(self.n_poiss)}
 
         self.norms_non_poiss = OrderedDict()
         index = 0  # Multiple parameters for each NPT, index counts these
         for i in range(len(self.non_poiss_models.keys())):
             self.norms_non_poiss[list(self.non_poiss_models.keys())[i]] = \
-            [self.medians_not_log[self.n_poiss + index + j] for j in range(
-            self.non_poiss_models[list(self.non_poiss_models.keys())[i]]['n_params'])]
-            index += self.non_poiss_models[
-                     list(self.non_poiss_models.keys())[i]]['n_params']
+                [self.medians_not_log[self.n_poiss + index + j]
+                 for j in range(
+                    self.non_poiss_models[list(self.non_poiss_models.keys())[i]][
+                        'n_params'])]
+            index += \
+                self.non_poiss_models[list(self.non_poiss_models.keys())[i]][
+                    'n_params']
 
     def fix_samples(self):
         """ Account for fixed parameters in the samples
@@ -598,7 +601,8 @@ class nptf_scan(config_maps):
             for fixed in self.fixed_params_list:
                 if fixed[1][0] == key:
                     self.model_decompression_key.insert(index +
-                    int(fixed[0]), [key, False])
+                                                        int(fixed[0]),
+                                                        [key, False])
             index += self.non_poiss_models[key]['n_params_total']
 
     @staticmethod
@@ -614,7 +618,19 @@ class nptf_scan(config_maps):
                 new_list.append(the_list[i])
         return new_list
 
-    def flatten(self, the_list):
+    @staticmethod
+    def convert_log(key, val):
+        """ Convert values to physical values if a log prior is used
+        """
+
+        tag, log_prior = key
+        if log_prior:
+            return [tag, 10 ** val]
+        else:
+            return [tag, val]
+
+    @staticmethod
+    def flatten(the_list):
         """ Flatten out a nested array
         """
 

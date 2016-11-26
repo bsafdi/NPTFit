@@ -30,7 +30,7 @@ be installed. See Example 1 for details.
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
-    from NPTFit import dnds_analysis # module for analysing the output
+    from NPTFit import Analysis # module for analysing the output
 
 .. code:: python
 
@@ -297,14 +297,14 @@ run. Note that ``load_scan`` can be used to load a run performed in a
 previous instance of ``NPTF``, as long as the various parameters match.
 
 After the scan is loaded we then create an instance of
-``dnds_analysis``, which takes an instance of ``nptfit.NPTF`` as an
+``Analysis``, which takes an instance of ``nptfit.NPTF`` as an
 argument - which must already have a scan loaded. From here we simply
 make a triangle plot.
 
 .. code:: python
 
     n.load_scan()
-    an = dnds_analysis.dnds_analysis(n)
+    an = Analysis.Analysis(n)
     an.make_triangle()
 
 

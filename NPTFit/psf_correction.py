@@ -24,51 +24,51 @@ import numpy as np
 from . import psf_compute
 
 
-class psf_correction:
+class PSFCorrection:
     def __init__(self, psf_dir=None, num_f_bins=10, n_psf=50000,
                  n_pts_per_psf=1000, f_trunc=0.01, nside=128,
                  psf_sigma_deg=None, delay_compute=False):
         """ Load or calculate the NPTF PSF correction
-            Adds f_ary and df_rho_div_ary to self
-            Defaults to a gaussian psf, for user defined psfs see below
 
-            Args:
-                psf_dir:       directory where psf files are stored
-                num_f_bins:    number of bins to calculate rho(f) in
-                n_psf:         number of psfs to place when calculating rho(f)
-                n_pts_per_psf: number of points to place per psf in calculation
-                f_trunc:       minimum flux fraction to keep track of
-                nside:         nside of the map rho(f) is used on
-                psf_sigma_deg: 1 sigma containment of the gaussian psf
-                delay_compute: set to true to define a custom psf
+            Adds f_ary and df_rho_div_ary to self. Defaults to a Gaussian PSF,
+            for user defined PSFs see below
+
+            :param psf_dir: directory where psf files are stored
+            :param num_f_bins: number of bins to calculate rho(f) in
+            :param n_psf: number of psfs to place when calculating rho(f)
+            :param n_pts_per_psf: number of points to place per psf in calculation
+            :param f_trunc: minimum flux fraction to keep track of
+            :param nside: nside of the map rho(f) is used on
+            :param psf_sigma_deg: 1 sigma containment of the gaussian psf
+            :param delay_compute: set to true to define a custom psf
 
             Custom PSF details:
-                To implement a custom (non-gaussian) psf create an instance of
-                psf_correction with the above parameters (ignore psf_sigma_deg)
-                setting delay_compute = True
 
-                Then redefine the following attributes:
-                    psf_r_func:     The psf as a function of r, distance from
-                                    the center of the point
-                    sample_psf_max: maximum distance to sample the psf from
-                                    the center, should be larger for psfs
-                                    with long tails
-                    psf_samples:    number of samples to make from the psf
-                                    (linearly spaced) from 0 to sample_psf_max,
-                                    should be large enough to adequately
-                                    represent the full psf
-                    psf_tag:        label the psf is saved with
+            To implement a custom (non-gaussian) psf create an instance of
+            PSFCorrection with the above parameters (ignore psf_sigma_deg)
+            setting delay_compute = True
 
-                Finally execute the calculation using make_or_load_psf_corr()
+            Then redefine the following attributes:
+
+            :param psf_r_func: The psf as a function of r, distance from
+                   the center of the point
+            :param sample_psf_max: maximum distance to sample the psf from
+                   the center, should be larger for psfs with long tails
+            :param psf_samples: number of samples to make from the psf
+                   (linearly spaced) from 0 to sample_psf_max,
+                   should be large enough to adequately represent the full psf
+            :param psf_tag: label the psf is saved with
+
+            Finally execute the calculation using make_or_load_psf_corr()
         """
 
         # User must either specify a sigma, or use a custom PSF
         if not delay_compute:
             assert(psf_sigma_deg is not None), \
-            "Must either specify a sigma or use a custom PSF"
+                   "Must either specify a sigma or use a custom PSF"
         else:
             # If custom PSF give sigma temporary value
-            if (psf_sigma_deg is None):
+            if psf_sigma_deg is None:
                 psf_sigma_deg = 0.1812
 
         self.psf_dir = psf_dir
@@ -87,7 +87,7 @@ class psf_correction:
         psf_sigma = psf_sigma_deg*np.pi/180.
 
         # If using a custom PSF, set delay_compute = True and manually
-        # set the following 4 variables for that instance of psf_correction
+        # set the following 4 variables for that instance of PSFCorrection
         self.psf_r_func = lambda r: np.exp(-r**2 / (2.*psf_sigma**2))
         self.sample_psf_max = 5. * psf_sigma
         self.psf_samples = 10000
@@ -126,7 +126,8 @@ class psf_correction:
             self.f_ary = loadpsf[0]
             self.df_rho_div_f_ary = loadpsf[1]
 
-    def make_dirs(self, dirs):
+    @staticmethod
+    def make_dirs(dirs):
         """ Creates directories if they do not already exist
         """
 

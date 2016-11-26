@@ -72,7 +72,7 @@ arguments determine the parameters of the mask. If multiple options are set to
 |                 |              | \ ``ring_l``  |
 |                 |              | )             |
 +-----------------+--------------+---------------+
-| ``custom_mask`` | ``[]``       | Optional      |
+| ``custom_mask`` | ``None``     | Optional      |
 |                 |              | user-provided |
 |                 |              | mask          |
 +-----------------+--------------+---------------+

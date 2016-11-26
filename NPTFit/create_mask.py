@@ -1,5 +1,5 @@
 ###############################################################################
-# Create Mask
+# create_mask.py
 ###############################################################################
 #
 # Creates a Boolean mask where pixels labelled as true are masked and those
@@ -64,7 +64,7 @@ def make_mask_total(nside=128,
                     b_mask=False, b_deg_min=-30, b_deg_max=30,
                     mask_ring=False, inner=0, outer=30,
                     ring_b=0, ring_l=0,
-                    custom_mask=[]):
+                    custom_mask=None):
     """ Combines band, l, b, ring, and custom masks into a single mask
     """
 
@@ -84,7 +84,7 @@ def make_mask_total(nside=128,
     if mask_ring:
         mask_array += make_ring_mask(inner, outer, ring_b, ring_l, nside)
 
-    if len(custom_mask) != 0:
+    if custom_mask is not None:
         mask_array += custom_mask
 
     return mask_array

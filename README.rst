@@ -3,7 +3,7 @@ NPTFit
 
 **Non-Poissonian template fitting in Python/Cython**
 
-|Documentation Status| |License: MIT|
+|Build Status| |Code Coverage| |Documentation Status| |License: MIT|
 
 AUTHORS
 -------
@@ -27,7 +27,8 @@ Out of the box, NPTFit relies on `MultiNest <https://ccpforge.cse.rl.ac.uk/gf/pr
 installed and linked prior to use. 
 
 NPTFit supports both Python 2 and 3, specifically 2.7 and 3.5. It may work with earlier 3.* versions, although this has not been tested.
-Make sure Cython is installed (*e.g.* :code:`pip install Cython`). NPTFit along with it's dependent Python packages can then be installed with 
+
+Make sure Cython is installed (*e.g.* :code:`pip install Cython`). NPTFit along with it's dependent Python packages can then be installed with
 
 .. code:: sh
 
@@ -42,6 +43,7 @@ which also builds the Cython modules. To just compile the Cython modules locally
 The code is parallelizable through MPI (*e.g.* `OpenMPI <https://www.open-mpi.org/software/ompi/v2.0/>`_), which can
 considerably speed up computationally intensive scans. This requires the MPI4py Python package for use with MultiNest, which
 can be installed, for example, with ``pip``:
+
 
 .. code:: sh
 
@@ -69,8 +71,8 @@ NPTFit.
     import numpy as np
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
-    from NPTFit import psf_correction as pc # module for determining the PSF correction
-    from NPTFit import dnds_analysis # module for analysing the output
+    from NPTFit import PSFCorrection as pc # module for determining the PSF correction
+    from NPTFit import Analysis # module for analysing the output
 
     # Initiate NPTF
     n = nptfit.NPTF()
@@ -96,7 +98,7 @@ NPTFit.
                           fixed_params = [[3,22.]])
 
     # Calculate the PSF Correction
-    pc_inst = pc.psf_correction(psf_sigma_deg=0.1812)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary = pc_inst.f_ary
     df_rho_div_f_ary = pc_inst.df_rho_div_f_ary
 
@@ -123,7 +125,12 @@ Problems with the code should be reported to the authors, or preferably
 noted through the `issue
 tracker <https://github.com/bsafdi/NPTFit/issues>`__.
 
+.. |Code Coverage| image:: https://codecov.io/gh/smsharma/NPTFit/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/smsharma/NPTFit
+.. |Build Status| image:: https://travis-ci.org/smsharma/NPTFit.svg?branch=master
+   :target: https://travis-ci.org/smsharma/NPTFit
 .. |Documentation Status| image:: https://readthedocs.org/projects/nptfit/badge/?version=latest
    :target: http://nptfit.readthedocs.io/en/latest/?badge=latest
 .. |License: MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
    :target: https://opensource.org/licenses/MIT
+
