@@ -59,7 +59,7 @@ class ConfigMaps(SetDirs):
 
         self.mask_total = external_mask
 
-    def add_template(self, template, label):
+    def add_template(self, template, label, units='counts'):
         """ Function to add a template to the template dictionary and array
 
             Note templates should be exposure corrected, so that they model
@@ -68,8 +68,20 @@ class ConfigMaps(SetDirs):
             :param template: Map of the spatial template
             :param label: String used to identify the template in
             subsequent calls
+            :param units: Units of provided template. By default
+            'counts': Template in photon counts
+            'flux': Template in fluxes with units ph/cm^2/s
+
+            .. note:: The exposure must be provided prior to adding a flux
+            template. This is then multipleid by the exposure.
         """
 
+        if units == 'flux':
+            assert (len(self.exposure_map) != 0), \
+                "Must provide exposure map before adding a flux template"
+            assert (len(self.exposure_map) == len(template)), \
+                "Template must be the same shape as the exposure map"
+            template *= self.exposure_map
         self.templates_dict.update({label: template})
         self.templates.append(template)
 

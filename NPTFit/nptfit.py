@@ -25,10 +25,10 @@ class NPTF(NPTFScan):
             Takes PSF parameters as input -- determined in PSFCorrection
 
             :param f_ary: Photon leakage probabilities characterizing PSF,
-                   sum(f_ary) = 1.0
+            sum(f_ary) = 1.0
             :param df_rho_div_f_ary: df*rho(f)/f for integrating over f as a sum
-                   Defaults to these being a delta function, which is the case if
-                   there is no PSF correction
+            Defaults to these being a delta function, which is the case if
+            there is no PSF correction
             :param nexp: Number of exposure regions to calculate the NPTF within
         """
 
