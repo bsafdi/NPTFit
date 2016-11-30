@@ -21,16 +21,15 @@ from .set_dirs import SetDirs  # Module for creating directories
 
 
 class ConfigMaps(SetDirs):
-    def __init__(self, tag='Untagged', work_dir=None, psf_dir=None):
+    def __init__(self, tag='Untagged', work_dir=None):
         """
             :param tag: Label associated with the scan
             :param work_dir: Location where all the output from the
             scan is stored
-            :param psf_dir: Where to save PSF correction files
         """
 
         # Setup the directories needed by the code
-        SetDirs.__init__(self, tag=tag, work_dir=work_dir, psf_dir=psf_dir)
+        SetDirs.__init__(self, tag=tag, work_dir=work_dir)
 
         # Initialise data, exposure and mask
         self.count_map = []

@@ -14,9 +14,9 @@ from .nptf_scan import NPTFScan  # Sets up and performs the scan
 
 
 class NPTF(NPTFScan):
-    def __init__(self, tag='Untagged', work_dir=None, psf_dir=None):
+    def __init__(self, tag='Untagged', work_dir=None):
         # Initialise NPTFScan
-        NPTFScan.__init__(self, tag=tag, work_dir=work_dir, psf_dir=psf_dir)
+        NPTFScan.__init__(self, tag=tag, work_dir=work_dir)
 
     def configure_for_scan(self, f_ary=np.array([1.0]), 
                            df_rho_div_f_ary=np.array([1.0]), nexp=1):
