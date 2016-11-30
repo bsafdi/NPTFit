@@ -16,11 +16,11 @@ extensions = [
 
 setup(
     name='NPTFit',
-    version='0.1dev',
+    version='0.1pre0',
     description='A Python package for Non-Poissonian Template Fitting',
     url='https://github.com/bsafdi/NPTFit',
-    author='Benjamin Safdi',
-    author_email='bsafdi@princeton.edu',
+    author='Siddharth Mishra-Sharma',
+    author_email='smsharma@princeton.edu',
     license='MIT',
     install_requires=[
             'numpy',

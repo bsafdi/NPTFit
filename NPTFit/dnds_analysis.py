@@ -23,10 +23,10 @@ import corner
 class Analysis:
     """ Class to analyze results of an NPTF.
 
-        nptf: an instance of nptfit.NPTF, where load_scan() has been performed
-        mask: if analysis is to be performed in a different ROI to run, insert
-              the analysis mask here
-        pixarea: if using a non-HEALPix map, insert the area of a pixel (in sr)
+        :param nptf: an instance of nptfit.NPTF, where load_scan() has been performed
+        :param mask: if analysis is to be performed in a different ROI to run, insert
+        the analysis mask here
+        :param pixarea: if using a non-HEALPix map, insert the area of a pixel (in sr)
     """
 
     def __init__(self, nptf, mask=None, pixarea=0.):
@@ -47,11 +47,11 @@ class Analysis:
                                           nsteps=10000, counts=False):
         """ Return intensity quantiles of a non-Poissonian template
 
-            comp: key of non-Poissonian template
-            smin: minimum count to "integrate" dnds from
-            smax: maximum count to "integrate" dnds to
-            nsteps: number of count bins in sum approximation of integral
-            count: whether to return counts (or intensities, by default)
+            :param comp: key of non-Poissonian template
+            :param smin: minimum count to "integrate" dnds from
+            :param smax: maximum count to "integrate" dnds to
+            :param nsteps: number of count bins in sum approximation of integral
+            :param counts: whether to return counts (or intensities, by default)
         """
 
         template = self.nptf.templates_dict_nested[comp]['template']
@@ -86,7 +86,8 @@ class Analysis:
     def return_intensity_arrays_poiss(self, comp, counts=False):
         """ Return intensity arrays of a Poissonian template
 
-            count: whether to return counts (or intensities, by default)
+            :param comp: key of Poissonian template
+            :param counts: whether to return counts (or intensities, by default)
         """
 
         template = self.nptf.templates_dict_nested[comp]['template']
@@ -208,12 +209,12 @@ class Analysis:
                                qs=[0.16, 0.5, 0.84], spow=0, *args, **kwargs):
         """ Calculate and plot median source count function
 
-            comp: key of non-Poissonian template
-            smin: minimum count to plot
-            smax: maximum count to plot
-            nsteps: binning in counts s
-            qs: source count quartles to plot
-            spow: plotting s**spow*dn/ds
+            :param comp: key of non-Poissonian template
+            :param smin: minimum count to plot
+            :param smax: maximum count to plot
+            :param nsteps: binning in counts s
+            :param qs: source count quartles to plot
+            :param spow: plotting s**spow*dn/ds
             **kwargs: plotting options
         """
 
@@ -238,9 +239,9 @@ class Analysis:
                                           ls_vert='dashed', *args, **kwargs):
         """ Plot flux fraction of a non-Poissonian template
 
-            bins: flux fraction bins
-            color_vert: colour of vertical quartile lines
-            ls_vert: matplotlib linestyle of vertical quartile lines
+            :param bins: flux fraction bins
+            :param color_vert: colour of vertical quartile lines
+            :param ls_vert: matplotlib linestyle of vertical quartile lines
             **kwargs: plotting options
         """
 
@@ -290,12 +291,7 @@ class Analysis:
     def return_poiss_parameter_posteriors(self, comp):
         """ Return posterior samples corresponding to individual parameters.
 
-            Returns:
-                self.aps_ary: sample normalization values
-                self.n_ary_ary: sampled slopes, each sub-array corresponding to
-                    samples for that slope (highest to lowest).
-                self.sb_ary_ary: sampled breaks, each sub-array corresponding to
-                    samples for that break (highest to lowest).
+            :return: sample normalization values
         """
 
         self.samples_reduced_ary = [self.return_poiss_samples(comp, sample)
@@ -305,12 +301,12 @@ class Analysis:
     def return_non_poiss_parameter_posteriors(self, comp):
         """ Return posterior samples corresponding to individual parameters.
 
-            Returns:
-                self.aps_ary: sample normalization values
-                self.n_ary_ary: sampled slopes, each sub-array corresponding to
-                    samples for that slope (highest to lowest).
-                self.sb_ary_ary: sampled breaks, each sub-array corresponding to
-                    samples for that break (highest to lowest).
+            :return: sample non-Poissonian posterior values values, list with
+            self.aps_ary: sample normalization values
+            self.n_ary_ary: sampled slopes, each sub-array corresponding to
+                samples for that slope (highest to lowest).
+            self.sb_ary_ary: sampled breaks, each sub-array corresponding to
+                samples for that break (highest to lowest).
         """
 
         self.samples_reduced_ary = [self.return_non_poiss_samples(comp, sample)

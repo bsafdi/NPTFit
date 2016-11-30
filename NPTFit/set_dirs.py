@@ -10,10 +10,9 @@ import os
 
 
 class SetDirs:
-    def __init__(self, tag='Untagged', work_dir=None, psf_dir=None):
+    def __init__(self, tag='Untagged', work_dir=None):
         """ :param tag: label associated with the scan
             :param work_dir: location where all output from the run is stored
-            :param psf_dir: location of the PSFCorrection
         """
         
         self.tag = tag
@@ -24,14 +23,12 @@ class SetDirs:
             self.work_dir = os.getcwd() + '/'
         else:
             self.work_dir = work_dir
-        if psf_dir is None:
-            self.psf_dir = self.work_dir + 'psf_dir/'
-        
+
         # Chains directories, where the output of 
         self.chains_base_dir = self.work_dir + 'chains/'
         self.chains_dir = self.chains_base_dir + self.tag + '/'
 
-        self.make_dirs([self.psf_dir, self.chains_base_dir, self.chains_dir])
+        self.make_dirs([self.chains_base_dir, self.chains_dir])
         
     def make_dirs_for_run(self, run_tag=None):
         """ Set up the directory for the run itself, called at the time of 

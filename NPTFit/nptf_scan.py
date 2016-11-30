@@ -27,11 +27,11 @@ from .config_maps import ConfigMaps  # Setup maps and templates for the run
 
 
 class NPTFScan(ConfigMaps):
-    def __init__(self, tag='Untagged', work_dir=None, psf_dir=None):
+    def __init__(self, tag='Untagged', work_dir=None):
         # Initialise ConfigMaps, creates base directories and allows user
         # to input maps, masks, and templates
 
-        ConfigMaps.__init__(self, tag=tag, work_dir=work_dir, psf_dir=psf_dir)
+        ConfigMaps.__init__(self, tag=tag, work_dir=work_dir)
 
         self.already_loaded = False
 

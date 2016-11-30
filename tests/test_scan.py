@@ -97,3 +97,6 @@ def test_scan_poiss():
     assert(True)
 
     return None
+
+test_scan_poiss()
+test_scan()
