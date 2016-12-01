@@ -125,10 +125,10 @@ Problems with the code should be reported to the authors, or preferably
 noted through the `issue
 tracker <https://github.com/bsafdi/NPTFit/issues>`__.
 
-.. |Code Coverage| image:: https://codecov.io/gh/smsharma/NPTFit/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/smsharma/NPTFit
-.. |Build Status| image:: https://travis-ci.org/smsharma/NPTFit.svg?branch=master
-   :target: https://travis-ci.org/smsharma/NPTFit
+.. |Code Coverage| image:: https://codecov.io/gh/bsafdi/NPTFit/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/bsafdi/NPTFit
+.. |Build Status| image:: https://travis-ci.org/bsafdi/NPTFit.svg?branch=master
+   :target: https://travis-ci.org/bsafdi/NPTFit
 .. |Documentation Status| image:: https://readthedocs.org/projects/nptfit/badge/?version=latest
    :target: http://nptfit.readthedocs.io/en/latest/?badge=latest
 .. |License: MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
