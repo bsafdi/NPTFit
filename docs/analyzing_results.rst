@@ -131,7 +131,7 @@ For Poissonian models, this returns a list of posterior normalizaion parameters 
 
 .. code:: python
 
-    >>> A_non_poiss_post, n_non_poiss_post, Sb_non_poiss_post = an.return_poiss_parameter_posteriors(comp)
+    >>> A_non_poiss_post, n_non_poiss_post, Sb_non_poiss_post = an.return_non_poiss_parameter_posteriors(comp)
 
 where 
 
