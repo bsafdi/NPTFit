@@ -38,7 +38,6 @@ and also explains why the run needs MPI.
     import numpy as np
     import corner
     import matplotlib.pyplot as plt
-    from matplotlib import rcParams
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
@@ -46,19 +45,6 @@ and also explains why the run needs MPI.
     from NPTFit import psf_correction as pc # module for determining the PSF correction
     
     from __future__ import print_function
-
-.. code:: python
-
-    # Set plotting options
-    rcParams['xtick.labelsize'] = 20
-    rcParams['ytick.labelsize'] = 20
-    rcParams['axes.labelsize'] = 20
-    rcParams['axes.titlesize'] = 20
-    rcParams['font.family'] = 'serif'
-    rcParams['font.serif'] = 'CMU Serif'
-    rcParams['figure.figsize'] = (7,5)
-    rcParams['legend.fontsize'] = 16
-    # rcParams['text.usetex'] = True
 
 Load in scan
 ------------
@@ -113,7 +99,7 @@ performed using MPI.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
 .. code:: python
@@ -135,7 +121,7 @@ Finally, load the completed scan performed using MPI.
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit-Python3/examples/chains/HighLat_Example/.txt
+      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/HighLat_Example/.txt
 
 
 Analysis
@@ -158,7 +144,7 @@ option is provided.
 
 
 
-.. image:: Example9_HighLat_Analysis_files/Example9_HighLat_Analysis_20_0.png
+.. image:: Example9_HighLat_Analysis_files/Example9_HighLat_Analysis_19_0.png
 
 
 2. Get Intensities
@@ -192,8 +178,8 @@ option is provided.
     plt.ylim([5e-14,1e-11])
     plt.tick_params(axis='x', length=5, width=2, labelsize=18)
     plt.tick_params(axis='y', length=5, width=2, labelsize=18)
-    plt.ylabel('$F^2 dN/dF$ [counts/cm$^2$/s/deg$^2$]', fontsize=18)
-    plt.xlabel('$F$  [counts/cm$^2$/s]', fontsize=18)
+    plt.ylabel('$F^2 dN/dF$ [counts cm$^{-2}$s$^{-1}$deg$^{-2}$]', fontsize=18)
+    plt.xlabel('$F$  [counts cm$^{-2}$ s$^{-1}$]', fontsize=18)
     plt.title('High Latitudes Isotropic NPTF', y=1.02)
 
 
@@ -201,12 +187,12 @@ option is provided.
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x2b1724a1a290>
+    <matplotlib.text.Text at 0x2abf38af4ad0>
 
 
 
 
-.. image:: Example9_HighLat_Analysis_files/Example9_HighLat_Analysis_24_1.png
+.. image:: Example9_HighLat_Analysis_files/Example9_HighLat_Analysis_23_1.png
 
 
 4. Plot Intensity Fractions
@@ -219,19 +205,11 @@ option is provided.
     an.plot_intensity_fraction_poiss('dif', bins=800, color='plum', label='Dif')
     plt.xlabel('Flux fraction (%)')
     plt.legend(fancybox = True)
-    plt.xlim(0,80)
+    plt.xlim(0,80);
 
 
 
-
-.. parsed-literal::
-
-    (0, 80)
-
-
-
-
-.. image:: Example9_HighLat_Analysis_files/Example9_HighLat_Analysis_26_1.png
+.. image:: Example9_HighLat_Analysis_files/Example9_HighLat_Analysis_25_0.png
 
 
 5. Access Parameter Posteriors
@@ -263,7 +241,7 @@ Poissonian parameters
 
 
 
-.. image:: Example9_HighLat_Analysis_files/Example9_HighLat_Analysis_30_0.png
+.. image:: Example9_HighLat_Analysis_files/Example9_HighLat_Analysis_29_0.png
 
 
 Non-poissonian parameters
@@ -307,5 +285,5 @@ Non-poissonian parameters
 
 
 
-.. image:: Example9_HighLat_Analysis_files/Example9_HighLat_Analysis_33_0.png
+.. image:: Example9_HighLat_Analysis_files/Example9_HighLat_Analysis_32_0.png
 

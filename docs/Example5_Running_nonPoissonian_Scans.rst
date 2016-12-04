@@ -30,19 +30,6 @@ be installed. See Example 1 for details.
     from NPTFit import psf_correction as pc # module for determining the PSF correction
     from NPTFit import dnds_analysis # module for analysing the output
 
-.. code:: python
-
-    # Set plotting options
-    rcParams['xtick.labelsize'] = 20
-    rcParams['ytick.labelsize'] = 20
-    rcParams['axes.labelsize'] = 20
-    rcParams['axes.titlesize'] = 20
-    rcParams['font.family'] = 'serif'
-    rcParams['font.serif'] = 'CMU Serif'
-    rcParams['figure.figsize'] = (7,5)
-    rcParams['legend.fontsize'] = 16
-    # rcParams['text.usetex'] = True
-
 Step 1: Setup an instance of NPTFit, add data, mask and templates
 -----------------------------------------------------------------
 
@@ -143,7 +130,7 @@ of the code.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
     The number of parameters to be fit is 3
 
 
@@ -175,7 +162,7 @@ example.
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit-bsafdi/examples/chains/non-Poissonian_Example/.txt
+      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/non-Poissonian_Example/.txt
 
 
 .. parsed-literal::
@@ -191,7 +178,7 @@ example.
 
 
 
-.. image:: Example5_Running_nonPoissonian_Scans_files/Example5_Running_nonPoissonian_Scans_21_2.png
+.. image:: Example5_Running_nonPoissonian_Scans_files/Example5_Running_nonPoissonian_Scans_20_2.png
 
 
 We also show a plot of the source count function, although a careful
@@ -208,19 +195,18 @@ explanation of the details here are deferred until Example 8.
     plt.ylim([1e-16,1e-10])
     plt.tick_params(axis='x', length=5,width=2,labelsize=18)
     plt.tick_params(axis='y',length=5,width=2,labelsize=18)
-    plt.xlabel('$F$  [counts/cm$^2$/s]', fontsize=18)
-    plt.ylabel('$F^2 dN/dF$ [counts/cm$^2$/s/deg$^2$]', fontsize=18)
+    plt.ylabel('$F^2 dN/dF$ [counts cm$^{-2}$s$^{-1}$deg$^{-2}$]', fontsize=18)
+    plt.xlabel('$F$  [counts cm$^{-2}$ s$^{-1}$]', fontsize=18)
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x2b61a162d590>
+    <matplotlib.text.Text at 0x2b37c5629ed0>
 
 
 
 
-.. image:: Example5_Running_nonPoissonian_Scans_files/Example5_Running_nonPoissonian_Scans_23_1.png
-
+.. image:: Example5_Running_nonPoissonian_Scans_files/Example5_Running_nonPoissonian_Scans_22_1.png
 

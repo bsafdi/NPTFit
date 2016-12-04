@@ -26,23 +26,10 @@ be installed. See Example 1 for details.
     import numpy as np
     import corner
     import matplotlib.pyplot as plt
-    from matplotlib import rcParams
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
     from NPTFit import dnds_analysis # module for analysing the output
-
-.. code:: python
-
-    # Set plotting options
-    rcParams['xtick.labelsize'] = 20
-    rcParams['ytick.labelsize'] = 20
-    rcParams['axes.labelsize'] = 20
-    rcParams['axes.titlesize'] = 20
-    rcParams['font.family'] = 'serif'
-    rcParams['font.serif'] = 'CMU Serif'
-    rcParams['legend.fontsize'] = 16
-    # rcParams['text.usetex'] = True
 
 Step 1: Setting up an instance of NPTFit
 ----------------------------------------
@@ -310,11 +297,11 @@ make a triangle plot.
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit-bsafdi/examples/chains/Poissonian_Example/.txt
+      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/Poissonian_Example/.txt
 
 
 
-.. image:: Example3_Running_Poissonian_Scans_files/Example3_Running_Poissonian_Scans_27_1.png
+.. image:: Example3_Running_Poissonian_Scans_files/Example3_Running_Poissonian_Scans_26_1.png
 
 
 The triangle plot makes it clear that a non-zero value of the GCE
@@ -333,18 +320,9 @@ by the diffuse model.
     an.plot_intensity_fraction_poiss('bub', bins=800, color='plum', label='Bub')
     plt.xlabel('Flux fraction (%)')
     plt.legend(fancybox = True)
-    plt.xlim(0,8)
+    plt.xlim(0,8);
 
 
 
-
-.. parsed-literal::
-
-    (0, 8)
-
-
-
-
-.. image:: Example3_Running_Poissonian_Scans_files/Example3_Running_Poissonian_Scans_30_1.png
-
+.. image:: Example3_Running_Poissonian_Scans_files/Example3_Running_Poissonian_Scans_29_0.png
 

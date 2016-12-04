@@ -25,7 +25,6 @@ be installed. See Example 1 for details.
     import numpy as np
     import healpy as hp
     import matplotlib.pyplot as plt
-    from matplotlib import rcParams
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
@@ -33,20 +32,6 @@ be installed. See Example 1 for details.
     from NPTFit import dnds_analysis # module for analysing the output
     
     from __future__ import print_function
-
-.. code:: python
-
-    # Set plotting options
-    rcParams['xtick.labelsize'] = 20
-    rcParams['ytick.labelsize'] = 20
-    rcParams['axes.labelsize'] = 20
-    rcParams['axes.titlesize'] = 20
-    rcParams['font.family'] = 'serif'
-    rcParams['font.serif'] = 'CMU Serif'
-    rcParams['figure.figsize'] = (7,5)
-    rcParams['legend.fontsize'] = 16
-    rcParams['lines.linewidth'] = 1.5
-    # rcParams['text.usetex'] = True
 
 Setup an identical instance of NPTFit to Example 5
 --------------------------------------------------
@@ -130,14 +115,18 @@ parameters:
 
 .. parsed-literal::
 
-    /group/hepheno/heptools/anaconda3/envs/venv_py27/lib/python2.7/site-packages/NPTFit-0.1.dev0-py2.7-linux-x86_64.egg/NPTFit/nptf_scan.py:427: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+    Vary A:  -587.546407526 -587.02757201 -588.170002713
+    Vary n1: -588.440076554 -587.02757201 -586.815912499
 
 
 .. parsed-literal::
 
-    Vary A:  -587.547654572 -587.028395246 -588.170444658
-    Vary n1: -588.44159824 -587.028395246 -586.816597839
-    Vary n2: -587.142083427 -587.028395246 -587.082731715
+    /group/hepheno/heptools/anaconda3/envs/venv_py27/lib/python2.7/site-packages/NPTFit-0.1rc0-py2.7-linux-x86_64.egg/NPTFit/nptf_scan.py:416: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+
+
+.. parsed-literal::
+
+    Vary n2: -587.141423107 -587.02757201 -587.081816027
 
 
 To make the point clearer we can fix :math:`n_1` and :math:`n_2` to
@@ -153,7 +142,7 @@ us was the best fit point for this parameter.
 
 .. code:: python
 
-    plt.plot(Avals,TSvals_A,color='black')
+    plt.plot(Avals,TSvals_A,color='black', lw=1.5)
     plt.axvline(-3.52+0.22,ls='dashed',color='black')
     plt.axvline(-3.52,ls='dashed',color='black')
     plt.axvline(-3.52-0.24,ls='dashed',color='black')
@@ -166,7 +155,7 @@ us was the best fit point for this parameter.
 
 
 
-.. image:: Example6_Manual_nonPoissonian_Likelihood_files/Example6_Manual_nonPoissonian_Likelihood_18_0.png
+.. image:: Example6_Manual_nonPoissonian_Likelihood_files/Example6_Manual_nonPoissonian_Likelihood_17_0.png
 
 
 Next we do the same thing for :math:`n_2`. This time we see that this
@@ -184,7 +173,7 @@ involves :math:`(n-1)^{-1}`.
 
 .. code:: python
 
-    plt.plot(n2vals,TSvals_n2,color='black')
+    plt.plot(n2vals,TSvals_n2,color='black', lw=1.5)
     plt.axvline(-0.48+1.18,ls='dashed',color='black')
     plt.axvline(-0.48,ls='dashed',color='black')
     plt.axvline(-0.48-1.02,ls='dashed',color='black')
@@ -197,7 +186,7 @@ involves :math:`(n-1)^{-1}`.
 
 
 
-.. image:: Example6_Manual_nonPoissonian_Likelihood_files/Example6_Manual_nonPoissonian_Likelihood_21_0.png
+.. image:: Example6_Manual_nonPoissonian_Likelihood_files/Example6_Manual_nonPoissonian_Likelihood_20_0.png
 
 
 In general :math:`\theta` will always be a flattened array of the

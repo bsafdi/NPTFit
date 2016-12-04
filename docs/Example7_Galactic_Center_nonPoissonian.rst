@@ -141,7 +141,7 @@ run finishes in a reasonable time on a single core.
 
     n.perform_scan(nlive=100)
 
-This can take up to an hour to run. The output of this run will be
+This can take **up to an hour to run**. The output of this run will be
 analyzed in detail in the next example.
 
 .. code:: python

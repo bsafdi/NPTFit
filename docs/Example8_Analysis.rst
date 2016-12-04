@@ -26,7 +26,6 @@ results below should be interpreted only as approximate.
     import numpy as np
     import corner
     import matplotlib.pyplot as plt
-    from matplotlib import rcParams
     
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
@@ -34,20 +33,6 @@ results below should be interpreted only as approximate.
     from NPTFit import psf_correction as pc # module for determining the PSF correction
     
     from __future__ import print_function
-
-.. code:: python
-
-    # Set plotting options
-    rcParams['xtick.labelsize'] = 20
-    rcParams['ytick.labelsize'] = 20
-    rcParams['axes.labelsize'] = 20
-    rcParams['axes.titlesize'] = 20
-    rcParams['font.family'] = 'serif'
-    rcParams['font.serif'] = 'CMU Serif'
-    rcParams['figure.figsize'] = (7,5)
-    rcParams['legend.fontsize'] = 16
-    rcParams['lines.linewidth'] = 1.5
-    # rcParams['text.usetex'] = True
 
 Analysis
 --------
@@ -115,7 +100,7 @@ loaded with ``n.load_scan()``.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-Python3/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
 .. code:: python
@@ -138,7 +123,7 @@ performed in Example 7.
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit-Python3/examples/chains/GCE_Example/.txt
+      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/GCE_Example/.txt
 
 
 Analysis
@@ -204,7 +189,7 @@ as follows.
 
 
 
-.. image:: Example8_Analysis_files/Example8_Analysis_26_0.png
+.. image:: Example8_Analysis_files/Example8_Analysis_25_0.png
 
 
 To use your own custom plotting options, use corner as follows
@@ -282,8 +267,8 @@ middle 68% and medians for the GCE and disk non-Poissonian templates:
 
 .. code:: python
 
-    print(corner.quantile(an.return_dNdF_arrays('gce',1e-12),[0.16,0.5,0.84]))
-    print(corner.quantile(an.return_dNdF_arrays('dsk',1e-12),[0.16,0.5,0.84]))
+    print(corner.quantile(an.return_dndf_arrays('gce',1e-12),[0.16,0.5,0.84]))
+    print(corner.quantile(an.return_dndf_arrays('dsk',1e-12),[0.16,0.5,0.84]))
 
 
 .. parsed-literal::
@@ -302,32 +287,36 @@ The source count distribution can be plotted with
 The options being the same as for obtaining the NPT intensity above.
 Additionally, ``spow`` is the power :math:`n` in :math:`F^ndN/dF` to
 return while plotting, and ``qs`` is an array of quantiles for which to
-return the dN/dF band.
+return the dN/dF band. We plot here the median in addition to 68% and
+95% confidence intervals.
 
 .. code:: python
 
-    an.plot_source_count_median('dsk',smin=0.01,smax=1000,nsteps=1000,color='cornflowerblue',spow=2,label='Disk')
-    an.plot_source_count_band('dsk',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='cornflowerblue',alpha=0.3,spow=2)
+    an.plot_source_count_median('dsk',smin=0.01,smax=1000,nsteps=1000,color='royalblue',spow=2,label='Disk PS')
+    an.plot_source_count_band('dsk',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='royalblue',alpha=0.15,spow=2)
+    an.plot_source_count_band('dsk',smin=0.01,smax=1000,nsteps=1000,qs=[0.025,0.5,0.975],color='royalblue',alpha=0.1,spow=2)
     
-    an.plot_source_count_median('gce',smin=0.01,smax=1000,nsteps=1000,color='forestgreen',spow=2,label='GCE')
-    an.plot_source_count_band('gce',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='forestgreen',alpha=0.3,spow=2)
+    
+    an.plot_source_count_median('gce',smin=0.01,smax=1000,nsteps=1000,color='firebrick',spow=2,label='GCE PS')
+    an.plot_source_count_band('gce',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='firebrick',alpha=0.15,spow=2)
+    an.plot_source_count_band('gce',smin=0.01,smax=1000,nsteps=1000,qs=[0.025,0.5,0.975],color='firebrick',alpha=0.1,spow=2)
+    
     
     plt.yscale('log')
     plt.xscale('log')
-    plt.xlim([5e-11,5e-9])
+    plt.xlim([1e-10,4e-9])
     plt.ylim([2e-13,1e-10])
+    
     plt.tick_params(axis='x', length=5, width=2, labelsize=18)
     plt.tick_params(axis='y', length=5, width=2, labelsize=18)
-    plt.ylabel('$F^2 dN/dF$ [counts/cm$^2$/s/deg$^2$]', fontsize=18)
-    plt.xlabel('$F$  [counts/cm$^2$/s]', fontsize=18)
-    plt.title('Galactic Center NPTF', y=1.02)
-    plt.legend(fancybox=True)
-    plt.tight_layout()
-    plt.savefig("GCE-NPTF-SourceCount.png")
+    plt.ylabel('$F^2 dN/dF$ [counts cm$^{-2}$s$^{-1}$deg$^{-2}$]', fontsize=18)
+    plt.xlabel('$F$  [counts cm$^{-2}$ s$^{-1}$]', fontsize=18)
+    plt.title(r'Galactic Center NPTF', y=1.02)
+    plt.legend(fancybox=True);
 
 
 
-.. image:: Example8_Analysis_files/Example8_Analysis_35_0.png
+.. image:: Example8_Analysis_files/Example8_Analysis_34_0.png
 
 
 As some references also show :math:`dN/dF`, and we give an example of it
@@ -335,11 +324,15 @@ below, also demonstrating the use of ``spow``.
 
 .. code:: python
 
-    an.plot_source_count_median('dsk',smin=0.01,smax=1000,nsteps=1000,color='cornflowerblue',spow=0,label='Disk')
-    an.plot_source_count_band('dsk',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='cornflowerblue',alpha=0.3,spow=0)
+    an.plot_source_count_median('dsk',smin=0.01,smax=1000,nsteps=1000,color='royalblue',spow=0,label='Disk PS')
+    an.plot_source_count_band('dsk',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='royalblue',alpha=0.15,spow=0)
+    an.plot_source_count_band('dsk',smin=0.01,smax=1000,nsteps=1000,qs=[0.025,0.5,0.975],color='royalblue',alpha=0.1,spow=0)
     
-    an.plot_source_count_median('gce',smin=0.01,smax=1000,nsteps=1000,color='forestgreen',spow=0,label='GCE')
-    an.plot_source_count_band('gce',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='forestgreen',alpha=0.3,spow=0)
+    
+    an.plot_source_count_median('gce',smin=0.01,smax=1000,nsteps=1000,color='firebrick',spow=0,label='GCE PS')
+    an.plot_source_count_band('gce',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='firebrick',alpha=0.15,spow=0)
+    an.plot_source_count_band('gce',smin=0.01,smax=1000,nsteps=1000,qs=[0.025,0.5,0.975],color='firebrick',alpha=0.1,spow=0)
+    
     
     plt.yscale('log')
     plt.xscale('log')
@@ -347,22 +340,14 @@ below, also demonstrating the use of ``spow``.
     plt.ylim([2e5,2e9])
     plt.tick_params(axis='x', length=5, width=2, labelsize=18)
     plt.tick_params(axis='y', length=5, width=2, labelsize=18)
-    plt.ylabel('$dN/dF$ [counts$^{-1}$cm$^2$ s/deg$^2$]', fontsize=18)
-    plt.xlabel('$F$  [counts/cm$^2$/s]', fontsize=18)
+    plt.ylabel('$dN/dF$ [counts$^{-1}$cm$^2$ s deg$^{-2}$]', fontsize=18)
+    plt.xlabel('$F$  [counts cm$^{-2}$ s$^{-1}$]', fontsize=18)
     plt.title('Galactic Center NPTF', y=1.02)
-    plt.legend(fancybox=True)
+    plt.legend(fancybox=True);
 
 
 
-
-.. parsed-literal::
-
-    <matplotlib.legend.Legend at 0x2b5e6d4d37d0>
-
-
-
-
-.. image:: Example8_Analysis_files/Example8_Analysis_37_1.png
+.. image:: Example8_Analysis_files/Example8_Analysis_36_0.png
 
 
 4. Plot Intensity Fractions
@@ -382,23 +367,16 @@ between 0 and 100 and ``**kwargs`` specify plotting options.
 
 .. code:: python
 
-    an.plot_intensity_fraction_non_poiss('gce', bins=800, color='cornflowerblue', label='GCE PS')
-    an.plot_intensity_fraction_poiss('gce', bins=800, color='lightsalmon', label='GCE DM')
+    an.plot_intensity_fraction_non_poiss('gce', bins=800, color='firebrick', label='GCE PS')
+    an.plot_intensity_fraction_poiss('gce', bins=800, color='forestgreen', label='GCE DM')
     plt.xlabel('Flux fraction (%)')
     plt.legend(fancybox = True)
-    plt.xlim(0,6)
+    plt.xlim(0,6);
+    plt.ylim(0,.3);
 
 
 
-
-.. parsed-literal::
-
-    (0, 6)
-
-
-
-
-.. image:: Example8_Analysis_files/Example8_Analysis_40_1.png
+.. image:: Example8_Analysis_files/Example8_Analysis_39_0.png
 
 
 This plot makes it clear, that when given the choice, the fit prefers to
@@ -451,7 +429,7 @@ These can then be use in any way required, for example simply plotted:
 
 
 
-.. image:: Example8_Analysis_files/Example8_Analysis_48_0.png
+.. image:: Example8_Analysis_files/Example8_Analysis_47_0.png
 
 
 Non-poissonian parameters
@@ -489,7 +467,7 @@ A similar syntax can be used to extract the non-Poissonian parameters.
 
 
 
-.. image:: Example8_Analysis_files/Example8_Analysis_52_0.png
+.. image:: Example8_Analysis_files/Example8_Analysis_51_0.png
 
 
 6. Bayesian log-evidence
@@ -500,8 +478,8 @@ as follows.
 
 .. code:: python
 
-    lBE, lBE_error = an.get_log_evidence()
-    print(lBE, lBE_error)
+    l_be, l_be_err = an.get_log_evidence()
+    print(l_be, l_be_err)
 
 
 .. parsed-literal::

@@ -31,7 +31,6 @@ http://nptfit.readthedocs.io/
     
     import numpy as np
     import healpy as hp
-    from matplotlib import rcParams
     
     from NPTFit import create_mask as cm # Module for creating masks
 

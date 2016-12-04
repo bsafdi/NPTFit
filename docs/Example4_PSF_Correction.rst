@@ -44,21 +44,6 @@ PSF corrections for the runs are stored.
     
     from __future__ import print_function
 
-.. code:: python
-
-    # Set plotting options
-    rcParams['xtick.labelsize'] = 20
-    rcParams['ytick.labelsize'] = 20
-    rcParams['axes.labelsize'] = 20
-    rcParams['axes.titlesize'] = 20
-    rcParams['font.family'] = 'serif'
-    rcParams['font.serif'] = 'CMU Serif'
-    rcParams['figure.figsize'] = (7,5)
-    rcParams['legend.fontsize'] = 16
-    rcParams['lines.linewidth'] = 1.5
-    # rcParams['text.usetex'] = True
-    # rcParams['axes.labelpad'] = 20
-
 Example 1: Default Gaussian PSF
 -------------------------------
 
@@ -77,7 +62,7 @@ dataset we will use in later examples.
     print('f_ary:', f_ary_1)
     print('df_rho_div_f_ary:', df_rho_div_f_ary_1)
     
-    plt.plot(f_ary_1,f_ary_1**2*df_rho_div_f_ary_1/(f_ary_1[1]-f_ary_1[0]),color='black')
+    plt.plot(f_ary_1,f_ary_1**2*df_rho_div_f_ary_1/(f_ary_1[1]-f_ary_1[0]),color='black', lw = 1.5)
     plt.xlabel('$f$')
     plt.ylabel('$f \\times \\rho(f)$')
     plt.title('Gaussian PSF, $\sigma_\mathrm{PSF} = 0.1812$', y=1.04)
@@ -85,22 +70,22 @@ dataset we will use in later examples.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
     f_ary: [ 0.05  0.15  0.25  0.35  0.45  0.55  0.65  0.75  0.85  0.95]
-    df_rho_div_f_ary: [ 65.29144354   6.87136418   2.51677775   1.29076109   0.81095658
-       0.54394155   0.08991201   0.           0.           0.        ]
+    df_rho_div_f_ary: [ 65.37739594   6.86210649   2.51879946   1.29510727   0.80302658
+       0.54293382   0.09285951   0.           0.           0.        ]
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x2ae635334090>
+    <matplotlib.text.Text at 0x2ac73209ed10>
 
 
 
 
-.. image:: Example4_PSF_Correction_files/Example4_PSF_Correction_6_2.png
+.. image:: Example4_PSF_Correction_files/Example4_PSF_Correction_5_2.png
 
 
 Example 2: Impact of changing :math:`\sigma`
@@ -123,9 +108,9 @@ out, leading to a :math:`\rho(f)` peaked at lower flux values.
     f_ary_3 = pc_inst.f_ary
     df_rho_div_f_ary_3 = pc_inst.df_rho_div_f_ary
     
-    plt.plot(f_ary_1,f_ary_1**2*df_rho_div_f_ary_1/(f_ary_1[1]-f_ary_1[0]),color='cornflowerblue',label='0.18')
-    plt.plot(f_ary_2,f_ary_2**2*df_rho_div_f_ary_2/(f_ary_2[1]-f_ary_2[0]),color='forestgreen',label='0.05')
-    plt.plot(f_ary_3,f_ary_3**2*df_rho_div_f_ary_3/(f_ary_3[1]-f_ary_3[0]),color='maroon',label='0.4')
+    plt.plot(f_ary_1,f_ary_1**2*df_rho_div_f_ary_1/(f_ary_1[1]-f_ary_1[0]),color='cornflowerblue',label='0.18', lw = 1.5)
+    plt.plot(f_ary_2,f_ary_2**2*df_rho_div_f_ary_2/(f_ary_2[1]-f_ary_2[0]),color='forestgreen',label='0.05', lw = 1.5)
+    plt.plot(f_ary_3,f_ary_3**2*df_rho_div_f_ary_3/(f_ary_3[1]-f_ary_3[0]),color='maroon',label='0.4', lw = 1.5)
     plt.xlabel('$f$')
     plt.ylabel('$f \\times \\rho(f)$')
     plt.legend(loc='upper right', fancybox=True)
@@ -134,20 +119,20 @@ out, leading to a :math:`\rho(f)` peaked at lower flux values.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.05_10_50000_1000_0.01.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.4_10_50000_1000_0.01.npy
+    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.05_10_50000_1000_0.01.npy
+    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.4_10_50000_1000_0.01.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x2ae632098c90>
+    <matplotlib.text.Text at 0x2ac73583d2d0>
 
 
 
 
-.. image:: Example4_PSF_Correction_files/Example4_PSF_Correction_9_2.png
+.. image:: Example4_PSF_Correction_files/Example4_PSF_Correction_8_2.png
 
 
 Example 3: Changing the default options for determining :math:`\rho(f)`
@@ -208,10 +193,10 @@ must be pursued in calculating :math:`\rho(f)`.
     df_rho_div_f_ary_7 = pc_inst.df_rho_div_f_ary
     
     plt.plot(f_ary_1,f_ary_1**2*df_rho_div_f_ary_1/(f_ary_1[1]-f_ary_1[0]),color='black',label=r'Default', lw=2.2)
-    plt.plot(f_ary_4,f_ary_4**2*df_rho_div_f_ary_4/(f_ary_4[1]-f_ary_4[0]),color='forestgreen',label=r'more f\_bins')
-    plt.plot(f_ary_5,f_ary_5**2*df_rho_div_f_ary_5/(f_ary_5[1]-f_ary_5[0]),color='cornflowerblue',label=r'fewer points')
-    plt.plot(f_ary_6,f_ary_6**2*df_rho_div_f_ary_6/(f_ary_6[1]-f_ary_6[0]),color='salmon',label=r'larger f\_trunc')
-    plt.plot(f_ary_7,f_ary_7**2*df_rho_div_f_ary_7/(f_ary_7[1]-f_ary_7[0]),color='orchid',label=r'lower nside')
+    plt.plot(f_ary_4,f_ary_4**2*df_rho_div_f_ary_4/(f_ary_4[1]-f_ary_4[0]),color='forestgreen',label=r'more f\_bins', lw = 1.5)
+    plt.plot(f_ary_5,f_ary_5**2*df_rho_div_f_ary_5/(f_ary_5[1]-f_ary_5[0]),color='cornflowerblue',label=r'fewer points', lw = 1.5)
+    plt.plot(f_ary_6,f_ary_6**2*df_rho_div_f_ary_6/(f_ary_6[1]-f_ary_6[0]),color='salmon',label=r'larger f\_trunc', lw = 1.5)
+    plt.plot(f_ary_7,f_ary_7**2*df_rho_div_f_ary_7/(f_ary_7[1]-f_ary_7[0]),color='orchid',label=r'lower nside', lw = 1.5)
     plt.xlabel('$f$')
     plt.ylabel('$f \\times \\rho(f)$')
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fancybox=True)
@@ -219,22 +204,22 @@ must be pursued in calculating :math:`\rho(f)`.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.181_20_50000_1000_0.01.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.181_10_5000_100_0.01.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.1.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_64_0.181_10_50000_1000_0.01.npy
+    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_20_50000_1000_0.01.npy
+    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_5000_100_0.01.npy
+    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.1.npy
+    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_64_0.181_10_50000_1000_0.01.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x2ae6354b6fd0>
+    <matplotlib.legend.Legend at 0x2ac73596ff90>
 
 
 
 
-.. image:: Example4_PSF_Correction_files/Example4_PSF_Correction_12_2.png
+.. image:: Example4_PSF_Correction_files/Example4_PSF_Correction_11_2.png
 
 
 Example 4: Custom PSF
@@ -335,8 +320,8 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
     f_ary_9 = pc_inst.f_ary
     df_rho_div_f_ary_9 = pc_inst.df_rho_div_f_ary
     
-    plt.plot(f_ary_8,f_ary_8**2*df_rho_div_f_ary_8/(f_ary_8[1]-f_ary_8[0]),color='maroon',label='Gauss PSF')
-    plt.plot(f_ary_8,f_ary_9**2*df_rho_div_f_ary_9/(f_ary_9[1]-f_ary_9[0]),color='forestgreen',label='Fermi PSF')
+    plt.plot(f_ary_8,f_ary_8**2*df_rho_div_f_ary_8/(f_ary_8[1]-f_ary_8[0]),color='maroon',label='Gauss PSF', lw = 1.5)
+    plt.plot(f_ary_8,f_ary_9**2*df_rho_div_f_ary_9/(f_ary_9[1]-f_ary_9[0]),color='forestgreen',label='Fermi PSF', lw = 1.5)
     plt.xlabel('$f$')
     plt.ylabel('$f \\times \\rho(f)$')
     plt.legend(loc='upper right', fancybox=True)
@@ -344,20 +329,20 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.235_10_50000_1000_0.01.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/Fermi_PSF_2GeV.npy
+    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.235_10_50000_1000_0.01.npy
+    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/Fermi_PSF_2GeV.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x2ae635b78850>
+    <matplotlib.legend.Legend at 0x2ac735a53e50>
 
 
 
 
-.. image:: Example4_PSF_Correction_files/Example4_PSF_Correction_15_2.png
+.. image:: Example4_PSF_Correction_files/Example4_PSF_Correction_14_2.png
 
 
 .. code:: python
@@ -396,8 +381,8 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
     f_ary_11 = pc_inst.f_ary
     df_rho_div_f_ary_11 = pc_inst.df_rho_div_f_ary
     
-    plt.plot(f_ary_10,f_ary_10**2*df_rho_div_f_ary_10/(f_ary_10[1]-f_ary_10[0]),color='maroon',label='Gauss PSF')
-    plt.plot(f_ary_11,f_ary_11**2*df_rho_div_f_ary_11/(f_ary_11[1]-f_ary_11[0]),color='forestgreen',label='Fermi PSF')
+    plt.plot(f_ary_10,f_ary_10**2*df_rho_div_f_ary_10/(f_ary_10[1]-f_ary_10[0]),color='maroon',label='Gauss PSF', lw = 1.5)
+    plt.plot(f_ary_11,f_ary_11**2*df_rho_div_f_ary_11/(f_ary_11[1]-f_ary_11[0]),color='forestgreen',label='Fermi PSF', lw = 1.5)
     plt.xlabel('$f$')
     plt.ylabel('$f \\times \\rho(f)$')
     plt.legend(loc='upper left', fancybox=True)
@@ -405,20 +390,20 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/gauss_128_0.055_10_50000_1000_0.01.npy
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit-bsafdi/examples/psf_dir/Fermi_PSF_20GeV.npy
+    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.055_10_50000_1000_0.01.npy
+    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/Fermi_PSF_20GeV.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x2ae6400b7c50>
+    <matplotlib.legend.Legend at 0x2ac735b230d0>
 
 
 
 
-.. image:: Example4_PSF_Correction_files/Example4_PSF_Correction_16_2.png
+.. image:: Example4_PSF_Correction_files/Example4_PSF_Correction_15_2.png
 
 
 The above example also serves as a tutorial on how to combine various
