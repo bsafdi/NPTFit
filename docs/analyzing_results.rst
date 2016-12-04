@@ -27,7 +27,10 @@ An instance of the analysis module can then be created as follows:
 
 .. code:: python
 
-    >>> an = dnds_analysis.Analysis(nptf)
+    >>> an = dnds_analysis.Analysis(nptf, mask=None, pixarea=0.)
+
+where ``mask`` specifies the ROI used for the analysis if this is different from that used for the scan, and ``pixarea`` is the area of a pixel in sr
+if using non-``HEALPix`` maps.
 
 Making triangle plots
 ~~~~~~~~~~~~~~~~~~~~~
@@ -136,8 +139,8 @@ For Poissonian models, this returns a list of posterior normalizaion parameters 
 where 
 
 - ``A_non_poiss_post`` is an array of non-Poissonian normalization parameter posteriors
-- ``n_non_poiss_post`` is a 2-d array, each sub-array containing posteriors for a given slope parameter, starting from the highest to the lowest
-- ``Sb_non_poiss_post`` is a 2-d array, each sub-array containing posteriors for a given break parameter, starting from the highest to the lowest
+- ``n_non_poiss_post`` is a 2-D array, each sub-array containing posteriors for a given slope parameter, starting from the highest to the lowest
+- ``Sb_non_poiss_post`` is a 2-D array, each sub-array containing posteriors for a given break parameter, starting from the highest to the lowest
 
 Getting Bayesian log-evidences
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -146,4 +149,4 @@ The Bayesian log-evidence and associated error can be accessed as follows:
 
 .. code:: python
 
-    >>> lBE, lBE_error = an.get_log_evidence()
+    >>> l_be, l_be_err = an.get_log_evidence()

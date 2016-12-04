@@ -7,7 +7,7 @@ template fit. An instance of ``nptfit.NPTF`` can be created as follows:
 .. code:: python
 
    >>> from NPTFit import nptfit
-   >>> nptf = nptfit.NPTF(tag, work_dir, psf_dir)
+   >>> nptf = nptfit.NPTF(tag, work_dir)
 
 Description of arguments (all optional):
 
@@ -26,13 +26,7 @@ Description of arguments (all optional):
 |              |              | scan is      |
 |              |              | stored       |
 +--------------+--------------+--------------+
-| ``psf_dir``  | ``None``     | Where to     |
-|              |              | save PSF     |
-|              |              | correction   |
-|              |              | files        |
-+--------------+--------------+--------------+
 
 .. NOTE::
-   The current directory for ``work_dir`` and ``work_dir/psf_dir`` for 
-   ``psf_dir`` are used if these are not provided.
+   The current directory for ``work_dir`` is used if not provided.
 

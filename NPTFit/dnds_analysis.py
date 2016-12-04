@@ -24,7 +24,7 @@ class Analysis:
     """ Class to analyze results of an NPTF.
 
         :param nptf: an instance of nptfit.NPTF, where load_scan() has been performed
-        :param mask: if analysis is to be performed in a different ROI to run, insert
+        :param mask: if analysis is to be performed in a different ROI to the run, insert
         the analysis mask here
         :param pixarea: if using a non-HEALPix map, insert the area of a pixel (in sr)
     """
