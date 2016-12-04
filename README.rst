@@ -115,7 +115,7 @@ example, which analyzed the output of
 `this <https://github.com/bsafdi/NPTFit/blob/master/examples/Example8_Analysis.ipynb>`__
 example exploring the point source origin of the galactic center excess.
 
-.. figure:: https://github.com/bsafdi/NPTFit/blob/master/docs/Example8_Analysis_files/Example8_Analysis_45_0.png
+.. figure:: https://github.com/bsafdi/NPTFit/blob/master/docs/Example8_Analysis_files/Example8_Analysis_34_0.png
    :alt: SourceCount
 
 ISSUES
