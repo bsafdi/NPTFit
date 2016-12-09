@@ -10,6 +10,7 @@ fermi_data.tar.gz*
 NPTFit.egg-info
 build
 dist
+htmlcov
 
 # Cython output
 *.pyc
