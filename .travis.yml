@@ -49,6 +49,6 @@ install:
     - wget http://physics.princeton.edu/~smsharma/fermi_data.tar.gz
     - tar -xvf fermi_data.tar.gz
 script:
-    - coverage run tests/test_scan.py
+    - coverage run tests/test_all.py
 after_success:
     - codecov

@@ -5,6 +5,7 @@ psf_dir
 chains
 fermi_data
 fermi_data.tar.gz*
+.coverage
 
 # Package/build directories
 NPTFit.egg-info
