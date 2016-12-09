@@ -18,18 +18,26 @@ The most up-to-date version of the code can be found at https://github.com/bsafd
 Installation
 ------------
 
+
 Out of the box, NPTFit relies on `MultiNest <https://ccpforge.cse.rl.ac.uk/gf/project/multinest/>`_ for Bayesian inference, which must be
 installed and linked prior to use. 
 
 NPTFit supports both Python 2 and 3, specifically 2.7 and 3.5. It may work with earlier 3.* versions, although this has not been tested.
 
-Make sure Cython is installed (*e.g.* :code:`pip install Cython`). NPTFit along with it's dependent Python packages can then be installed with
+Make sure Cython is installed (*e.g.* :code:`pip install Cython`). The easiest way to install NPTFit along with it's dependent Python packages 
+is using ``pip``:
+
+.. code:: sh
+
+  $ pip install NPTFit
+
+or using the setup script:
 
 .. code:: sh
 
   $ python setup.py install
 
-which also builds the Cython modules. To just compile the Cython modules locally
+which also builds the Cython modules. To just compile the Cython modules locally:
 
 .. code:: sh
 
@@ -38,6 +46,7 @@ which also builds the Cython modules. To just compile the Cython modules locally
 The code is parallelizable through MPI (*e.g.* `OpenMPI <https://www.open-mpi.org/software/ompi/v2.0/>`_), which can
 considerably speed up computationally intensive scans. This requires the MPI4py Python package for use with MultiNest, which
 can be installed, for example, with ``pip``:
+
 
 .. code:: sh
 
