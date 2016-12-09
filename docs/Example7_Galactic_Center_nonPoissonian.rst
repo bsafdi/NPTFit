@@ -9,7 +9,10 @@ to the Poissonian templates considered, non-Poissonian point source
 templates of various morphologies.
 
 Here we simply perform the run, a detailed analysis of the results can
-be found in the next example.
+be found in the next example. A Python script version of this notebook
+can be found as ``Example7_Galactic_Center_nonPoissonian.py``, which can
+be run faster on multiple processors with MPI (see example in
+``Example7_Galactic_Center_Batch.batch``.
 
 **NB:** even with ``nlive=100``, this notebook takes roughly one hour to
 complete. This highlights that for realistic non-Poissonian runs,
@@ -46,7 +49,7 @@ for details.
 
 .. code:: python
 
-    n = nptfit.NPTF(tag='GCE_Example')
+    n = nptfit.NPTF(tag='GCE_Example_newf')
 
 .. code:: python
 
@@ -79,13 +82,9 @@ for details.
 Step 2: Add Models
 ------------------
 
-We fix the diffuse model to its best fit value determined from an
-earlier fit. This is done simply to speed up the scan below. In general
-it is recommended that the diffuse model should be floated.
-
 .. code:: python
 
-    n.add_poiss_model('dif', '$A_\mathrm{dif}$', False, fixed=True, fixed_norm=15.)
+    n.add_poiss_model('dif', '$A_\mathrm{dif}$', fixed=True, fixed_norm=14.67)
     n.add_poiss_model('iso', '$A_\mathrm{iso}$', [0,2], False)
     n.add_poiss_model('gce', '$A_\mathrm{gce}$', [0,2], False)
     n.add_poiss_model('bub', '$A_\mathrm{bub}$', [0,2], False)
@@ -118,7 +117,7 @@ Step 3: Configure Scan with PSF correction
 
 .. parsed-literal::
 
-    Loading the psf correction from: /zfs/nrodd/NPTFit/examples/notebooks/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
 .. code:: python

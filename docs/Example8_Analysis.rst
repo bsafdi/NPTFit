@@ -44,7 +44,7 @@ loaded with ``n.load_scan()``.
 
 .. code:: python
 
-    n = nptfit.NPTF(tag='GCE_Example')
+    n = nptfit.NPTF(tag='GCE_Example_newf')
 
 .. code:: python
 
@@ -54,7 +54,7 @@ loaded with ``n.load_scan()``.
 
 .. code:: python
 
-    pscmask=np.array(np.load('fermi_data/fermidata_pscmask.npy'), dtype=bool)
+    pscmask=np.array(np.load('fermi_data/fermi_pscmask_cons.npy'), dtype=bool)
     analysis_mask = cm.make_mask_total(band_mask = True, band_mask_range = 2,
                                        mask_ring = True, inner = 0, outer = 30,
                                        custom_mask = pscmask)
@@ -76,10 +76,10 @@ loaded with ``n.load_scan()``.
 
 .. code:: python
 
-    n.add_poiss_model('iso','$A_\mathrm{iso}$',[-2,2],False)
-    n.add_poiss_model('dif','$A_\mathrm{dif}$',[-2,2],fixed=True, fixed_norm=15.)
-    n.add_poiss_model('gce','$A_\mathrm{gce}$',[-2,2],False)
-    n.add_poiss_model('bub','$A_\mathrm{bub}$',[-2,2],False)
+    n.add_poiss_model('dif', '$A_\mathrm{dif}$', fixed=True, fixed_norm=14.67)
+    n.add_poiss_model('iso', '$A_\mathrm{iso}$', [0,2], False)
+    n.add_poiss_model('gce', '$A_\mathrm{gce}$', [0,2], False)
+    n.add_poiss_model('bub', '$A_\mathrm{bub}$', [0,2], False)
 
 .. code:: python
 
@@ -123,7 +123,7 @@ performed in Example 7.
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/GCE_Example/.txt
+      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/GCE_Example_newf/.txt
 
 
 Analysis
@@ -140,20 +140,20 @@ used to access the posterior chains with ``n.samples``:
 
 .. parsed-literal::
 
-    (715, 11)
-    [[  2.02183174e-01   2.39669575e-02   9.79958092e-01 ...,   2.21879127e+01
-        4.13248782e-01   3.89056680e+01]
-     [  1.42877959e-01   1.67586387e-02   9.18143440e-01 ...,   2.39770745e+00
-        1.10613478e+00   2.82342018e+01]
-     [  3.13657173e-01   3.40163197e-02   9.70377300e-01 ...,   2.06343720e+00
-        1.44329031e+00   2.27620469e+01]
+    (741, 11)
+    [[  3.64691822e-01   1.34740973e-01   9.31172758e-01 ...,   2.20491850e+01
+        5.44277104e-01   3.02346663e+01]
+     [  6.43735503e-01   4.23342456e-02   7.53877709e-01 ...,   2.09548864e+01
+       -7.15130115e-02   3.08319347e+01]
+     [  4.26872933e-01   9.17816072e-02   9.68932781e-01 ...,   1.92173721e+01
+       -1.87495053e+00   2.68394950e+01]
      ..., 
-     [  3.11079740e-01   1.02820464e-02   9.18678453e-01 ...,   2.35394791e+00
-       -3.42663799e-01   2.52508167e+01]
-     [  3.11079740e-01   1.02820464e-02   9.18678453e-01 ...,   2.35394791e+00
-       -3.42663799e-01   2.52508167e+01]
-     [  3.83860007e-01   1.06242110e-02   8.70613582e-01 ...,   2.23894317e+00
-       -7.75741149e-01   2.91286566e+01]]
+     [  4.43485759e-01   2.29078417e-03   8.81020387e-01 ...,   1.28963036e+01
+       -1.84868559e+00   3.08482690e+01]
+     [  4.55746431e-01   1.41377732e-02   9.16967489e-01 ...,   2.78378738e+01
+       -1.39216537e+00   2.98667420e+01]
+     [  4.81895556e-01   1.80832165e-02   8.79153360e-01 ...,   2.43908162e+01
+       -5.38391016e-01   3.00742214e+01]]
 
 
 In the analysis module described next we provide basic helper functions
@@ -245,9 +245,9 @@ well as that of the GCE PT:
 
 .. parsed-literal::
 
-    GCE NPT Intensity [  9.74733669e-08   1.11380763e-07   1.22590855e-07] ph/cm^2/s
-    Disk NPT Intensity [  8.71555274e-08   1.01280005e-07   1.19953723e-07] ph/cm^2/s
-    GCE PT Intensity [  5.37910482e-10   2.13377720e-09   5.04887005e-09] ph/cm^2/s
+    GCE NPT Intensity [  4.84629246e-08   6.40066569e-08   7.72576661e-08] ph/cm^2/s
+    Disk NPT Intensity [  4.63451387e-08   6.27115423e-08   8.07192577e-08] ph/cm^2/s
+    GCE PT Intensity [  8.98465954e-10   3.19275586e-09   8.24976317e-09] ph/cm^2/s
 
 
 3. Plot Source Count Distributions
@@ -273,9 +273,42 @@ middle 68% and medians for the GCE and disk non-Poissonian templates:
 
 .. parsed-literal::
 
-    [  4.85743498e+04   1.24615711e+06   6.26836117e+07]
-    [  1.40610459e+04   9.75809896e+05   1.69668804e+08]
+    [  1.04149898e+05   3.60411984e+06   1.71299721e+08]
+    [  3.51206262e+04   1.32927373e+06   1.28748409e+08]
 
+
+The following arrays are used to show the resolved 3FGL points sources
+and associated Poisson errors as appropriate for the plots below. For
+how these were obtained, see `this
+snippet <https://gist.github.com/smsharma/829296c483a92528ab8bbba0d1439e88>`__.
+
+.. code:: python
+
+    x_counts, y_counts, error_L, error_H, x_errors_L, x_errors_H = \
+    [np.array([  1.36887451e-10,   2.56502091e-10,   4.80638086e-10,
+              9.00628020e-10,   1.68761248e-09,   3.16227766e-09,
+              5.92553098e-09,   1.11033632e-08,   2.08056754e-08,
+              3.89860370e-08,   7.30527154e-08]),
+     np.array([  1.04000127e+08,   1.83397053e+08,   9.65856820e+07,
+              1.51198295e+07,   4.76804443e+06,   9.78677656e+05,
+              2.08916332e+05,   0.00000000e+00,   0.00000000e+00,
+              0.00000000e+00,   0.00000000e+00]),
+     np.array([  2.14237668e+07,   2.08831658e+07,   1.10708578e+07,
+              3.18362798e+06,   1.29929969e+06,   4.21069315e+05,
+              1.34538182e+05,  -5.57461814e-04,  -2.97500603e-04,
+             -1.58767124e-04,  -8.47292389e-05]),
+     np.array([  2.63822671e+07,   2.34164673e+07,   1.24232945e+07,
+              3.93887993e+06,   1.71404939e+06,   6.58746511e+05,
+              2.74201404e+05,   1.02159419e+05,   5.45194091e+04,
+              2.90953689e+04,   1.55273233e+04]),
+     np.array([  3.68874510e-11,   6.91203483e-11,   1.29518913e-10,
+              2.42694796e-10,   4.54765736e-10,   8.52147960e-10,
+              1.59676969e-09,   2.99205487e-09,   5.60656455e-09,
+              1.05056783e-08,   1.96857231e-08]),
+     np.array([  5.04942913e-11,   9.46170829e-11,   1.77295138e-10,
+              3.32218719e-10,   6.22517224e-10,   1.16648362e-09,
+              2.18577733e-09,   4.09574765e-09,   7.67468330e-09,
+              1.43809553e-08,   2.69472846e-08])]
 
 The source count distribution can be plotted with
 
@@ -292,6 +325,8 @@ return the dN/dF band. We plot here the median in addition to 68% and
 
 .. code:: python
 
+    plt.figure(figsize=[6,5])
+    
     an.plot_source_count_median('dsk',smin=0.01,smax=1000,nsteps=1000,color='royalblue',spow=2,label='Disk PS')
     an.plot_source_count_band('dsk',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='royalblue',alpha=0.15,spow=2)
     an.plot_source_count_band('dsk',smin=0.01,smax=1000,nsteps=1000,qs=[0.025,0.5,0.975],color='royalblue',alpha=0.1,spow=2)
@@ -301,10 +336,12 @@ return the dN/dF band. We plot here the median in addition to 68% and
     an.plot_source_count_band('gce',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='firebrick',alpha=0.15,spow=2)
     an.plot_source_count_band('gce',smin=0.01,smax=1000,nsteps=1000,qs=[0.025,0.5,0.975],color='firebrick',alpha=0.1,spow=2)
     
+    plt.errorbar(x_counts,x_counts**2*y_counts,xerr=[x_errors_L,x_errors_H],yerr=x_counts**2*np.array([error_L,error_H]), fmt='o', color='black', label='3FGL PS')
+    
     
     plt.yscale('log')
     plt.xscale('log')
-    plt.xlim([1e-10,4e-9])
+    plt.xlim([1e-10,1e-8])
     plt.ylim([2e-13,1e-10])
     
     plt.tick_params(axis='x', length=5, width=2, labelsize=18)
@@ -312,11 +349,15 @@ return the dN/dF band. We plot here the median in addition to 68% and
     plt.ylabel('$F^2 dN/dF$ [counts cm$^{-2}$s$^{-1}$deg$^{-2}$]', fontsize=18)
     plt.xlabel('$F$  [counts cm$^{-2}$ s$^{-1}$]', fontsize=18)
     plt.title(r'Galactic Center NPTF', y=1.02)
-    plt.legend(fancybox=True);
+    plt.legend(fancybox=True, loc='lower right');
+    plt.tight_layout()
+    
+    
+    # plt.savefig("dnds_masked.pdf")
 
 
 
-.. image:: Example8_Analysis_files/Example8_Analysis_34_0.png
+.. image:: Example8_Analysis_files/Example8_Analysis_36_0.png
 
 
 As some references also show :math:`dN/dF`, and we give an example of it
@@ -324,6 +365,8 @@ below, also demonstrating the use of ``spow``.
 
 .. code:: python
 
+    plt.figure(figsize=[6,5])
+    
     an.plot_source_count_median('dsk',smin=0.01,smax=1000,nsteps=1000,color='royalblue',spow=0,label='Disk PS')
     an.plot_source_count_band('dsk',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='royalblue',alpha=0.15,spow=0)
     an.plot_source_count_band('dsk',smin=0.01,smax=1000,nsteps=1000,qs=[0.025,0.5,0.975],color='royalblue',alpha=0.1,spow=0)
@@ -332,6 +375,8 @@ below, also demonstrating the use of ``spow``.
     an.plot_source_count_median('gce',smin=0.01,smax=1000,nsteps=1000,color='firebrick',spow=0,label='GCE PS')
     an.plot_source_count_band('gce',smin=0.01,smax=1000,nsteps=1000,qs=[0.16,0.5,0.84],color='firebrick',alpha=0.15,spow=0)
     an.plot_source_count_band('gce',smin=0.01,smax=1000,nsteps=1000,qs=[0.025,0.5,0.975],color='firebrick',alpha=0.1,spow=0)
+    
+    plt.errorbar(x_counts, y_counts,xerr=[x_errors_L,x_errors_H],yerr=np.array([error_L,error_H]), fmt='o', color='black', label='3FGL PS')
     
     
     plt.yscale('log')
@@ -347,7 +392,7 @@ below, also demonstrating the use of ``spow``.
 
 
 
-.. image:: Example8_Analysis_files/Example8_Analysis_36_0.png
+.. image:: Example8_Analysis_files/Example8_Analysis_38_0.png
 
 
 4. Plot Intensity Fractions
@@ -376,7 +421,7 @@ between 0 and 100 and ``**kwargs`` specify plotting options.
 
 
 
-.. image:: Example8_Analysis_files/Example8_Analysis_39_0.png
+.. image:: Example8_Analysis_files/Example8_Analysis_41_0.png
 
 
 This plot makes it clear, that when given the choice, the fit prefers to
@@ -429,7 +474,7 @@ These can then be use in any way required, for example simply plotted:
 
 
 
-.. image:: Example8_Analysis_files/Example8_Analysis_47_0.png
+.. image:: Example8_Analysis_files/Example8_Analysis_49_0.png
 
 
 Non-poissonian parameters
@@ -467,7 +512,7 @@ A similar syntax can be used to extract the non-Poissonian parameters.
 
 
 
-.. image:: Example8_Analysis_files/Example8_Analysis_51_0.png
+.. image:: Example8_Analysis_files/Example8_Analysis_53_0.png
 
 
 6. Bayesian log-evidence
@@ -484,5 +529,5 @@ as follows.
 
 .. parsed-literal::
 
-    -33479.166149 0.457762328977
+    -29466.494212 0.411995897483
 
