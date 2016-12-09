@@ -208,10 +208,16 @@ class NPTFScan(ConfigMaps):
                     floated_breaks = npt_breaks - fixed_breaks
                     floated_params = self.non_poiss_models[key]['n_params']
                     hloc = floated_params - floated_breaks
-                    self.non_poiss_models[key]['prior_range'][hloc][0] *= \
-                        self.exposure_mean
-                    self.non_poiss_models[key]['prior_range'][hloc][1] *= \
-                        self.exposure_mean
+                    if self.non_poiss_models[key]['log_prior'][hloc] == True:
+                        self.non_poiss_models[key]['prior_range'][hloc][0] += \
+                            np.log10(self.exposure_mean)
+                        self.non_poiss_models[key]['prior_range'][hloc][1] += \
+                            np.log10(self.exposure_mean)
+                    else:
+                        self.non_poiss_models[key]['prior_range'][hloc][0] *= \
+                            self.exposure_mean
+                        self.non_poiss_models[key]['prior_range'][hloc][1] *= \
+                            self.exposure_mean
 
             # If not relative, adjust all breaks
             if is_flux and not is_relative:
@@ -233,10 +239,16 @@ class NPTFScan(ConfigMaps):
                 floated_breaks = npt_breaks - fixed_breaks
                 floated_params = self.non_poiss_models[key]['n_params']
                 for fp in range(floated_params - floated_breaks, floated_params):
-                    self.non_poiss_models[key]['prior_range'][fp][0] *= \
-                        self.exposure_mean
-                    self.non_poiss_models[key]['prior_range'][fp][1] *= \
-                        self.exposure_mean
+                    if self.non_poiss_models[key]['log_prior'][fp] == True:
+                        self.non_poiss_models[key]['prior_range'][fp][0] += \
+                            np.log10(self.exposure_mean)
+                        self.non_poiss_models[key]['prior_range'][fp][1] += \
+                            np.log10(self.exposure_mean)
+                    else:
+                        self.non_poiss_models[key]['prior_range'][fp][0] *= \
+                            self.exposure_mean
+                        self.non_poiss_models[key]['prior_range'][fp][1] *= \
+                            self.exposure_mean
 
         # Define array of templates describing the spatial distribution of NPT
         # templates - each element is an array of the compressed template in
