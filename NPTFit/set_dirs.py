@@ -9,7 +9,7 @@
 import os
 
 
-class SetDirs:
+class SetDirs:  # pragma: no cover
     def __init__(self, tag='Untagged', work_dir=None):
         """ :param tag: label associated with the scan
             :param work_dir: location where all output from the run is stored
