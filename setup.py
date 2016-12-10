@@ -25,7 +25,6 @@ setup(
     install_requires=[
             'numpy',
             'matplotlib',
-            'scipy',
             'healpy',
             'Cython',
             'pymultinest',

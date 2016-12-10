@@ -35,7 +35,7 @@ install:
     - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
     - source activate test
     # Python setup
-    - conda install --yes numpy Cython mpi4py scipy
+    - conda install --yes numpy Cython mpi4py
     - pip install numpy matplotlib healpy pymultinest jupyter corner mpmath pytest pytest-cov codecov coverage
     - make build  # Build Cython
     # Download and install MultiNest
