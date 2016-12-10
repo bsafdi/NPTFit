@@ -117,9 +117,9 @@ An interactive version of this example can be found in the example
 `here <https://github.com/bsafdi/NPTFit/blob/master/examples/Example5_Running_nonPoissonian_Scans.ipynb>`__.
 
 The following source-count distribution is an unmasked version of the one produced in
-`this <https://github.com/bsafdi/NPTFit/blob/master/examples/Example7_Galactic_Center_nonPoissonian.ipynb>`__
-example, which analyzed the output of
 `this <https://github.com/bsafdi/NPTFit/blob/master/examples/Example8_Analysis.ipynb>`__
+example, which analyzed the output of
+`this <https://github.com/bsafdi/NPTFit/blob/master/examples/Example7_Galactic_Center_nonPoissonian.ipynb>`__
 example exploring the point source origin of the galactic center excess.
 
 .. figure:: https://github.com/bsafdi/NPTFit/blob/master/docs/GCE_unmasked.png
