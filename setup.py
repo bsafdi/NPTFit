@@ -16,7 +16,7 @@ extensions = [
 
 setup(
     name='NPTFit',
-    version='0.1pre0',
+    version='0.1.1',
     description='A Python package for Non-Poissonian Template Fitting',
     url='https://github.com/bsafdi/NPTFit',
     author='Siddharth Mishra-Sharma',
