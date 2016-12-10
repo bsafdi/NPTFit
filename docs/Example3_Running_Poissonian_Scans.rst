@@ -12,7 +12,7 @@ In detail we will perform an analysis of the inner galaxy involving all
 five background templates discussed in Example 1. We will show that the
 fit prefers a non-zero value for the GCE template.
 
-**NB:** this example makes use of the Fermi Data, which needs to already
+**NB:** This example makes use of the Fermi Data, which needs to already
 be installed. See Example 1 for details.
 
 .. code:: python

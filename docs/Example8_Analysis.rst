@@ -44,7 +44,7 @@ loaded with ``n.load_scan()``.
 
 .. code:: python
 
-    n = nptfit.NPTF(tag='GCE_Example_newf')
+    n = nptfit.NPTF(tag='GCE_Example')
 
 .. code:: python
 
@@ -54,7 +54,7 @@ loaded with ``n.load_scan()``.
 
 .. code:: python
 
-    pscmask=np.array(np.load('fermi_data/fermi_pscmask_cons.npy'), dtype=bool)
+    pscmask=np.array(np.load('fermi_data/fermidata_pscmask.npy'), dtype=bool)
     analysis_mask = cm.make_mask_total(band_mask = True, band_mask_range = 2,
                                        mask_ring = True, inner = 0, outer = 30,
                                        custom_mask = pscmask)

@@ -62,15 +62,15 @@ Downloading the data
 --------------------
 
 The *Fermi* data used here can be downloaded from
-http://physics.princeton.edu/~smsharma/fermi\_data.tar.gz along with a
-``README`` detailing the data. The following commands automatically
-download and set up the data on a UNIX system:
+https://dspace.mit.edu/handle/1721.1/105492 along with a ``README``
+detailing the data. The following commands automatically download and
+set up the data on a UNIX system:
 
 .. code:: python
 
-    # Assumes wget is available! Otherwise, download manually 
-    # from http://physics.princeton.edu/~smsharma/fermi_data.tar.gz
-    os.system("wget http://physics.princeton.edu/~smsharma/fermi_data.tar.gz")
+    # Assumes wget is available! Otherwise, use curl or download manually 
+    # from https://dspace.mit.edu/handle/1721.1/105492
+    os.system("wget https://dspace.mit.edu/bitstream/handle/1721.1/105492/fermi_data.tar.gz")
     os.system("tar -xvf fermi_data.tar.gz")
     os.system("rm -r fermi_data.tar.gz*")
 
@@ -206,9 +206,8 @@ Point Source Catalog Mask
 
 We also include a mask of all point sources in the 3FGL, as well as
 large extended objects such as the Large Magellanic Cloud. All point
-sources are masked at :math:`1^{\circ}`, which is much larger than the
-relevant PSF in the dataset and energy range we are using. The map below
-is a mask, so just a boolean array
+sources are masked at 95% containment as appropriate for this ``nside``.
+The map below is a mask, so just a boolean array
 
 Note that with the NPTF it is not always desirable to mask point sources
 - we can often simply use a non-Poissonian template to model them.
@@ -217,7 +216,7 @@ Note that with the NPTF it is not always desirable to mask point sources
 
     pscmask = np.load('fermi_data/fermidata_pscmask.npy')
     
-    hp.mollview(pscmask,title='Point Source Catalog Mask')
+    hp.mollview(pscmask, title='Point Source Catalog Mask')
 
 
 

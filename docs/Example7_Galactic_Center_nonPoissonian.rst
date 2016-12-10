@@ -14,12 +14,12 @@ can be found as ``Example7_Galactic_Center_nonPoissonian.py``, which can
 be run faster on multiple processors with MPI (see example in
 ``Example7_Galactic_Center_Batch.batch``.
 
-**NB:** even with ``nlive=100``, this notebook takes roughly one hour to
+**NB:** Even with ``nlive=100``, this notebook takes roughly one hour to
 complete. This highlights that for realistic non-Poissonian runs,
 running on multiple cores becomes necessary. We show an explicit
 application of this in Example 9.
 
-**NB:** this example makes use of the Fermi Data, which needs to already
+**NB:** This example makes use of the Fermi Data, which needs to already
 be installed. See Example 1 for details.
 
 .. code:: python
@@ -49,7 +49,7 @@ for details.
 
 .. code:: python
 
-    n = nptfit.NPTF(tag='GCE_Example_newf')
+    n = nptfit.NPTF(tag='GCE_Example')
 
 .. code:: python
 

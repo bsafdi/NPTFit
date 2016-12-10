@@ -12,7 +12,7 @@ NPTFit.
 
 **NB:** The batch file must be run before this notebook.
 
-**NB:** this example makes use of the Fermi Data, which needs to already
+**NB:** This example makes use of the Fermi Data, which needs to already
 be installed. See Example 1 for details.
 
 In this example, we model the source-count function as a triply-broken
