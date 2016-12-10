@@ -15,7 +15,7 @@ fermi_data = np.load('fermi_data/fermidata_counts.npy')
 fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
 n.load_data(fermi_data, fermi_exposure)
 
-pscmask=np.array(np.load('fermi_data/fermi_pscmask_cons.npy'), dtype=bool)
+pscmask=np.array(np.load('fermi_data/fermidata_pscmask.npy'), dtype=bool)
 analysis_mask = cm.make_mask_total(band_mask = True, band_mask_range = 2,
                                    mask_ring = True, inner = 0, outer = 30,
                                    custom_mask = pscmask)
