@@ -24,7 +24,7 @@ INSTALLATION AND DEPENDENCIES
 
 
 Out of the box, NPTFit relies on `MultiNest <https://ccpforge.cse.rl.ac.uk/gf/project/multinest/>`_ for Bayesian inference, which must be
-installed and linked prior to use. 
+installed and linked prior to use. See `here <http://monte-python.readthedocs.io/en/latest/nested.html>`_ for a helpful set of installation instructions.
 
 NPTFit supports both Python 2 and 3, specifically 2.7 and 3.5. It may work with earlier 3.* versions, although this has not been tested.
 
