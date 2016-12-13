@@ -17,7 +17,7 @@ here:
 `AUTHORS.txt <https://github.com/bsafdi/NPTFit/blob/master/AUTHORS.txt>`__.
 
 If you make use of NPTFit in a publication, please cite
-`1612.0xxxx <https://arxiv.org/>`__.
+`1612.03173 <https://arxiv.org/abs/1612.03173>`__.
 
 INSTALLATION AND DEPENDENCIES
 -----------------------------
@@ -48,7 +48,7 @@ which also builds the Cython modules. To just compile the Cython modules locally
   $ make build
 
 The code is parallelizable through MPI (*e.g.* `OpenMPI <https://www.open-mpi.org/software/ompi/v2.0/>`_), which can
-considerably speed up computationally intensive scans. This requires the MPI4py Python package for use with MultiNest, which
+considerably speed up computationally intensive scans. This requires the MPI4Py Python package for use with MultiNest, which
 can be installed, for example, with ``pip``:
 
 
@@ -78,8 +78,8 @@ NPTFit.
     import numpy as np
     from NPTFit import nptfit # module for performing scan
     from NPTFit import create_mask as cm # module for creating the mask
-    from NPTFit import PSFCorrection as pc # module for determining the PSF correction
-    from NPTFit import Analysis # module for analysing the output
+    from NPTFit import psf_correction as pc # module for determining the PSF correction
+    from NPTFit import dnds_analysis # module for analysing the output
 
     # Initiate NPTF
     n = nptfit.NPTF()

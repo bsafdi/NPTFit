@@ -44,7 +44,7 @@ which also builds the Cython modules. To just compile the Cython modules locally
   $ make build
 
 The code is parallelizable through MPI (*e.g.* `OpenMPI <https://www.open-mpi.org/software/ompi/v2.0/>`_), which can
-considerably speed up computationally intensive scans. This requires the MPI4py Python package for use with MultiNest, which
+considerably speed up computationally intensive scans. This requires the MPI4Py Python package for use with MultiNest, which
 can be installed, for example, with ``pip``:
 
 
