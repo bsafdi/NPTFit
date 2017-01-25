@@ -421,9 +421,10 @@ class NPTFScan(ConfigMaps):
                                 self.exposure_mean / self.exposure_means_list[
                                     i]] +
                                list(self.theta_ps[j][1:self.nbreak_ary[j] + 2]) +
-                               list(self.theta_ps[j][self.nbreak_ary[j] + 2:] *
-                                    self.exposure_means_list[
-                                        i] / self.exposure_mean)
+                               list(np.array(
+                                    self.theta_ps[j][self.nbreak_ary[j] + 2:]) *
+                                    (self.exposure_means_list[
+                                        i] / self.exposure_mean))
                                for j in
                                range(len(self.NPT_dist_compressed_exp_ary))]
 
