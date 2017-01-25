@@ -80,7 +80,7 @@ class PSFCorrection:
 
         if self.psf_dir is None:
             self.psf_dir = os.getcwd() + '/psf_dir/'
-            self.make_dirs([self.psf_dir])
+        self.make_dirs([self.psf_dir])
 
         # Convert psf from degrees to radians
         # Only used if the psf is a gaussian
