@@ -46,7 +46,7 @@ install:
     - export LD_LIBRARY_PATH=$(pwd)/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
     # Download Fermi data
     - cd ..
-    - wget http://physics.princeton.edu/~smsharma/fermi_data.tar.gz
+    - wget https://dspace.mit.edu/bitstream/handle/1721.1/105492/fermi_data.tar.gz
     - tar -xvf fermi_data.tar.gz
 script:
     - coverage run tests/test_all.py
