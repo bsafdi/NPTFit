@@ -325,11 +325,13 @@ class NPTFScan(ConfigMaps):
                       for region in range(self.nexp)])
 
         # Combine the two if necessary to build the full PT map
-        if len(self.poiss_models_fixed) != 0:
+        if (len(self.poiss_models_fixed) != 0) & (len(a_theta) != 0):
             pt_sum_compressed = pt_sum_compressed_float + \
                                 pt_sum_compressed_fixed
-        else:
+        elif len(self.poiss_models_fixed) == 0:
             pt_sum_compressed = pt_sum_compressed_float
+        else:
+            pt_sum_compressed = pt_sum_compressed_fixed
 
         # If no Poissonian templates, pt_sum_compressed set to a zero array
         if (self.n_poiss + len(self.poiss_models_fixed)) == 0:
