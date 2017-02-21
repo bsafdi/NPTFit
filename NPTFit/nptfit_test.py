@@ -10,7 +10,7 @@ from __future__ import absolute_import
 
 import numpy as np
 
-from .nptf_scan import NPTFScan  # Sets up and performs the scan
+from nptf_scan import NPTFScan  # Sets up and performs the scan
 
 
 class NPTF(NPTFScan):

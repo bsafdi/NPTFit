@@ -81,8 +81,8 @@ def return_xs_1break(double[::1] theta, double[::1] f_ary,
         f2 = float(f_ary[f_index])
         df_rho_div_f2 = df_rho_div_f_ary[f_index]
         
-        g1_ary_f = igf.incgamma_up_fct_ary(k_max, 1. - n1, sb * f2)
-        g2_ary_f = igf.incgamma_lo_fct_ary(k_max, 1. - n2, sb * f2)
+        g1_ary_f = igf.incgamma_up_fct_ary_py(k_max, 1. - n1, sb * f2)
+        g2_ary_f = igf.incgamma_lo_fct_ary_py(k_max, 1. - n2, sb * f2)
         
         pref1_x_m_ary =  pow(sb * f2, n1)
         pref2_x_m_ary = pow(sb * f2, n2)
@@ -147,10 +147,10 @@ def return_xs_2break(double[::1] theta, double[::1] f_ary,
         f2 = float(f_ary[f_index])
         df_rho_div_f2 = df_rho_div_f_ary[f_index]
         
-        g0_ary_f = igf.incgamma_up_fct_ary(k_max, 1. - n1, sb1 * f2)
-        g1_ary_f = igf.incgamma_up_fct_ary(k_max, 1. - n2, sb2 * f2) \
-                   - igf.incgamma_up_fct_ary(k_max, 1. - n2, sb1 * f2)
-        g2_ary_f = igf.incgamma_lo_fct_ary(k_max, 1. - n3, sb2 * f2)
+        g0_ary_f = igf.incgamma_up_fct_ary_py(k_max, 1. - n1, sb1 * f2)
+        g1_ary_f = igf.incgamma_up_fct_ary_py(k_max, 1. - n2, sb2 * f2) \
+                   - igf.incgamma_up_fct_ary_py(k_max, 1. - n2, sb1 * f2)
+        g2_ary_f = igf.incgamma_lo_fct_ary_py(k_max, 1. - n3, sb2 * f2)
 
         pref0_x_m_ary = pow(sb1 * f2, n1)
         pref1_x_m_ary = pref0_x_m_ary * pow(sb1 * f2, n2 - n1)
@@ -227,12 +227,12 @@ def return_xs_3break(double[::1] theta, double[::1] f_ary,
         f2 = float(f_ary[f_index])
         df_rho_div_f2 = df_rho_div_f_ary[f_index]
 
-        g0_ary_f = igf.incgamma_up_fct_ary(k_max, 1. - n1, sb1 * f2)
-        g1_ary_f = igf.incgamma_up_fct_ary(k_max, 1. - n2, sb2 * f2) \
-                   - igf.incgamma_up_fct_ary(k_max, 1. - n2, sb1 * f2)
-        g2_ary_f = igf.incgamma_up_fct_ary(k_max, 1. - n3, sb3 * f2) \
-                   - igf.incgamma_up_fct_ary(k_max, 1. - n3, sb2 * f2)
-        g3_ary_f = igf.incgamma_lo_fct_ary(k_max, 1. - n4, sb3 * f2)
+        g0_ary_f = igf.incgamma_up_fct_ary_py(k_max, 1. - n1, sb1 * f2)
+        g1_ary_f = igf.incgamma_up_fct_ary_py(k_max, 1. - n2, sb2 * f2) \
+                   - igf.incgamma_up_fct_ary_py(k_max, 1. - n2, sb1 * f2)
+        g2_ary_f = igf.incgamma_up_fct_ary_py(k_max, 1. - n3, sb3 * f2) \
+                   - igf.incgamma_up_fct_ary_py(k_max, 1. - n3, sb2 * f2)
+        g3_ary_f = igf.incgamma_lo_fct_ary_py(k_max, 1. - n4, sb3 * f2)
 
         pref0_x_m_ary = pow(sb1 * f2, n1)
         pref1_x_m_ary = pref0_x_m_ary * pow(sb1 * f2, n2 - n1)
@@ -325,17 +325,17 @@ def return_xs_lbreak(double[::1] theta, int n_break, double[::1] f_ary,
         df_rho_div_f2 = df_rho_div_f_ary[f_index]
 
         # Terms involving incomplete gamma functions in x_m
-        gamma_ary = igf.incgamma_up_fct_ary(k_max, 1.-n_ary[0], sb_ary[0] * f2)
+        gamma_ary = igf.incgamma_up_fct_ary_py(k_max, 1.-n_ary[0], sb_ary[0] * f2)
         for m in range(k_max + 1):
             g_ary_f_ary[0][m] = gamma_ary[m]
 
         for i in range(1, n_break):
-            gamma_ary = igf.incgamma_up_fct_ary(k_max, 1.-n_ary[i], sb_ary[i] * f2) \
-                        - igf.incgamma_up_fct_ary(k_max, 1.-n_ary[i], sb_ary[i-1] * f2)
+            gamma_ary = igf.incgamma_up_fct_ary_py(k_max, 1.-n_ary[i], sb_ary[i] * f2) \
+                        - igf.incgamma_up_fct_ary_py(k_max, 1.-n_ary[i], sb_ary[i-1] * f2)
             for m in range(k_max + 1):
                 g_ary_f_ary[i][m] = gamma_ary[m]
 
-        gamma_ary = igf.incgamma_lo_fct_ary(k_max, 1.-n_ary[n_break], sb_ary[n_break-1] * f2)
+        gamma_ary = igf.incgamma_lo_fct_ary_py(k_max, 1.-n_ary[n_break], sb_ary[n_break-1] * f2)
         for m in range(k_max + 1):
             g_ary_f_ary[n_break][m] = gamma_ary[m]
 

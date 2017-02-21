@@ -17,7 +17,7 @@ from __future__ import absolute_import
 import numpy as np
 import numpy.ma as ma
 
-from .set_dirs import SetDirs  # Module for creating directories
+from set_dirs import SetDirs  # Module for creating directories
 
 
 class ConfigMaps(SetDirs):

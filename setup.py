@@ -9,7 +9,8 @@ extensions = [
     Extension("NPTFit.pll", ["NPTFit/pll.pyx"],
         include_dirs=[numpy.get_include()], extra_compile_args=["-ffast-math",'-O3']),
     Extension("NPTFit.incgamma_fct", ["NPTFit/incgamma_fct.pyx"],
-        include_dirs=[numpy.get_include()], extra_compile_args=["-ffast-math",'-O3']),
+        include_dirs=[numpy.get_include()], libraries=["gsl", "gslcblas", "m"],
+        extra_compile_args=["-ffast-math",'-O3']),
     Extension("NPTFit.x_m", ["NPTFit/x_m.pyx"],
         include_dirs=[numpy.get_include()], extra_compile_args=["-ffast-math",'-O3'])
 ]
