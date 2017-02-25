@@ -21,9 +21,9 @@ import numpy as np
 import pymultinest
 from collections import OrderedDict
 
-import pll  # The Poissonian likelihood function
-import npll  # The non-Poissonian likelihood function
-from config_maps import ConfigMaps  # Setup maps and templates for the run
+from . import pll  # The Poissonian likelihood function
+from . import npll  # The non-Poissonian likelihood function
+from .config_maps import ConfigMaps  # Setup maps and templates for the run
 
 
 class NPTFScan(ConfigMaps):
