@@ -417,9 +417,7 @@ class NPTFScan(ConfigMaps):
         for i in range(self.nexp):
             # For each NPT template adjust the breaks to account for the
             # difference in exposure
-            theta_ps_expreg = [[self.theta_ps[j][0] *
-                                self.exposure_mean / self.exposure_means_list[
-                                    i]] +
+            theta_ps_expreg = [[self.theta_ps[j][0]] +
                                list(self.theta_ps[j][1:self.nbreak_ary[j] + 2]) +
                                list(np.array(
                                     self.theta_ps[j][self.nbreak_ary[j] + 2:]) *
