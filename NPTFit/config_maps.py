@@ -47,6 +47,10 @@ class ConfigMaps(SetDirs):
             :param exposure_map: A map of the exposure
         """
 
+        # Check the counts map is an array of integers
+        assert (all(isinstance(np, int) for np in count_map)), \
+            "Data must be an array of counts (integers)"
+
         self.count_map = count_map
         self.exposure_map = exposure_map
 
@@ -115,7 +119,7 @@ class ConfigMaps(SetDirs):
 
         # Compress data - this is used for a Poissonian scan
         temp_data = ma.masked_array(data=self.count_map, mask=self.mask_total)
-        # Ensure still an integer array
+        # Convert map to int32 array - Cython considers int64s to be floats
         self.masked_compressed_data = \
             np.array(temp_data.compressed(), dtype='int32')
 
@@ -131,7 +135,7 @@ class ConfigMaps(SetDirs):
         for i in range(self.nexp):
             temp_data_expreg = ma.masked_array(data=self.count_map,
                                                mask=self.expreg_mask[i])
-            # Ensure still an integer array
+            # Again convert to int32
             self.masked_compressed_data_expreg.append(np.array(
                  temp_data_expreg.compressed(), dtype='int32'))
 
