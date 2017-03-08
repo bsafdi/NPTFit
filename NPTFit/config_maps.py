@@ -49,7 +49,7 @@ class ConfigMaps(SetDirs):
 
         # Check the counts map is an array of integers
         assert (all(isinstance(np, int) for np in count_map)), \
-            "Data must be an array of counts (integers)"
+            "Data must be an array of counts (python integers)"
 
         self.count_map = count_map
         self.exposure_map = exposure_map
