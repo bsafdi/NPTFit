@@ -1,5 +1,5 @@
-# This file is called by Example9_HighLat_Batch.batch, and must be run before
-# using Example9_HighLat_Analysis.ipynb
+# This file is called by Example10_HighLat_Batch.batch, and must be run before
+# using Example10_HighLat_Analysis.ipynb
 # The scan performs a run over the high latitude sky
 
 # NB: this example makes use of the Fermi Data, which needs to already be
@@ -13,7 +13,7 @@ from NPTFit import psf_correction as pc # module for determining the PSF correct
 
 n = nptfit.NPTF(tag='HighLat_Example')
 
-fermi_data = np.load('fermi_data/fermidata_counts.npy')
+fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(int)
 fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
 n.load_data(fermi_data, fermi_exposure)
 
@@ -26,10 +26,11 @@ iso = np.load('fermi_data/template_iso.npy')
 
 n.add_template(dif, 'dif')
 n.add_template(iso, 'iso')
+np.add_template(np.ones(len(iso)), 'iso_np', units='PS')
 
 n.add_poiss_model('dif', '$A_\mathrm{dif}$', [0, 30], False)
 n.add_poiss_model('iso', '$A_\mathrm{iso}$', [0, 5], False)
-n.add_non_poiss_model('iso',
+n.add_non_poiss_model('iso_np',
                       ['$A^\mathrm{ps}_\mathrm{iso}$',
                        '$n_1$', '$n_2$', '$n_3$', '$n_4$',
                        '$S_b^{(1)}$', '$S_b^{(2)}$', '$S_b^{(3)}$'],
