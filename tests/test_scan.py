@@ -11,9 +11,9 @@ from NPTFit import psf_correction as pc # module for determining the PSF correct
 
 
 def test_scan_non_poiss():
-    n = nptfit.NPTF(tag='HighLat_Example')
+    n = nptfit.NPTF(tag='Test_NPoiss')
 
-    fermi_data = np.load('fermi_data/fermidata_counts.npy')
+    fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(int)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
 
@@ -44,7 +44,7 @@ def test_scan_non_poiss():
 
 
 def test_scan_poiss():
-    n = nptfit.NPTF(tag='HighLat_Example')
+    n = nptfit.NPTF(tag='Test_Poiss')
 
     fermi_data = np.load('fermi_data/fermidata_counts.npy')
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
