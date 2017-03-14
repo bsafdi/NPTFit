@@ -3,7 +3,7 @@ NPTFit
 
 **Non-Poissonian template fitting in Python/Cython**
 
-|Build Status| |Code Coverage| |Documentation Status| |License: MIT| |Zenodo|
+|Build Status| |Code Coverage| |Documentation Status| |License: MIT| |arXiv| |Zenodo| 
 
 AUTHORS
 -------
@@ -145,6 +145,8 @@ tracker <https://github.com/bsafdi/NPTFit/issues>`__.
    :target: http://nptfit.readthedocs.io/en/latest/?badge=latest
 .. |License: MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
    :target: https://opensource.org/licenses/MIT
+.. |arXiv| image:: https://img.shields.io/badge/arXiv-1612.03173%20-green.svg
+   :target: https://arxiv.org/abs/1612.03173
 .. |Zenodo| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.380469.svg
    :target: https://doi.org/10.5281/zenodo.380469
 
