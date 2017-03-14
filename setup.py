@@ -1,8 +1,11 @@
+from __future__ import print_function
+
 import logging
 from setuptools import setup
 from distutils.extension import Extension
 from Cython.Build import cythonize
 import numpy
+
 
 extensions = [
     Extension("NPTFit.npll", ["NPTFit/npll.pyx"],
@@ -36,13 +39,20 @@ setup_args = {'name':'NPTFit',
             'mpmath',
         ]}
         
+# Attempt GSL compilation; if this fails, do standard compilation.
+
 try:
+    print("Attempting GSL compilation...")
     setup(packages=['NPTFit'],
         ext_modules = cythonize(extensions),
         **setup_args
     )
+    print("GSL compilation successful!")
+
 except:
+    print("GSL compilation failed! Attempting mpmath compilation...")
     setup(packages=['NPTFit'],
         ext_modules = cythonize(extensions[:-1]),
         **setup_args
     )
+    print("mpmath compilation successful!")
