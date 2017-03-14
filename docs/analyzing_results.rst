@@ -2,7 +2,7 @@ Analyzing results of a scan
 ---------------------------
 
 .. TIP::
-   See the :doc:`Example8_Analysis` for an interactive version of the analysis options described here.
+   See the :doc:`Example9_Analysis` for an interactive version of the analysis options described here.
 
 
 While the chain samples of a non-Poissonian fit performed using MultiNest can be readily 

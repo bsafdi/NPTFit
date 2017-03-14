@@ -35,7 +35,10 @@ For example, a template specifying an underlying isotropic PS distribution for a
 .. NOTE::
    While the data, exposure and template maps need not be in 
    `HEALPix <http://healpix.jpl.nasa.gov/>`_ 
-   format, PSF correction and creation of masks is only supported for HEALPix 
-   formatted arrays.
+   format, creation of masks is only supported for HEALPix 
+   formatted arrays. Conversion between Cartesian and HEALPix maps can be
+   performed using
+   `grid2healpix <https://github.com/nickrodd/grid2healpix>`_
 
 .. _``HEALPix``: http://healpix.jpl.nasa.gov/
+.. _``grid2healpix``: https://github.com/nickrodd/grid2healpix
