@@ -88,7 +88,7 @@ Example notebooks
 
    Example3_Running_Poissonian_Scans.rst
 
-   Example4_Simple_NPTF_files.rst
+   Example4_Simple_NPTF.rst
    
    Example5_PSF_Correction.rst
 
