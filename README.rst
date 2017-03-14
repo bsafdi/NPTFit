@@ -3,7 +3,7 @@ NPTFit
 
 **Non-Poissonian template fitting in Python/Cython**
 
-|Build Status| |Code Coverage| |Documentation Status| |License: MIT| |arXiv| |Zenodo| 
+|Build Status| |Code Coverage| |Documentation Status| |License: MIT| |arXiv| 
 
 AUTHORS
 -------
