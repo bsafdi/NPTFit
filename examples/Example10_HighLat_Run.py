@@ -13,7 +13,7 @@ from NPTFit import psf_correction as pc # module for determining the PSF correct
 
 n = nptfit.NPTF(tag='HighLat_Example')
 
-fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(int)
+fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
 fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
 n.load_data(fermi_data, fermi_exposure)
 
