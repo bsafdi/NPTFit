@@ -1,5 +1,5 @@
 ###############################################################################
-# incgamma_fct.pyx
+# incgamma_fct_p.pyx
 ###############################################################################
 #
 # Calculation of the two following arrays:
@@ -9,6 +9,8 @@
 # Determine these using gamma function recursion relations. The use of 128
 # point precision is important, and is why part of the code is python rather
 # than cython.
+#
+# This is the python version of the gamma-functions and uses mpmath.
 #
 ###############################################################################
 
