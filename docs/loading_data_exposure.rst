@@ -23,9 +23,9 @@ is the template key, used to identify the template in later calls.
 
 The argument `units` specifies the template units (counts or flux) or type (to be used in either Poissonian or PS models). The following values are allowed:
 
--- ``'counts'``: template in counts/pixel, to be used in a Poissonian model. Exposure and PSF corrected.
--- ``'flux'``: template in counts/cm^2/s/pixel, to be used in a Poissonian model. Not exposure corrected.
--- ``'PS'``: template for the underlying PS distribution, to be used in a non-Poissonian model. This shouldn't account for exposure effects. 
+- ``'counts'``: template in counts/pixel, to be used in a Poissonian model. Exposure and PSF corrected.
+- ``'flux'``: template in counts/cm^2/s/pixel, to be used in a Poissonian model. Not exposure corrected.
+- ``'PS'``: template for the underlying PS distribution, to be used in a non-Poissonian model. This shouldn't account for exposure effects. 
 
 For example, a template specifying an underlying isotropic PS distribution for a non-Poissonian model would be added with the keyword ``'PS'`` as a truly isotropic array, e.g. ``[1,1,1,...,1]``.
 

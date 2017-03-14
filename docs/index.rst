@@ -87,18 +87,20 @@ Example notebooks
    Example2_Creating_Masks.rst
 
    Example3_Running_Poissonian_Scans.rst
+
+   Example4_Simple_NPTF_files
    
-   Example4_PSF_Correction.rst
+   Example5_PSF_Correction.rst
 
-   Example5_Running_nonPoissonian_Scans.rst
+   Example6_Running_nonPoissonian_Scans.rst
 
-   Example6_Manual_nonPoissonian_Likelihood.rst
+   Example7_Manual_nonPoissonian_Likelihood.rst
 
-   Example7_Galactic_Center_nonPoissonian.rst
+   Example8_Galactic_Center_nonPoissonian.rst
 
-   Example8_Analysis.rst
+   Example9_Analysis.rst
 
-   Example9_HighLat_Analysis.rst
+   Example10_HighLat_Analysis.rst
 
 .. TIP::
    When using NPTFit we recommend the use of National Pipe Thread (NPT) rather than the more common British Standard Pipe (BSP). For details, see `NPT <https://en.wikipedia.org/wiki/National_pipe_thread>`_. 
