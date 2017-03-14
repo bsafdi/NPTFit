@@ -17,8 +17,13 @@ from . import pdf_sampler
 
 def psf_corr(nside, num_f_bins, n_psf, n_pts_per_psf, f_trunc, psf_r_func,
              sample_psf_max, psf_samples):
+    # PSF can't extend beyond 180 degrees, so check hasn't been asked for
+    assert (sample_psf_max <= np.pi), \
+        "PSF on a sphere cannot extend more than 180 degrees"
+    
     # Setup pdf of the psf
-    radial_pdf = lambda r: r * psf_r_func(r)
+    # On a sphere the PSF correction as a function of r is sin(r)*PSF(r)
+    radial_pdf = lambda r: np.sin(r) * psf_r_func(r)
     rvals = np.linspace(0, sample_psf_max, psf_samples)
     pofr = radial_pdf(rvals)
     dist = pdf_sampler.PDFSampler(rvals, pofr)
