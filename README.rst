@@ -3,7 +3,7 @@ NPTFit
 
 **Non-Poissonian template fitting in Python/Cython**
 
-|Build Status| |Code Coverage| |Documentation Status| |License: MIT|
+|Build Status| |Code Coverage| |Documentation Status| |License: MIT| |Zenodo|
 
 AUTHORS
 -------
@@ -46,6 +46,10 @@ which also builds the Cython modules. To just compile the Cython modules locally
 .. code:: sh
 
   $ make build
+
+NPTFit uses either `GSL <https://www.gnu.org/software/gsl/>`_ (faster) or `mpmath <http://mpmath.org>`_ for back-end calculations. By default, the GSL version is compiled 
+during setup if this is available and linked, in which case the setup script concludes with ``"GSL compilation successful!"``. 
+Otherwise, ``"mpmath compilation successful!"`` is shown.
 
 The code is parallelizable through MPI (*e.g.* `OpenMPI <https://www.open-mpi.org/software/ompi/v2.0/>`_), which can
 considerably speed up computationally intensive scans. This requires the MPI4Py Python package for use with MultiNest, which
@@ -140,4 +144,7 @@ tracker <https://github.com/bsafdi/NPTFit/issues>`__.
    :target: http://nptfit.readthedocs.io/en/latest/?badge=latest
 .. |License: MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
    :target: https://opensource.org/licenses/MIT
+.. |Zenodo| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.380469.svg
+   :target: https://doi.org/10.5281/zenodo.380469
+
 

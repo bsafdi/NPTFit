@@ -159,7 +159,7 @@ Example 6: Full Analysis Mask including Custom Point Source Catalog Mask
 ------------------------------------------------------------------------
 
 Finally we show an example of a full analysis mask that we will use for
-an analysis of the Galactic Center Excess in Example 3 and 7. Here we
+an analysis of the Galactic Center Excess in Example 3 and 8. Here we
 mask the plane with a band mask, mask outside a ring and also include a
 custom point source mask. The details of the point source mask are given
 in Example 1.

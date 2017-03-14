@@ -1,0 +1,32 @@
+#!/bin/bash
+#SBATCH -N 1   # node count
+#SBATCH --ntasks-per-node=12
+#SBATCH -t 20:00:00
+#SBATCH --mem=60GB
+##SBATCH --mail-type=begin
+##SBATCH --mail-type=end
+#SBATCH --mail-user=smsharma@princeton.edu
+#SBATCH -p hepheno
+
+# This is an example slurm script for running NPTFit with MPI
+
+# In addition to the usual setup commands to run python with slurm appropriate
+# to the server it is being run on, at this stage the user needs to point the
+# code to MultiNest and OpenMPI also
+# At this stage the user needs to point the code to MultiNest and MPI libraries
+
+# MPI compilers
+export MKL_LP64_ILP64=ilp64
+source /opt/intel/compilers_and_libraries_2016.2.181/linux/bin/compilervars.sh intel64
+source /opt/intel/impi/5.0.3.048/bin64/mpivars.sh
+
+# MultiNest libraries
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/group/hepheno/heptools/MultiNest/lib/
+
+cd /group/hepheno/smsharma/NPTFit/examples
+source activate venv_py27
+
+# The below syntax shows how to call the code with MPI
+# Alternative: mpiexec -np 12 python Example10_HighLat_Run.py
+
+mpiexec.hydra -n 12 python Example8_Galactic_Center_nonPoissonian.py

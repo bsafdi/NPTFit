@@ -47,6 +47,10 @@ class ConfigMaps(SetDirs):
             :param exposure_map: A map of the exposure
         """
 
+        # Check the counts map is an array of integers
+        assert (all(isinstance(np, int) for np in count_map)), \
+            "Data must be an array of counts (python integers)"
+
         self.count_map = count_map
         self.exposure_map = exposure_map
 
@@ -61,18 +65,26 @@ class ConfigMaps(SetDirs):
     def add_template(self, template, label, units='counts'):
         """ Function to add a template to the template dictionary and array
 
-            Note templates should be exposure corrected, so that they model
-            the counts rather than flux, before being added
+            Templates to be used as Poissonian models can be added as counts or 
+            flux. In either case the map must account for the point spread 
+            function before addition.
 
+            NOTE: templates used as non-Poissonian models MUST be added as
+            physical maps of the expected point source distribution, so that it
+            has units of [point sources/pixel]. When adding set units='PS'. 
+            These templates should not be corrected for the instrument point 
+            spread function before addition.
+            
             :param template: Map of the spatial template
             :param label: String used to identify the template in
             subsequent calls
             :param units: Units of provided template. By default
-            'counts': Template in photon counts
-            'flux': Template in fluxes with units ph/cm^2/s
+            'counts': Template in counts/pixel
+            'flux': Template in fluxes with units counts/cm^2/s/pixel
+            'PS': Template for point sources with units point sources/pixel
 
             .. note:: The exposure must be provided prior to adding a flux
-            template. This is then multipleid by the exposure.
+            or PS template. 
         """
 
         if units == 'flux':
@@ -81,6 +93,13 @@ class ConfigMaps(SetDirs):
             assert (len(self.exposure_map) == len(template)), \
                 "Template must be the same shape as the exposure map"
             template *= self.exposure_map
+
+        if units == 'PS':
+            assert (len(self.exposure_map) != 0), \
+                "Must provide exposure map before adding a flux template"
+            assert (len(self.exposure_map) == len(template)), \
+                "Template must be the same shape as the exposure map"
+            template /= self.exposure_map/np.mean(self.exposure_map)
         self.templates_dict.update({label: template})
         self.templates.append(template)
 
@@ -115,7 +134,7 @@ class ConfigMaps(SetDirs):
 
         # Compress data - this is used for a Poissonian scan
         temp_data = ma.masked_array(data=self.count_map, mask=self.mask_total)
-        # Ensure still an integer array
+        # Convert map to int32 array - Cython considers int64s to be floats
         self.masked_compressed_data = \
             np.array(temp_data.compressed(), dtype='int32')
 
@@ -131,7 +150,7 @@ class ConfigMaps(SetDirs):
         for i in range(self.nexp):
             temp_data_expreg = ma.masked_array(data=self.count_map,
                                                mask=self.expreg_mask[i])
-            # Ensure still an integer array
+            # Again convert to int32
             self.masked_compressed_data_expreg.append(np.array(
                  temp_data_expreg.compressed(), dtype='int32'))
 

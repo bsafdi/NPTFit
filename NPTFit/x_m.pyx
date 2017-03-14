@@ -10,7 +10,10 @@
 import numpy as np
 cimport numpy as np
 cimport cython
-import incgamma_fct as igf
+try:
+    import incgamma_fct as igf
+except ImportError:
+    import incgamma_fct_p as igf
 
 # Type used for all non-integer functions
 DTYPE = np.float

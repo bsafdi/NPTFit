@@ -96,9 +96,12 @@ is data and then exposure.
 here, the code more generally works on any 1-d arrays, as long as the
 data, exposure, mask, and templates all have the same length.
 
+Code to embed data on a regular Cartesian grid into a HEALPix map can be
+found here: https://github.com/nickrodd/grid2healpix.
+
 .. code:: python
 
-    fermi_data = np.load('fermi_data/fermidata_counts.npy')
+    fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(int)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
 
@@ -138,7 +141,7 @@ Step 3: Add Background Models to the Fit
 
 Now from this list of templates the ``NPTF`` now knows about, we add in
 a series of background models which will be passed to MultiNest. In
-Example 6 we will show how to evaluate the likelihood without MultiNest,
+Example 7 we will show how to evaluate the likelihood without MultiNest,
 so that it can be interfaced with alternative inference packages.
 
 Poissonian templates only have one parameter associated with them:
@@ -203,7 +206,7 @@ Step 5: Perform the Scan
 
 Having setup all the parameters, we can now perform the scan using
 MultiNest. We will show an example of how to manually calculate the
-likelihood in Example 6.
+likelihood in Example 7.
 
 +----------------+----------------+----------------+
 | Argument       | Default Value  | Purpose        |
@@ -276,7 +279,7 @@ Step 6: Analyze the Output
 
 Here we show a simple example of the output - the triangle plot. The
 full list of possible analysis options is explained in more detail in
-Example 8.
+Example 9.
 
 In order to do this we need to first load the scan using ``load_scan``,
 which takes as an optional argument the same ``run_tag`` as used for the

@@ -43,6 +43,10 @@ which also builds the Cython modules. To just compile the Cython modules locally
 
   $ make build
 
+NPTFit uses either `GSL <https://www.gnu.org/software/gsl/>`_ (faster) or `mpmath <http://mpmath.org>`_ for back-end calculations. By default, the GSL version is compiled 
+during setup if this is available and linked, in which case the setup script concludes with ``"GSL compilation successful!"``. 
+Otherwise, ``"mpmath compilation successful!"`` is shown.
+
 The code is parallelizable through MPI (*e.g.* `OpenMPI <https://www.open-mpi.org/software/ompi/v2.0/>`_), which can
 considerably speed up computationally intensive scans. This requires the MPI4Py Python package for use with MultiNest, which
 can be installed, for example, with ``pip``:

@@ -325,13 +325,11 @@ class NPTFScan(ConfigMaps):
                       for region in range(self.nexp)])
 
         # Combine the two if necessary to build the full PT map
-        if (len(self.poiss_models_fixed) != 0) & (len(a_theta) != 0):
+        if len(self.poiss_models_fixed) != 0:
             pt_sum_compressed = pt_sum_compressed_float + \
                                 pt_sum_compressed_fixed
-        elif len(self.poiss_models_fixed) == 0:
-            pt_sum_compressed = pt_sum_compressed_float
         else:
-            pt_sum_compressed = pt_sum_compressed_fixed
+            pt_sum_compressed = pt_sum_compressed_float
 
         # If no Poissonian templates, pt_sum_compressed set to a zero array
         if (self.n_poiss + len(self.poiss_models_fixed)) == 0:
@@ -419,9 +417,7 @@ class NPTFScan(ConfigMaps):
         for i in range(self.nexp):
             # For each NPT template adjust the breaks to account for the
             # difference in exposure
-            theta_ps_expreg = [[self.theta_ps[j][0] *
-                                self.exposure_mean / self.exposure_means_list[
-                                    i]] +
+            theta_ps_expreg = [[self.theta_ps[j][0]] +
                                list(self.theta_ps[j][1:self.nbreak_ary[j] + 2]) +
                                list(np.array(
                                     self.theta_ps[j][self.nbreak_ary[j] + 2:]) *

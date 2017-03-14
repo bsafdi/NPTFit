@@ -44,20 +44,6 @@ The specifics of the dataset we use are given below.
     import numpy as np
     import healpy as hp
 
-.. code:: python
-
-    import matplotlib
-    matplotlib.matplotlib_fname()
-
-
-
-
-.. parsed-literal::
-
-    u'/group/hepheno/heptools/anaconda3/envs/venv_py27/lib/python2.7/site-packages/matplotlib/mpl-data/matplotlibrc'
-
-
-
 Downloading the data
 --------------------
 
@@ -70,18 +56,9 @@ set up the data on a UNIX system:
 
     # Assumes wget is available! Otherwise, use curl or download manually 
     # from https://dspace.mit.edu/handle/1721.1/105492
-    os.system("wget https://dspace.mit.edu/bitstream/handle/1721.1/105492/fermi_data.tar.gz")
-    os.system("tar -xvf fermi_data.tar.gz")
-    os.system("rm -r fermi_data.tar.gz*")
-
-
-
-
-.. parsed-literal::
-
-    0
-
-
+    os.system("wget https://dspace.mit.edu/bitstream/handle/1721.1/105492/fermi_data.tar.gz");
+    os.system("tar -xvf fermi_data.tar.gz");
+    os.system("rm -r fermi_data.tar.gz*");
 
 The Data - Map of Gamma-ray Counts
 ----------------------------------
@@ -103,11 +80,11 @@ in the data.
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_9_0.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_8_0.png
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_9_1.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_8_1.png
 
 
 To see the detailed structure in the map, we also mock up a logarithmic
@@ -124,7 +101,7 @@ version of the data.
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_11_0.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_10_0.png
 
 
 Exposure Map - Map of where *Fermi*-LAT looks
@@ -150,7 +127,7 @@ exposure map, which has units of [cm:math:`^2` s].
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_14_0.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_13_0.png
 
 
 When performing an NPTF, technically the non-Poissonian templates should
@@ -163,7 +140,7 @@ For the Fermi instrument a small number of exposure values (set by
 ``nexp`` at the point of configuring a scan) is often sufficient, as the
 exposure is quite uniform over the sky. For datasets with less uniform
 exposure, however, larger values of ``nexp`` are recommended. We show a
-run performed with ``nexp != 1`` in Example 9.
+run performed with ``nexp != 1`` in Example 4 and 10.
 
 Below we show how the sky is divided into different exposure regions -
 try changing ``nexp``.
@@ -194,11 +171,11 @@ within the specified ROI, not the entire sky
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_16_0.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_15_0.png
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_16_1.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_15_1.png
 
 
 Point Source Catalog Mask
@@ -220,7 +197,7 @@ Note that with the NPTF it is not always desirable to mask point sources
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_19_0.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_18_0.png
 
 
 Templates - Spatial Models for the Fermi Data
@@ -265,11 +242,11 @@ data.
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_24_0.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_23_0.png
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_24_1.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_23_1.png
 
 
 Isotropic Emission
@@ -287,7 +264,7 @@ map makes the fact the template has been exposure corrected manifest.
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_27_0.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_26_0.png
 
 
 *Fermi* Bubbles
@@ -305,7 +282,7 @@ becomes non-uniform in counts after exposure correction.
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_30_0.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_29_0.png
 
 
 Point Source Catalog Model
@@ -330,11 +307,11 @@ spread due to the Fermi PSF.
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_33_0.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_32_0.png
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_33_1.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_32_1.png
 
 
 Model for the Galactic Center Excess
@@ -369,19 +346,19 @@ center.
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_36_0.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_35_0.png
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_36_1.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_35_1.png
 
 
 Model for Disk Correlated Point Sources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When studying the point source origin of the GCE - done in Example7 - we
-will also include a model for point sources correlated with the disk of
-the Milky Way. For this purpose we use the following thin disk double
+When studying the point source origin of the GCE - done in Example 8 -
+we will also include a model for point sources correlated with the disk
+of the Milky Way. For this purpose we use the following thin disk double
 exponential model for the point source population:
 
 .. math:: n(z,R) \propto \exp \left( - R / 5~\textrm{kpc} \right) \exp \left( - |z| /0.3~\textrm{kpc} \right)\,,
@@ -399,9 +376,9 @@ from the Galactic Center.
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_39_0.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_38_0.png
 
 
 
-.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_39_1.png
+.. image:: Example1_Overview_of_the_Fermi_Data_files/Example1_Overview_of_the_Fermi_Data_38_1.png
 

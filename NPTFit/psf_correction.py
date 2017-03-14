@@ -22,12 +22,14 @@ from __future__ import absolute_import
 import os
 import numpy as np
 from . import psf_compute
+from . import psf_compute_cart
 
 
 class PSFCorrection:
     def __init__(self, psf_dir=None, num_f_bins=10, n_psf=50000,
                  n_pts_per_psf=1000, f_trunc=0.01, nside=128,
-                 psf_sigma_deg=None, delay_compute=False):
+                 psf_sigma_deg=None, delay_compute=False, 
+                 healpix_map=True, pixarea=None):
         """ Load or calculate the NPTF PSF correction
 
             Adds f_ary and df_rho_div_ary to self. Defaults to a Gaussian PSF,
@@ -41,6 +43,8 @@ class PSFCorrection:
             :param nside: nside of the map rho(f) is used on
             :param psf_sigma_deg: 1 sigma containment of the gaussian psf
             :param delay_compute: set to true to define a custom psf
+            :param healpix_map: set to False if not working with a healpix map
+            :param pixarea: pixel area (sr) if not a healpix map
 
             Custom PSF details:
 
@@ -77,6 +81,8 @@ class PSFCorrection:
         self.n_pts_per_psf = n_pts_per_psf
         self.f_trunc = f_trunc
         self.nside = nside
+        self.healpix_map = healpix_map
+        self.pixarea = pixarea
 
         if self.psf_dir is None:
             self.psf_dir = os.getcwd() + '/psf_dir/'
@@ -91,12 +97,21 @@ class PSFCorrection:
         self.psf_r_func = lambda r: np.exp(-r**2 / (2.*psf_sigma**2))
         self.sample_psf_max = 5. * psf_sigma
         self.psf_samples = 10000
-        self.psf_tag = 'gauss_'+str(self.nside) + '_' + \
-                       str(np.round(psf_sigma_deg, 3)) + '_' + \
-                       str(self.num_f_bins) + '_' + \
-                       str(self.n_psf) + '_' + \
-                       str(self.n_pts_per_psf) + '_' + \
-                       str(self.f_trunc)
+        if self.healpix_map:
+            self.psf_tag = 'gauss_' + str(self.nside) + '_' + \
+                           str(np.round(psf_sigma_deg, 3)) + '_' + \
+                           str(self.num_f_bins) + '_' + \
+                           str(self.n_psf) + '_' + \
+                           str(self.n_pts_per_psf) + '_' + \
+                           str(self.f_trunc)
+        else:
+            pixarea_str = str(np.round(self.pixarea*(180./np.pi)**2,3))
+            self.psf_tag = 'gauss_' + pixarea_str + '_' + \
+                           str(np.round(psf_sigma_deg, 3)) + '_' + \
+                           str(self.num_f_bins) + '_' + \
+                           str(self.n_psf) + '_' + \
+                           str(self.n_pts_per_psf) + '_' + \
+                           str(self.f_trunc)
 
         # If set delay evaluation so that a user defined PSF can be entered
         # User then has to manually call this to implement the calculation
@@ -110,11 +125,19 @@ class PSFCorrection:
 
         self.psf_corr_file = self.psf_dir + self.psf_tag + '.npy'
         if not os.path.exists(self.psf_corr_file):
-            self.f_ary, self.df_rho_div_f_ary \
+            if self.healpix_map:
+                self.f_ary, self.df_rho_div_f_ary \
                 = psf_compute.psf_corr(self.nside, self.num_f_bins, self.n_psf,
                                        self.n_pts_per_psf, self.f_trunc,
                                        self.psf_r_func, self.sample_psf_max,
                                        self.psf_samples)
+            else:
+                self.f_ary, self.df_rho_div_f_ary \
+                = psf_compute_cart.psf_corr(self.pixarea, self.num_f_bins, 
+                                            self.n_psf, self.n_pts_per_psf, 
+                                            self.f_trunc, self.psf_r_func, 
+                                            self.sample_psf_max, 
+                                            self.psf_samples)
             tosave = np.array([self.f_ary, self.df_rho_div_f_ary])
             # Check again if exists, for multicore runs
             if not os.path.exists(self.psf_corr_file):

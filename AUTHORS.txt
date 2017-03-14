@@ -10,6 +10,7 @@ Major contributions:
 
 Lina Necib
 Samuel Lee
+Gabriel Collin
 
 Bug reports:
 ============
