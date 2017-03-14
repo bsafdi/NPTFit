@@ -99,7 +99,7 @@ class ConfigMaps(SetDirs):
                 "Must provide exposure map before adding a flux template"
             assert (len(self.exposure_map) == len(template)), \
                 "Template must be the same shape as the exposure map"
-            template /= self.exposure_map
+            template /= self.exposure_map/np.mean(self.exposure_map)
         self.templates_dict.update({label: template})
         self.templates.append(template)
 
