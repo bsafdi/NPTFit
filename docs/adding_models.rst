@@ -108,7 +108,7 @@ Arguments for non-Poissonian model:
    The number of breaks in the non-Poissonian model is inferred from the length of the ``model_tag`` array.
 
 .. WARNING::
-   Non-Poissonian (or PS) models must use a template loaded with ``units='PS'``, while non-Poissonian models should 
+   Non-Poissonian (or PS) models must use a template loaded with ``units='PS'``, while non-Poissonian models should use ``units='counts'`` or ``units='flux'``.
 
 :math:`dN/dF` model specifications
 ****************************

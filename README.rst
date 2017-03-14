@@ -95,6 +95,7 @@ NPTFit.
 
     n.load_data(fermi_data, fermi_exposure)
     n.add_template(iso_temp, 'iso')
+    n.add_template(np.ones(len(iso_temp)), 'iso_ps', units='PS')
 
     # Define the Region of Interest with a Mask
     analysis_mask = cm.make_mask_total(mask_ring=True, inner=0, outer=5, ring_b=90, ring_l=0)
@@ -102,7 +103,7 @@ NPTFit.
 
     # Add a Poissonian and non-Poissonian model
     n.add_poiss_model('iso','$A_\mathrm{iso}$', False, fixed=True, fixed_norm=1.47)
-    n.add_non_poiss_model('iso',
+    n.add_non_poiss_model('iso_ps',
                           ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$S_b$'],
                           [[-6,1],[2.05,30],[-2,1.95]],
                           [True,False,False],
