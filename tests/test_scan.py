@@ -41,7 +41,30 @@ def test_scan_non_poiss():
     n.perform_scan(nlive=50)
 
     n.load_scan()
+    n.load_scan()
 
+    n = nptfit.NPTF(tag='Test_NPoiss')
+
+    fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
+    fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
+    n.load_data(fermi_data, fermi_exposure)
+
+    dif = np.load('fermi_data/template_dif.npy')
+    iso = np.load('fermi_data/template_iso.npy')
+
+    n.add_template(dif, 'dif')
+    n.add_template(iso, 'iso')
+
+    n.add_non_poiss_model('iso',
+                          ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
+                          [[0,10],[2.05,30],[1.0,2.0],[-2,1.95],[0,200],[200,400]]
+                          units='flux')
+    n.add_non_poiss_model('dif',
+                          ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
+                          [[0,10],[2.05,30],[1.0,2.0],[-2,1.95],[0,200],[200,400]]
+                          units='flux',dnds_model='specify_relative_breaks')
+
+    n.configure_for_scan()
 
 def test_scan_poiss():
     n = nptfit.NPTF(tag='Test_Poiss')
@@ -58,6 +81,8 @@ def test_scan_poiss():
 
     n.add_template(dif, 'dif')
     n.add_template(iso, 'iso')
+    n.add_template(iso, 'iso_f', units='flux')
+    n.add_template(iso, 'iso_PS', units='PS')
 
     n.add_poiss_model('dif', '$A_\mathrm{dif}$', [0, 30], False)
     n.add_poiss_model('iso', '$A_\mathrm{iso}$', [0, 5], False)
@@ -67,3 +92,17 @@ def test_scan_poiss():
     n.perform_scan(nlive=50)
 
     n.load_scan()
+
+    n = nptfit.NPTF(tag='Test_Poiss')
+
+    fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
+    fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
+    n.load_data(fermi_data, fermi_exposure)
+
+    dif = np.load('fermi_data/template_dif.npy')
+
+    n.add_template(dif, 'dif')
+
+    n.add_poiss_model('dif', '$A_\mathrm{dif}$', [0, 30], False)
+
+    n.configure_for_scan(nexp=len(dif)+1)
