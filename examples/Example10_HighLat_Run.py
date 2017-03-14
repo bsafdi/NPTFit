@@ -26,7 +26,7 @@ iso = np.load('fermi_data/template_iso.npy')
 
 n.add_template(dif, 'dif')
 n.add_template(iso, 'iso')
-np.add_template(np.ones(len(iso)), 'iso_np', units='PS')
+n.add_template(np.ones(len(iso)), 'iso_np', units='PS')
 
 n.add_poiss_model('dif', '$A_\mathrm{dif}$', [0, 30], False)
 n.add_poiss_model('iso', '$A_\mathrm{iso}$', [0, 5], False)

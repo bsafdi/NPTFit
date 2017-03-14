@@ -22,7 +22,7 @@ extensions = [
 ]
 
 setup_args = {'name':'NPTFit',
-    'version':'0.1.1',
+    'version':'0.2',
     'description':'A Python package for Non-Poissonian Template Fitting',
     'url':'https://github.com/bsafdi/NPTFit',
     'author':'Siddharth Mishra-Sharma',

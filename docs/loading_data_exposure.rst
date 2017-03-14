@@ -16,13 +16,18 @@ Spatial templates can be added as follows:
 
 .. code:: python
 
-   >>> nptf.add_template(template,key)
+   >>> nptf.add_template(template, key, units)
 
 where the first argument is the template ``numpy`` array and the second argument 
 is the template key, used to identify the template in later calls.
 
-All templates should be corrected for exposure before adding.  In detail, they should be models of the counts rather than the flux. Templates that will be used by Poissonian models should also be smoothed with the detector point spread function (PSF) in the case when that is is non-trivial.  Templates that will be used to describe the spatial distribution of non-Poissonian models should be exposure corrected but not smoothed with the PSF. 
+The argument `units` specifies the template units (counts or flux) or type (to be used in either Poissonian or PS models). The following values are allowed:
 
+-- ``'counts'``: template in counts/pixel, to be used in a Poissonian model. Exposure and PSF corrected.
+-- ``'flux'``: template in counts/cm^2/s/pixel, to be used in a Poissonian model. Not exposure corrected.
+-- ``'PS'``: template for the underlying PS distribution, to be used in a non-Poissonian model. This shouldn't account for exposure effects. 
+
+For example, a template specifying an underlying isotropic PS distribution for a non-Poissonian model would be added with the keyword ``'PS'`` as a truly isotropic array, e.g. ``[1,1,1,...,1]``.
 
 .. WARNING::
    The data, exposure and template maps must be of the same length. 
