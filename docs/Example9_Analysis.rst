@@ -48,7 +48,7 @@ loaded with ``n.load_scan()``.
 
 .. code:: python
 
-    fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(int)
+    fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
 
