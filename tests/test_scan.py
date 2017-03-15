@@ -66,8 +66,8 @@ def test_scan_non_poiss():
     n.add_template(iso, 'iso')
     n.add_non_poiss_model('iso',
                           ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
-                          [[0,1],[2.05,30],[1.0,2.0],[-2,1.95],[0,200]],
-                          units='flux',fixed_params=[[6,250]])
+                          [[0,200]],
+                          units='flux',fixed_params=[[0,1.],[1,2.],[2,1.],[3,-2],[5,250]])
     n.configure_for_scan()
     n.perform_scan(nlive=50)
 
@@ -76,8 +76,9 @@ def test_scan_non_poiss():
     n.add_template(iso, 'iso')
     n.add_non_poiss_model('iso',
                           ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
-                          [[0,1],[2.05,30],[1.0,2.0],[-2,1.95],[200,400]],
-                          units='flux',dnds_model='specify_relative_breaks',fixed_params=[[5,150]])
+                          [[200,400]],
+                          units='flux',dnds_model='specify_relative_breaks',
+                          fixed_params=[[0,1.],[1,2.],[2,1.],[3,-2],[4,150]])
     n.configure_for_scan()
     n.perform_scan(nlive=50)
     
