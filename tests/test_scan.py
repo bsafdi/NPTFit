@@ -6,9 +6,7 @@ sys.path.append("../NPTFit")
 import numpy as np
 
 from NPTFit import nptfit # module for performing scan
-from NPTFit import create_mask as cm # module for creating the mask
 from NPTFit import psf_correction as pc # module for determining the PSF correction
-
 
 def test_scan_non_poiss():
     n = nptfit.NPTF(tag='Test_NPoiss')
@@ -17,8 +15,7 @@ def test_scan_non_poiss():
     fermi_exposure = np.array([1., 1., 1., 2., 2., 2.])
     n.load_data(fermi_data, fermi_exposure)
 
-    analysis_mask = cm.make_mask_total(mask_ring = True, inner = 0, outer = 5, ring_b = 90, ring_l = 0)
-    n.load_mask(analysis_mask)
+    analysis_mask = np.array([False, False, False, False, False, True])
 
     dif = np.array([1., 2., 3., 4., 5., 6.])
     iso = np.array([1., 1., 1., 1., 1., 1.])
@@ -69,7 +66,7 @@ def test_scan_poiss():
     fermi_exposure = np.array([1., 1., 1., 2., 2., 2.])
     n.load_data(fermi_data, fermi_exposure)
 
-    analysis_mask = cm.make_mask_total(mask_ring = True, inner = 0, outer = 5, ring_b = 90, ring_l = 0)
+    analysis_mask = np.array([False, False, False, False, False, True])
     n.load_mask(analysis_mask)
 
     dif = np.array([1., 2., 3., 4., 5., 6.])
@@ -91,11 +88,7 @@ def test_scan_poiss():
 
     n = nptfit.NPTF(tag='Test_Poiss')
 
-    fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
-    fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
-
-    dif = np.load('fermi_data/template_dif.npy')
 
     n.add_template(dif, 'dif')
 
