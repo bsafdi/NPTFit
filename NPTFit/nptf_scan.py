@@ -186,7 +186,7 @@ class NPTFScan(ConfigMaps):
             # If relative, just adjust the highest break
             if is_flux and is_relative:
                 npt_params = self.non_poiss_models[key]['n_params_total']
-                npt_breaks = (npt_params - 2) / 2
+                npt_breaks = int((npt_params - 2) / 2)
                 break_locs = range(npt_breaks + 2, 2 * npt_breaks + 2)
                 highest_break = npt_breaks + 2
 
@@ -222,7 +222,7 @@ class NPTFScan(ConfigMaps):
             # If not relative, adjust all breaks
             if is_flux and not is_relative:
                 npt_params = self.non_poiss_models[key]['n_params_total']
-                npt_breaks = (npt_params - 2) / 2
+                npt_breaks = int((npt_params - 2) / 2)
                 break_locs = range(npt_breaks + 2, 2 * npt_breaks + 2)
 
                 # Check if there are any fixed breaks and adjust

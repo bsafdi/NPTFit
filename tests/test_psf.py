@@ -51,21 +51,6 @@ def test_psf():
     f_ary_gauss = pc_inst.f_ary
     df_rho_div_f_ary_gauss = pc_inst.df_rho_div_f_ary
 
-    # Define parameters that specify the Fermi-LAT PSF at 2 GeV
-    fcore = 0.748988248179
-    score = 0.428653790656
-    gcore = 7.82363229341
-    stail = 0.715962650769
-    gtail = 3.61883748683
-    spe = 0.00456544262478
-
-    # Define the full PSF in terms of two King functions
-    def king_fn(x, sigma, gamma):
-        return 1./(2.*np.pi*sigma**2.)*(1.-1./gamma)*(1.+(x**2./(2.*gamma*sigma**2.)))**(-gamma)
-
-    def Fermi_PSF(r):
-        return fcore*king_fn(r/spe,score,gcore) + (1-fcore)*king_fn(r/spe,stail,gtail)
-
     # Modify the relevant parameters in pc_inst and then make or load the PSF
     pc_inst = pc.PSFCorrection(delay_compute=True,healpix_map=False, pixarea=pixarea,nside=1)
     pc_inst.psf_r_func = lambda r: Fermi_PSF(r)
