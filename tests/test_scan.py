@@ -57,11 +57,11 @@ def test_scan_non_poiss():
 
     n.add_non_poiss_model('iso',
                           ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
-                          [[0,10],[2.05,30],[1.0,2.0],[-2,1.95],[0,200],[200,400]]
+                          [[0,10],[2.05,30],[1.0,2.0],[-2,1.95],[0,200],[200,400]],
                           units='flux')
     n.add_non_poiss_model('dif',
                           ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
-                          [[0,10],[2.05,30],[1.0,2.0],[-2,1.95],[0,200],[200,400]]
+                          [[0,10],[2.05,30],[1.0,2.0],[-2,1.95],[0,200],[200,400]],
                           units='flux',dnds_model='specify_relative_breaks')
 
     n.configure_for_scan()
