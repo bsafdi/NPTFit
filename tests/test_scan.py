@@ -46,6 +46,8 @@ def test_scan_non_poiss():
 
     n.add_template(dif, 'dif')
     n.add_template(iso, 'iso')
+    n.add_template(dif, 'dif2')
+    n.add_template(iso, 'iso2')
 
     n.add_non_poiss_model('iso',
                           ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
@@ -55,8 +57,20 @@ def test_scan_non_poiss():
                           ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
                           [[0,10],[2.05,30],[1.0,2.0],[-2,1.95],[0,200],[200,400]],
                           units='flux',dnds_model='specify_relative_breaks')
+    n.add_non_poiss_model('iso',
+                          ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
+                          [[0,10],[2.05,30],[1.0,2.0],[-2,1.95],[0,200]],
+                          units='flux',fixed_params=[[6,250]])
+    n.add_non_poiss_model('dif',
+                          ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
+                          [[0,10],[2.05,30],[1.0,2.0],[-2,1.95],[200,400]],
+                          units='flux',dnds_model='specify_relative_breaks',fixed_params=[[5,150]]))
 
     n.configure_for_scan(nexp=len(dif)+1)
+
+    n.perform_scan(nlive=50)
+
+    n.load_scan()
 
 
 def test_scan_poiss():
@@ -95,3 +109,7 @@ def test_scan_poiss():
     n.add_poiss_model('dif', '$A_\mathrm{dif}$', [0, 30], False)
 
     n.configure_for_scan()
+
+    n.perform_scan(nlive=50)
+
+    n.load_scan()
