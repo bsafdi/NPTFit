@@ -89,7 +89,7 @@ NPTFit.
     n = nptfit.NPTF()
 
     # Load data and templates
-    fermi_data = np.load('fermi_data/fermidata_counts.npy')
+    fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     iso_temp = np.load('fermi_data/template_iso.npy')
 
