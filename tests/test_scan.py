@@ -13,15 +13,15 @@ from NPTFit import psf_correction as pc # module for determining the PSF correct
 def test_scan_non_poiss():
     n = nptfit.NPTF(tag='Test_NPoiss')
 
-    fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
-    fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
+    fermi_data = np.array([2, 1, 1, 1, 4, 10]).astype(np.int32)
+    fermi_exposure = np.array([1., 1., 1., 2., 2., 2.])
     n.load_data(fermi_data, fermi_exposure)
 
     analysis_mask = cm.make_mask_total(mask_ring = True, inner = 0, outer = 5, ring_b = 90, ring_l = 0)
     n.load_mask(analysis_mask)
 
-    dif = np.load('fermi_data/template_dif.npy')
-    iso = np.load('fermi_data/template_iso.npy')
+    dif = np.array([1., 2., 3., 4., 5., 6.])
+    iso = np.array([1., 1., 1., 1., 1., 1.])
 
     n.add_template(dif, 'dif')
     n.add_template(iso, 'iso')
@@ -45,12 +45,7 @@ def test_scan_non_poiss():
 
     n = nptfit.NPTF(tag='Test_NPoiss')
 
-    fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
-    fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
-
-    dif = np.load('fermi_data/template_dif.npy')
-    iso = np.load('fermi_data/template_iso.npy')
 
     n.add_template(dif, 'dif')
     n.add_template(iso, 'iso')
@@ -64,22 +59,21 @@ def test_scan_non_poiss():
                           [[0,10],[2.05,30],[1.0,2.0],[-2,1.95],[0,200],[200,400]],
                           units='flux',dnds_model='specify_relative_breaks')
 
-    #n.configure_for_scan(nexp=len(dif)+1)
-    n.configure_for_scan()
+    n.configure_for_scan(nexp=len(dif)+1)
 
 
 def test_scan_poiss():
     n = nptfit.NPTF(tag='Test_Poiss')
 
-    fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
-    fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
+    fermi_data = np.array([2, 1, 1, 1, 4, 10]).astype(np.int32)
+    fermi_exposure = np.array([1., 1., 1., 2., 2., 2.])
     n.load_data(fermi_data, fermi_exposure)
 
     analysis_mask = cm.make_mask_total(mask_ring = True, inner = 0, outer = 5, ring_b = 90, ring_l = 0)
     n.load_mask(analysis_mask)
 
-    dif = np.load('fermi_data/template_dif.npy')
-    iso = np.load('fermi_data/template_iso.npy')
+    dif = np.array([1., 2., 3., 4., 5., 6.])
+    iso = np.array([1., 1., 1., 1., 1., 1.])
 
     n.add_template(dif, 'dif')
     n.add_template(iso, 'iso')
