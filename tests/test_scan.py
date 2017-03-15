@@ -63,7 +63,7 @@ def test_scan_non_poiss():
 
     n = nptfit.NPTF(tag='Test_NPoiss')
     n.load_data(fermi_data, fermi_exposure)
-    n.add_template(iso, 'dif')
+    n.add_template(iso, 'iso')
     n.add_non_poiss_model('iso',
                           ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
                           [[0,1],[2.05,30],[1.0,2.0],[-2,1.95],[0,200]],
@@ -73,7 +73,7 @@ def test_scan_non_poiss():
 
     n = nptfit.NPTF(tag='Test_NPoiss')
     n.load_data(fermi_data, fermi_exposure)
-    n.add_template(iso, 'dif')
+    n.add_template(iso, 'iso')
     n.add_non_poiss_model('iso',
                           ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
                           [[0,1],[2.05,30],[1.0,2.0],[-2,1.95],[200,400]],
