@@ -45,6 +45,15 @@ def test_scan_non_poiss():
     n.add_template(iso, 'iso')
     n.add_non_poiss_model('iso',
                           ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$S_{b1}$'],
+                          [[0,1],[2.05,2.5],[-2.,-1.5],[1.,4.]])
+    n.configure_for_scan()
+    n.perform_scan(nlive=50)
+
+    n = nptfit.NPTF(tag='Test_NPoiss')
+    n.load_data(fermi_data, fermi_exposure)
+    n.add_template(iso, 'iso')
+    n.add_non_poiss_model('iso',
+                          ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$S_{b1}$'],
                           [[0,1]],
                           units='flux',fixed_params=[[1,2.],[2,-2.],[3,100.]])
     n.configure_for_scan(nexp=len(dif)+1)
@@ -81,7 +90,42 @@ def test_scan_non_poiss():
                           fixed_params=[[0,1.],[1,2.],[2,1.],[3,-2],[4,150]])
     n.configure_for_scan()
     n.perform_scan(nlive=50)
-    
+
+    n = nptfit.NPTF(tag='Test_NPoiss')
+    n.load_data(fermi_data, fermi_exposure)
+    n.add_template(iso, 'iso')
+    n.add_non_poiss_model('iso',
+                          ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
+                          [[0.,1.]],[True]
+                          units='flux',fixed_params=[[0,1.],[1,2.],[2,1.],[3,-2],[5,250]])
+    n.configure_for_scan()
+    n.perform_scan(nlive=50)
+
+    n = nptfit.NPTF(tag='Test_NPoiss')
+    n.load_data(fermi_data, fermi_exposure)
+    n.add_template(iso, 'iso')
+    n.add_non_poiss_model('iso',
+                          ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$n_3','$S_{b1}$','$S_{b2}$'],
+                          [[0.1,1]],[True]
+                          units='flux',dnds_model='specify_relative_breaks',
+                          fixed_params=[[0,1.],[1,2.],[2,1.],[3,-2],[4,150]])
+    n.configure_for_scan()
+    n.perform_scan(nlive=50)
+
+    n = nptfit.NPTF(tag='Test_NPoiss')
+    n.load_data(fermi_data, fermi_exposure)
+    n.add_template(iso, 'iso')
+    n.add_template(dif, 'dif')
+    n.add_non_poiss_model('iso',
+                          ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$S_{b1}$'],
+                          [[0,1]],
+                          units='flux',fixed_params=[[1,2.],[2,-2.],[3,100.]])
+    n.add_non_poiss_model('dif',
+                          ['$A^\mathrm{ps}_\mathrm{iso}$','$n_1$','$n_2$','$S_{b1}$'],
+                          [[0,1]],
+                          units='flux',fixed_params=[[1,2.],[2,-2.],[3,100.]])
+    n.configure_for_scan()
+    n.perform_scan(nlive=50)
 
 def test_scan_poiss():
     n = nptfit.NPTF(tag='Test_Poiss')
