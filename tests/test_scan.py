@@ -64,7 +64,9 @@ def test_scan_non_poiss():
                           [[0,10],[2.05,30],[1.0,2.0],[-2,1.95],[0,200],[200,400]],
                           units='flux',dnds_model='specify_relative_breaks')
 
-    n.configure_for_scan(nexp=2*len(dif))
+    #n.configure_for_scan(nexp=len(dif)+1)
+    n.configure_for_scan()
+
 
 def test_scan_poiss():
     n = nptfit.NPTF(tag='Test_Poiss')
