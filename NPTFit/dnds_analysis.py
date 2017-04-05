@@ -420,5 +420,5 @@ class Analysis:
         corner.corner(self.nptf.samples, labels=self.nptf.params, smooth=1.5,
                       smooth1d=1, quantiles=[0.16, 0.5, 0.84], show_titles=True,
                       title_fmt='.2f', title_args={'fontsize': 14},
-                      range=[1 for _ in range(self.nptf.n_params)],
+                      range=[1 for _ in range(self.nptf.n_params_full)],
                       plot_datapoints=False, verbose=False)

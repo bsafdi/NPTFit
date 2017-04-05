@@ -526,8 +526,11 @@ class NPTFScan(ConfigMaps):
             if len(self.fixed_params_list) > 0:
                 self.fix_samples()
                 self.fix_medians()
-                self.n_params += len(self.fixed_params_list)
+                # Set the full number of parameters - used for triangle plot
+                self.n_params_full = self.n_params + len(self.fixed_params_list)
                 self.fix_model_decompression()
+            else:
+                self.n_params_full = self.n_params
 
             self.already_loaded = True
 
