@@ -20,7 +20,7 @@ from mpmath import mp
 
 ## Precalculate log(m!) for m in [0, fct_max - 1]
 # If data map has more than fct_max counts per pixel fct_max must be increased
-fct_max = 5000
+fct_max = 30000
 
 def log_factorial(m):
     return np.sum(np.log(np.arange(1., m + 1., dtype=np.float128)))
