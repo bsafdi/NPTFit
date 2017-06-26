@@ -96,7 +96,7 @@ class ConfigMaps(SetDirs):
 
         if units == 'PS':
             assert (len(self.exposure_map) != 0), \
-                "Must provide exposure map before adding a flux template"
+                "Must provide exposure map before adding a PS template"
             assert (len(self.exposure_map) == len(template)), \
                 "Template must be the same shape as the exposure map"
             template /= self.exposure_map/np.mean(self.exposure_map)

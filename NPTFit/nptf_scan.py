@@ -59,6 +59,10 @@ class NPTFScan(ConfigMaps):
             :param fixed_norm: normalization of template, if fixed
         """
 
+        # Check the model is in the template dictionary
+        assert (template_name in self.templates_dict), \
+            template_name + " is not a known template, must be added"
+        
         # Fixed and non-fixed poiss models appended to different dictionaries
         if fixed:
             self.poiss_models_fixed[template_name] = {'fixed_norm': fixed_norm}
@@ -95,6 +99,10 @@ class NPTFScan(ConfigMaps):
             :param units: The units in which the prior or fixed value for the
                    breaks is specified. This should be either counts or flux
         """
+
+        # Check the model is in the template dictionary
+        assert (template_name in self.templates_dict), \
+            template_name + " is not a known template, must be added"
 
         if log_prior is False:
             log_prior_list = [False for _ in range(len(model_tag))]
