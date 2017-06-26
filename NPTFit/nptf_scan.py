@@ -146,10 +146,12 @@ class NPTFScan(ConfigMaps):
         # Configure the non-poissonian priors
         self.theta_min_non_poiss = self.flatten(
             [np.array(val['prior_range'])[::, 0]
-             for val in self.non_poiss_models.values()])
+             for val in self.non_poiss_models.values() if \
+             len(val['prior_range']) > 0 ])
         self.theta_max_non_poiss = self.flatten(
             [np.array(val['prior_range'])[::, 1]
-             for val in self.non_poiss_models.values()])
+             for val in self.non_poiss_models.values() if \
+             len(val['prior_range']) > 0 ] )
 
         # Setup the theta min and max arrays
         self.theta_min = self.theta_min_poiss + self.theta_min_non_poiss
@@ -349,7 +351,7 @@ class NPTFScan(ConfigMaps):
         # Note that through the use of convert_log, theta_ps here is an array
         # of [tag, value]
         theta_ps = []
-        if self.n_non_poiss != 0:
+        if self.n_non_poiss_models != 0:
             theta_ps = [self.convert_log(self.model_decompression_key[i],
                                          theta[i]) for i in
                         range(self.n_poiss, self.n_params)]
