@@ -297,7 +297,7 @@ class NPTFScan(ConfigMaps):
 
         self.configure_priors()
 
-        print('The number of parameters to be fit is', self.n_params)
+        # print('The number of parameters to be fit is', self.n_params)
 
     def make_pt_sum_theta(self, theta):
         """ Take the unfixed parameters being scanned by multinest and convert
