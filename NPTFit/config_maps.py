@@ -43,13 +43,14 @@ class ConfigMaps(SetDirs):
     def load_data(self, count_map, exposure_map):
         """ Function to input analysis data
 
-            :param count_map: A map of counts (integers)
+            :param count_map: A map of counts (integers - need not be here)
             :param exposure_map: A map of the exposure
         """
 
+        # Not checking this for now
         # Check the counts map is an array of integers
-        assert (all(isinstance(p, np.int32) for p in count_map)), \
-            "Data must be an array of counts (python integers)"
+        #assert (all(isinstance(p, np.int32) for p in count_map)), \
+        #    "Data must be an array of counts (python integers)"
 
         self.count_map = count_map
         self.exposure_map = exposure_map
@@ -135,8 +136,9 @@ class ConfigMaps(SetDirs):
         # Compress data - this is used for a Poissonian scan
         temp_data = ma.masked_array(data=self.count_map, mask=self.mask_total)
         # Convert map to int32 array - Cython considers int64s to be floats
+        # Don't convert on this branch
         self.masked_compressed_data = \
-            np.array(temp_data.compressed(), dtype='int32')
+            np.array(temp_data.compressed()) #, dtype='int32')
 
         # Check the user has not accidentally masked the entire sky
         assert(len(self.masked_compressed_data != 0)), \
@@ -150,9 +152,9 @@ class ConfigMaps(SetDirs):
         for i in range(self.nexp):
             temp_data_expreg = ma.masked_array(data=self.count_map,
                                                mask=self.expreg_mask[i])
-            # Again convert to int32
+            # Again convert to int32 - not this branch
             self.masked_compressed_data_expreg.append(np.array(
-                 temp_data_expreg.compressed(), dtype='int32'))
+                 temp_data_expreg.compressed())) #, dtype='int32'))
 
         # Create a nested dictionary of different versions of the templates
         the_dict = self.templates_dict
@@ -185,7 +187,7 @@ class ConfigMaps(SetDirs):
         # Convert from list of exreg pixels to masks (int as used to index)
         array_split = np.array_split(array_sorted, self.nexp)
         expreg_array = [np.array([array_split[i][j][0]
-                        for j in range(len(array_split[i]))], dtype='int32')
+                        for j in range(len(array_split[i]))]) #, dtype='int32') Not this branch
                         for i in range(len(array_split))]
 
         temp_expreg_mask = []
