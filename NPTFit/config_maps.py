@@ -187,7 +187,7 @@ class ConfigMaps(SetDirs):
         # Convert from list of exreg pixels to masks (int as used to index)
         array_split = np.array_split(array_sorted, self.nexp)
         expreg_array = [np.array([array_split[i][j][0]
-                        for j in range(len(array_split[i]))]) #, dtype='int32') Not this branch
+                        for j in range(len(array_split[i]))], dtype='int32') #, dtype='int32') Not this branch
                         for i in range(len(array_split))]
 
         temp_expreg_mask = []
