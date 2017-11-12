@@ -13,6 +13,9 @@ addons:
       - g++-4.8
       - gfortran-4.8
       - swig
+      - liblapack-dev
+      - lapack-devel
+      - lapack
 
 cache:
     directories:
@@ -21,11 +24,11 @@ cache:
 
 before_install:
     # Set up a conda environment for faster set-up of standard libraries
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-    - chmod +x miniconda.sh
-    - ./miniconda.sh -b -p $HOME/miniconda
-    - export PATH=$HOME/miniconda/bin:$PATH
-    - conda update --yes conda
+    #- wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+    #- chmod +x miniconda.sh
+    #- ./miniconda.sh -b -p $HOME/miniconda
+    #- export PATH=$HOME/miniconda/bin:$PATH
+    #- conda update --yes conda
     # Set the C++ and Fortran compilers 
     - export CXX=g++-4.8 
     - export F90=gfortran-4.8
