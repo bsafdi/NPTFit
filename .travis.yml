@@ -32,13 +32,17 @@ before_install:
 
 install:
     # Create and activate a test environment
-    - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
-    - source activate test
+    #- conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
+    #- source activate test
     # Python setup
-    - conda install --yes numpy Cython mpi4py
-    - pip install numpy matplotlib healpy pymultinest jupyter corner mpmath pytest pytest-cov codecov coverage
-    - make build  # Build Cython
+    #- conda install --yes numpy Cython mpi4py
+    #- pip install numpy matplotlib healpy pymultinest jupyter corner mpmath pytest pytest-cov codecov coverage
+    #- make build  # Build Cython
     # Download and install MultiNest
+    - git clone https://github.com/xianyi/OpenBLAS.git
+    - cd OpenBLAS
+    - make
+    - export BLAS_DIR=$(pwd)
     - git clone http://github.com/JohannesBuchner/MultiNest
     - cd MultiNest
     - cmake -DCMAKE_Fortran_COMPILER=gfortran-4.8
