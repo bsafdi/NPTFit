@@ -41,15 +41,17 @@ install:
     # Create and activate a test environment
     - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
     - source activate test
-    # Python setup
-    - conda install --yes numpy Cython mpi4py
-    - pip install numpy matplotlib healpy pymultinest jupyter corner mpmath pytest pytest-cov codecov coverage
-    - make build  # Build Cython
-    - python setup.py install # Install locally
     # Download Fermi data
     - cd ..
     - wget https://dspace.mit.edu/bitstream/handle/1721.1/105492/fermi_data.tar.gz
     - tar -xvf fermi_data.tar.gz
+    # Python setup
+    - conda install --yes numpy Cython mpi4py
+    - pip install numpy matplotlib healpy pymultinest jupyter corner mpmath pytest pytest-cov codecov coverage
+    - echo $(pwd)
+    - make build  # Build Cython
+    - python setup.py install # Install locally
+
 script:
     - coverage run tests/test_all.py
 after_success:
