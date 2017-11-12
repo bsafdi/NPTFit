@@ -14,8 +14,6 @@ addons:
       - gfortran-4.8
       - swig
       - liblapack-dev
-      - lapack-devel
-      - lapack
 
 cache:
     directories:
