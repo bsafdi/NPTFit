@@ -14,6 +14,6 @@
 cd NPTFit/examples
 
 # The below syntax shows how to call the code with MPI
-# Alternative: mpiexec -n 12 python Example8_Galactic_Center_nonPoissonian.py
+# Alternative: mpiexec -n 12 python Example10_Galactic_Center_nonPoissonian.py
 
-mpirun -np 12 python Example8_Galactic_Center_nonPoissonian.py
+mpirun -np 12 python Example10_Galactic_Center_nonPoissonian.py
