@@ -38,7 +38,7 @@ Example 1: Mask Nothing
 -----------------------
 
 If no options are specified, create mask returns an empty mask. In the
-plot here and for those below, blue represents unmasked, red masked.
+plot here and for those below, purple represents unmasked, yellow masked.
 
 .. code:: python
 
