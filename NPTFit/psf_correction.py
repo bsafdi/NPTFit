@@ -84,6 +84,7 @@ class PSFCorrection:
         self.nside = nside
         self.healpix_map = healpix_map
         self.pixarea = pixarea
+        self.gridsize = gridsize
 
         if self.psf_dir is None:
             self.psf_dir = os.getcwd() + '/psf_dir/'
