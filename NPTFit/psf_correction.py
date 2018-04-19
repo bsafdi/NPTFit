@@ -29,7 +29,7 @@ class PSFCorrection:
     def __init__(self, psf_dir=None, num_f_bins=10, n_psf=50000,
                  n_pts_per_psf=1000, f_trunc=0.01, nside=128,
                  psf_sigma_deg=None, delay_compute=False, 
-                 healpix_map=True, pixarea=None):
+                 healpix_map=True, pixarea=None, gridsize=None):
         """ Load or calculate the NPTF PSF correction
 
             Adds f_ary and df_rho_div_ary to self. Defaults to a Gaussian PSF,
@@ -45,6 +45,7 @@ class PSFCorrection:
             :param delay_compute: set to true to define a custom psf
             :param healpix_map: set to False if not working with a healpix map
             :param pixarea: pixel area (sr) if not a healpix map
+            :param gridsize: gridsize if not a healpix map
 
             Custom PSF details:
 
@@ -133,7 +134,8 @@ class PSFCorrection:
                                        self.psf_samples)
             else:
                 self.f_ary, self.df_rho_div_f_ary \
-                = psf_compute_cart.psf_corr(self.pixarea, self.num_f_bins, 
+                = psf_compute_cart.psf_corr(self.gridsize, 
+                                            self.pixarea, self.num_f_bins, 
                                             self.n_psf, self.n_pts_per_psf, 
                                             self.f_trunc, self.psf_r_func, 
                                             self.sample_psf_max, 
