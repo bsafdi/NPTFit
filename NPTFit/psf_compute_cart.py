@@ -17,11 +17,11 @@ import numpy as np
 import healpy as hp
 from . import pdf_sampler
 
-# Calculation is performed on a grid of size gridsize x gridsize 
-gridsize = 500
+def psf_corr(gridsize, pixarea, num_f_bins, n_psf, n_pts_per_psf, f_trunc, 
+             psf_r_func, sample_psf_max, psf_samples):
 
-def psf_corr(pixarea, num_f_bins, n_psf, n_pts_per_psf, f_trunc, psf_r_func,
-             sample_psf_max, psf_samples):
+    # Calculation is performed on a grid of size gridsize x gridsize
+
     # Setup pdf of the psf
     radial_pdf = lambda r: r * psf_r_func(r)
     rvals = np.linspace(0, sample_psf_max, psf_samples)
@@ -52,17 +52,31 @@ def psf_corr(pixarea, num_f_bins, n_psf, n_pts_per_psf, f_trunc, psf_r_func,
         y_arr = y_c[ps_i] + dy
 
         # Convert these arrays into positions on the grid
-        x_loc = np.mod(np.floor(x_arr/pixwidth).astype(int),gridsize) 
-        y_loc = np.mod(np.floor(y_arr/pixwidth).astype(int),gridsize)
+        # Commented out code was old, where we gave the grid periodic boundary
+        # conditions. Now work to account for the fact flux can get lost off the edge
+        #x_loc = np.mod(np.floor(x_arr/pixwidth).astype(int),gridsize) 
+        #y_loc = np.mod(np.floor(y_arr/pixwidth).astype(int),gridsize)
+        x_loc = np.floor(x_arr/pixwidth).astype(int)
+        y_loc = np.floor(y_arr/pixwidth).astype(int)
+
+        # Keep only pixels within the grid
+        keep = np.where(x_loc > -1 & x_loc < gridsize & 
+                        y_loc > -1 & y_loc < gridsize)[0]
+
+        x_keep = x_loc[keep]
+        y_keep = y_loc[keep]
 
         # Move from a 2D array to a 1D array
-        pixel = gridsize*y_loc + x_loc
+        pixel = gridsize*y_keep + x_keep
 
         # From this information determine the flux fraction per pixel
         mn = np.min(pixel)
         mx = np.max(pixel) + 1
-        pixel_hist = np.histogram(pixel, bins=mx - mn, range=(mn, mx), normed=1)[
-            0]
+        pixel_hist = np.histogram(pixel, bins=mx - mn, range=(mn, mx))[0]
+
+        # Normalize manually by the number of points generated, not the
+        # number that survived
+        pixel_hist /= float(n_pts_per_psf)
         outlist.append(pixel_hist)
 
     f_values = np.concatenate(outlist)
