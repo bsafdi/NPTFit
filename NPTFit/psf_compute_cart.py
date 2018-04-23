@@ -60,8 +60,8 @@ def psf_corr(gridsize, pixarea, num_f_bins, n_psf, n_pts_per_psf, f_trunc,
         y_loc = np.floor(y_arr/pixwidth).astype(int)
 
         # Keep only pixels within the grid
-        keep = np.where(x_loc > -1 & x_loc < gridsize & 
-                        y_loc > -1 & y_loc < gridsize)[0]
+        keep = np.where((x_loc > -1) & (x_loc < gridsize) & 
+                        (y_loc > -1) & (y_loc < gridsize))[0]
 
         x_keep = x_loc[keep]
         y_keep = y_loc[keep]
@@ -76,7 +76,7 @@ def psf_corr(gridsize, pixarea, num_f_bins, n_psf, n_pts_per_psf, f_trunc,
 
         # Normalize manually by the number of points generated, not the
         # number that survived
-        pixel_hist /= float(n_pts_per_psf)
+        pixel_hist = pixel_hist.astype(float)/float(n_pts_per_psf)
         outlist.append(pixel_hist)
 
     f_values = np.concatenate(outlist)
