@@ -21,7 +21,7 @@ def call_pkgconfig(args, remove_flags=False):
     code, out, _ = call_shell(['pkg-config'] + args)
     if code != 0:
         raise BadExitStatus()
-    flags = out.strip().split(' ')
+    flags = out.decode().strip().split(' ')
     if len(flags) == 1 and flags[0] == '':
         return []
     if remove_flags:
