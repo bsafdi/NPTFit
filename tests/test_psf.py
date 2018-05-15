@@ -47,12 +47,12 @@ def test_psf():
 
 
     pixarea = 4.*np.pi/12.
-    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812,n_psf=5000,n_pts_per_psf=100,num_f_bins=20,f_trunc=0.1,nside=1,healpix_map=False, pixarea=pixarea)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812,n_psf=5000,n_pts_per_psf=100,num_f_bins=20,f_trunc=0.1,nside=1,healpix_map=False, pixarea=pixarea, gridsize=5)
     f_ary_gauss = pc_inst.f_ary
     df_rho_div_f_ary_gauss = pc_inst.df_rho_div_f_ary
 
     # Modify the relevant parameters in pc_inst and then make or load the PSF
-    pc_inst = pc.PSFCorrection(delay_compute=True,healpix_map=False, pixarea=pixarea,nside=1)
+    pc_inst = pc.PSFCorrection(delay_compute=True,nside=1)
     pc_inst.psf_r_func = lambda r: Fermi_PSF(r)
     pc_inst.sample_psf_max = 10.*spe*(score+stail)/2.
     pc_inst.psf_samples = 10000
