@@ -235,7 +235,9 @@ found here: https://github.com/nickrodd/grid2healpix
 In order to calculate the appropriate PSF correction for Cartesian maps
 the general syntax is the same, except now the ``healpix_map`` keyword
 should be set to ``False`` and the ``pixarea`` keyword set to the area
-in sr of each pixel of the Cartesian map.
+in sr of each pixel of the Cartesian map.  In addition the ``gridsize`` 
+keyword determines how large the map is, and flux that falls outside the 
+map is lost in the Cartesian case.
 
 As an example of this syntax we calculate the PSF correction on a
 Cartesian map that has pixels the same size as an ``nside=128`` healpix
@@ -245,7 +247,7 @@ identical.
 .. code:: python
 
     pixarea = 4*np.pi/(12*128*128)
-    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812, healpix_map=False, pixarea=pixarea)
+    pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812, healpix_map=False, pixarea=pixarea, gridsize=100)
     f_ary_8 = pc_inst.f_ary
     df_rho_div_f_ary_8 = pc_inst.df_rho_div_f_ary
     

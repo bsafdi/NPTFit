@@ -213,8 +213,8 @@ twice as long for example).
     nside = 2
     npix = hp.nside2npix(nside)
     exposure = np.zeros(npix)
-    exposure[0:npix/2] = 1.0
-    exposure[npix/2:npix] = 2.0
+    exposure[0:int(npix/2)] = 1.0
+    exposure[int(npix/2):npix] = 2.0
     data = np.random.poisson(exposure)
     
     for ips in range(10):
