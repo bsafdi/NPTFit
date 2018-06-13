@@ -47,7 +47,7 @@ install:
     - tar -xvf fermi_data.tar.gz
     # Python setup
     - conda install --yes numpy Cython mpi4py
-    - pip install six numpy matplotlib healpy pymultinest jupyter corner mpmath pytest pytest-cov codecov coverage
+    - pip install numpy matplotlib healpy==1.11.0 pymultinest jupyter corner mpmath pytest pytest-cov codecov coverage
     - echo $(pwd)
     - make build  # Build Cython
     - python setup.py install # Install locally
