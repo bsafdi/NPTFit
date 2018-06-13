@@ -15,7 +15,7 @@ counts coming from all point sources. The effect of a finite point
 spread function on the statistics and how to account for it is discussed
 in Example 5.
 
-.. code:: python
+.. code:: ipython3
 
     # Import relevant modules
     
@@ -39,11 +39,11 @@ Example 1: A map without point sources
 We start out by analyzing a map without any point sources, using a
 uniform exposure map. First let's create and plot our random data.
 
-.. code:: python
+.. code:: ipython3
 
     nside = 2
     npix = hp.nside2npix(nside)
-    data = np.random.poisson(1,npix)
+    data = np.random.poisson(1,npix).astype(np.int32)
     exposure = np.ones(npix)
     
     hp.mollview(data,title='Fake Data')
@@ -61,7 +61,7 @@ uniform exposure map. First let's create and plot our random data.
 Next we set up an instance of NPTFit and add in the data. We'll analyze
 the entire sky at once, so we won't add in a mask.
 
-.. code:: python
+.. code:: ipython3
 
     n = nptfit.NPTF(tag='SimpleNPTF_Example')
     n.load_data(data, exposure)
@@ -70,7 +70,7 @@ Now we add in templates, one to describe isotropic Poissonian emission
 and one for isotropic point sources. Note the different syntax requires
 for each.
 
-.. code:: python
+.. code:: ipython3
 
     iso = np.ones(npix)
     n.add_template(iso, 'iso_p', units='flux')
@@ -85,7 +85,7 @@ break Sb.
 More details on the forms for the non-Poissonian model can be found in
 Example 6.
 
-.. code:: python
+.. code:: ipython3
 
     n.add_poiss_model('iso_p', '$A_\mathrm{iso}$', [0,2], False)
     n.add_non_poiss_model('iso_np',
@@ -96,7 +96,7 @@ Example 6.
 Once everything is setup, we configure and perform the scan, and then
 show the triangle plot and flux fraction plot.
 
-.. code:: python
+.. code:: ipython3
 
     n.configure_for_scan()
     n.perform_scan(nlive=500)
@@ -119,7 +119,7 @@ show the triangle plot and flux fraction plot.
 
     No mask set; defaulting to a blank mask
     The number of parameters to be fit is 5
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/SimpleNPTF_Example/.txt
+      analysing data from /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/chains/SimpleNPTF_Example/.txt
 
 
 
@@ -140,7 +140,7 @@ Example 2: A map with point sources
 We now repeat the analysis above, but now add in 10 mean 50 count point
 sources. First lets take the data from above and add the point sources.
 
-.. code:: python
+.. code:: ipython3
 
     for ips in range(10):
         data[np.random.randint(npix)] += np.random.poisson(50)
@@ -154,7 +154,7 @@ sources. First lets take the data from above and add the point sources.
 
 Now we repeat all the steps used in the example without point sources.
 
-.. code:: python
+.. code:: ipython3
 
     n = nptfit.NPTF(tag='SimpleNPTF_Example')
     n.load_data(data,exposure)
@@ -183,7 +183,7 @@ Now we repeat all the steps used in the example without point sources.
 
     No mask set; defaulting to a blank mask
     The number of parameters to be fit is 5
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/SimpleNPTF_Example/.txt
+      analysing data from /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/chains/SimpleNPTF_Example/.txt
 
 
 
@@ -208,14 +208,14 @@ side of the sky is expected to obtain twice as many counts as the other
 (which could occur if the instrument looked at that half of the sky
 twice as long for example).
 
-.. code:: python
+.. code:: ipython3
 
     nside = 2
     npix = hp.nside2npix(nside)
     exposure = np.zeros(npix)
     exposure[0:int(npix/2)] = 1.0
     exposure[int(npix/2):npix] = 2.0
-    data = np.random.poisson(exposure)
+    data = np.random.poisson(exposure).astype(np.int32)
     
     for ips in range(10):
         loc = np.random.randint(npix)
@@ -239,7 +239,7 @@ exposure regions. In this simple example we know that 2 is all we need,
 but in real situations it is worth trying various values of nexp to see
 where results converge.
 
-.. code:: python
+.. code:: ipython3
 
     n = nptfit.NPTF(tag='SimpleNPTF_Example')
     n.load_data(data,exposure)
@@ -268,7 +268,7 @@ where results converge.
 
     No mask set; defaulting to a blank mask
     The number of parameters to be fit is 5
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/SimpleNPTF_Example/.txt
+      analysing data from /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/chains/SimpleNPTF_Example/.txt
 
 
 
@@ -284,7 +284,7 @@ To highlight the importance of the exposure regions, let's repeat this
 using only one exposure region which we emphasize is the **wrong** thing
 to do.
 
-.. code:: python
+.. code:: ipython3
 
     n = nptfit.NPTF(tag='SimpleNPTF_Example')
     n.load_data(data,exposure)
@@ -313,7 +313,7 @@ to do.
 
     No mask set; defaulting to a blank mask
     The number of parameters to be fit is 5
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/SimpleNPTF_Example/.txt
+      analysing data from /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/chains/SimpleNPTF_Example/.txt
 
 
 

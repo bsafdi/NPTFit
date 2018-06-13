@@ -12,7 +12,7 @@ sources.
 **NB:** This example makes use of the Fermi Data, which needs to already
 be installed. See Example 1 for details.
 
-.. code:: python
+.. code:: ipython3
 
     # Import relevant modules
     
@@ -39,17 +39,17 @@ Here we choose an ROI that is a small ring around the galactic north
 pole. In this small region we will only use isotropically distributed
 templates.
 
-.. code:: python
+.. code:: ipython3
 
     n = nptfit.NPTF(tag='non-Poissonian_Example')
 
-.. code:: python
+.. code:: ipython3
 
     fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
 
-.. code:: python
+.. code:: ipython3
 
     analysis_mask = cm.make_mask_total(mask_ring = True, inner = 0, outer = 5, ring_b = 90, ring_l = 0)
     n.load_mask(analysis_mask)
@@ -59,7 +59,7 @@ units of photon counts and is exposure corrected, which we anticipate
 using as such for the Poissonian model, while for the non-Poissonian
 model the underlying PS distribution is truly isotropic.
 
-.. code:: python
+.. code:: ipython3
 
     iso_p = np.load('fermi_data/template_iso.npy')
     n.add_template(iso_p, 'iso_p')
@@ -104,7 +104,7 @@ In the example below we add an isotropic distributed non-Poissonian
 template, with a log flat normalisation, linear flat indices, and a
 fixed break.
 
-.. code:: python
+.. code:: ipython3
 
     n.add_poiss_model('iso_p','$A_\mathrm{iso}$', False, fixed=True, fixed_norm=1.51)
     n.add_non_poiss_model('iso_np',
@@ -126,7 +126,7 @@ Here we take ``nexp=1`` for a simple example. Generally increasing
 ``nexp`` leads to more accurate results, but also increases the runtime
 of the code.
 
-.. code:: python
+.. code:: ipython3
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary = pc_inst.f_ary
@@ -137,7 +137,7 @@ of the code.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
     The number of parameters to be fit is 3
 
 
@@ -150,7 +150,7 @@ than in the Poissonian example, the runtime is longer here. This is due
 to the fact that the NPTF likelihood is inherently more complicated and
 so takes longer to evaluate.
 
-.. code:: python
+.. code:: ipython3
 
     n.perform_scan(nlive=800)
 
@@ -160,7 +160,7 @@ Step 5: Analyze the Output
 Here we analyze the output using the same commands as in the Poissonian
 example.
 
-.. code:: python
+.. code:: ipython3
 
     n.load_scan()
     cs=dnds_analysis.Analysis(n)
@@ -169,16 +169,16 @@ example.
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/non-Poissonian_Example/.txt
+      analysing data from /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/chains/non-Poissonian_Example/.txt
 
 
 .. parsed-literal::
 
-    /group/hepheno/heptools/anaconda3/envs/venv_py27/lib/python2.7/site-packages/matplotlib/axes/_base.py:2903: UserWarning: Attempting to set identical left==right results
+    /zfs/nrodd/anaconda3/lib/python3.6/site-packages/matplotlib/axes/_base.py:2961: UserWarning: Attempting to set identical left==right results
     in singular transformations; automatically expanding.
     left=172.52, right=172.52
       'left=%s, right=%s') % (left, right))
-    /group/hepheno/heptools/anaconda3/envs/venv_py27/lib/python2.7/site-packages/matplotlib/axes/_base.py:3179: UserWarning: Attempting to set identical bottom==top results
+    /zfs/nrodd/anaconda3/lib/python3.6/site-packages/matplotlib/axes/_base.py:3285: UserWarning: Attempting to set identical bottom==top results
     in singular transformations; automatically expanding.
     bottom=172.52, top=172.52
       'bottom=%s, top=%s') % (bottom, top))
@@ -191,7 +191,7 @@ example.
 We also show a plot of the source count function, although a careful
 explanation of the details here are deferred until Example 9.
 
-.. code:: python
+.. code:: ipython3
 
     cs.plot_source_count_median('iso_np',smin=0.01,smax=10000,nsteps=1000,spow=2,color='forestgreen')
     cs.plot_source_count_band('iso_np',smin=0.01,smax=10000,nsteps=1000,qs=[0.16,0.5,0.84],spow=2,color='forestgreen',alpha=0.3)
@@ -210,7 +210,7 @@ explanation of the details here are deferred until Example 9.
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x7f3fe4a68290>
+    Text(0.5,0,'$F$  [counts cm$^{-2}$ s$^{-1}$]')
 
 
 

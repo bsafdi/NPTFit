@@ -28,7 +28,7 @@ save the output to avoid recomputing the same correction twice.
 Consequently it can be convenient to have a common ``psf_dir`` where all
 PSF corrections for the runs are stored.
 
-.. code:: python
+.. code:: ipython3
 
     # Import relevant modules
     
@@ -53,7 +53,7 @@ PSF as a function of :math:`r` is
 to the value of the 68% containment radius for the PSF of the *Fermi*
 dataset we will use in later examples.
 
-.. code:: python
+.. code:: ipython3
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary_1 = pc_inst.f_ary
@@ -70,17 +70,17 @@ dataset we will use in later examples.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
-    f_ary: [ 0.05  0.15  0.25  0.35  0.45  0.55  0.65  0.75  0.85  0.95]
-    df_rho_div_f_ary: [ 65.53584202   6.85862895   2.49694092   1.2868697    0.81498447
-       0.54081015   0.09351828   0.           0.           0.        ]
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    f_ary: [0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85 0.95]
+    df_rho_div_f_ary: [65.29502702  6.86435887  2.543033    1.28251213  0.80024078  0.54595125
+      0.09246876  0.          0.          0.        ]
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x7fbc7c7ca850>
+    Text(0.5,1.04,'Gaussian PSF, $\\sigma_\\mathrm{PSF} = 0.1812$')
 
 
 
@@ -98,7 +98,7 @@ concentrated at a single large value. As :math:`\sigma` increases we
 move away from this idealized scenario and the flux becomes more spread
 out, leading to a :math:`\rho(f)` peaked at lower flux values.
 
-.. code:: python
+.. code:: ipython3
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.05)
     f_ary_2 = pc_inst.f_ary
@@ -119,15 +119,15 @@ out, leading to a :math:`\rho(f)` peaked at lower flux values.
 
 .. parsed-literal::
 
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.05_10_50000_1000_0.01.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.4_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.05_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.4_10_50000_1000_0.01.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x7fbc7c5f8190>
+    Text(0.5,1.04,'Varying $\\sigma_\\mathrm{PSF}$')
 
 
 
@@ -174,7 +174,7 @@ non-HEALPix grid, the PSF can often be approximated by an appropriate
 HEALPix binning. If this is not the case, however, a different approach
 must be pursued in calculating :math:`\rho(f)`.
 
-.. code:: python
+.. code:: ipython3
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812,num_f_bins=20)
     f_ary_4 = pc_inst.f_ary
@@ -204,17 +204,17 @@ must be pursued in calculating :math:`\rho(f)`.
 
 .. parsed-literal::
 
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_20_50000_1000_0.01.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_5000_100_0.01.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.1.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_64_0.181_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_20_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_5000_100_0.01.npy
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_50000_1000_0.1.npy
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_64_0.181_10_50000_1000_0.01.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x7fbbf4fb5550>
+    <matplotlib.legend.Legend at 0x7f393e0dc470>
 
 
 
@@ -235,8 +235,8 @@ found here: https://github.com/nickrodd/grid2healpix
 In order to calculate the appropriate PSF correction for Cartesian maps
 the general syntax is the same, except now the ``healpix_map`` keyword
 should be set to ``False`` and the ``pixarea`` keyword set to the area
-in sr of each pixel of the Cartesian map.  In addition the ``gridsize`` 
-keyword determines how large the map is, and flux that falls outside the 
+in sr of each pixel of the Cartesian map. In addition the ``gridsize``
+keyword determines how large the map is, and flux that falls outside the
 map is lost in the Cartesian case.
 
 As an example of this syntax we calculate the PSF correction on a
@@ -244,7 +244,7 @@ Cartesian map that has pixels the same size as an ``nside=128`` healpix
 map, and compare the two PSF corrections. Note they are essentially
 identical.
 
-.. code:: python
+.. code:: ipython3
 
     pixarea = 4*np.pi/(12*128*128)
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812, healpix_map=False, pixarea=pixarea, gridsize=100)
@@ -259,14 +259,14 @@ identical.
 
 .. parsed-literal::
 
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_0.21_0.181_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_0.21_0.181_10_50000_1000_0.01.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x7fbc7c467950>
+    Text(0,0.5,'$f \\times \\rho(f)$')
 
 
 
@@ -336,7 +336,7 @@ becomes smaller, however, the difference is marginal.
 For the full details of the Fermi-LAT PSF, see:
 http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LAT\_IRFs/IRF\_PSF.html
 
-.. code:: python
+.. code:: ipython3
 
     # Fermi-LAT PSF at 2 GeV
     
@@ -381,15 +381,15 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 
 .. parsed-literal::
 
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.235_10_50000_1000_0.01.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/Fermi_PSF_2GeV.npy
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.235_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/Fermi_PSF_2GeV.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x7fbc7c588710>
+    <matplotlib.legend.Legend at 0x7f393e00dd30>
 
 
 
@@ -397,7 +397,7 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 .. image:: Example5_PSF_Correction_files/Example5_PSF_Correction_17_2.png
 
 
-.. code:: python
+.. code:: ipython3
 
     # Fermi-LAT PSF at 20 GeV
     
@@ -442,15 +442,15 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 
 .. parsed-literal::
 
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.055_10_50000_1000_0.01.npy
-    File saved as: /group/hepheno/smsharma/NPTFit/examples/psf_dir/Fermi_PSF_20GeV.npy
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.055_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/Fermi_PSF_20GeV.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x7fbc7c771390>
+    <matplotlib.legend.Legend at 0x7f393df7a8d0>
 
 
 

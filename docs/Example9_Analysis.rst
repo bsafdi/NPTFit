@@ -15,7 +15,7 @@ In this example we provide the details of how to use each function.
 performed there was with a low nside and a fixed diffuse model, so the
 results below should be interpreted only as approximate.
 
-.. code:: python
+.. code:: ipython3
 
     # Import relevant modules
     
@@ -42,17 +42,17 @@ done when initiating and performing the scan. The process here is the
 same as in Example 8, up to configuring the scan. Finally, the scan is
 loaded with ``n.load_scan()``.
 
-.. code:: python
+.. code:: ipython3
 
     n = nptfit.NPTF(tag='GCE_Example')
 
-.. code:: python
+.. code:: ipython3
 
     fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
 
-.. code:: python
+.. code:: ipython3
 
     pscmask=np.array(np.load('fermi_data/fermidata_pscmask.npy'), dtype=bool)
     analysis_mask = cm.make_mask_total(band_mask = True, band_mask_range = 2,
@@ -60,7 +60,7 @@ loaded with ``n.load_scan()``.
                                        custom_mask = pscmask)
     n.load_mask(analysis_mask)
 
-.. code:: python
+.. code:: ipython3
 
     dif = np.load('fermi_data/template_dif.npy')
     iso = np.load('fermi_data/template_iso.npy')
@@ -79,14 +79,14 @@ loaded with ``n.load_scan()``.
     n.add_template(gce/rescale, 'gce_np', units='PS')
     n.add_template(dsk/rescale, 'dsk_np', units='PS')
 
-.. code:: python
+.. code:: ipython3
 
-    n.add_poiss_model('dif', '$A_\mathrm{dif}$', fixed=True, fixed_norm=14.67)
+    n.add_poiss_model('dif', '$A_\mathrm{dif}$', fixed=True, fixed_norm=14.88)
     n.add_poiss_model('iso', '$A_\mathrm{iso}$', [0,2], False)
     n.add_poiss_model('gce', '$A_\mathrm{gce}$', [0,2], False)
     n.add_poiss_model('bub', '$A_\mathrm{bub}$', [0,2], False)
 
-.. code:: python
+.. code:: ipython3
 
     n.add_non_poiss_model('gce_np',
                           ['$A_\mathrm{gce}^\mathrm{ps}$','$n_1^\mathrm{gce}$','$n_2^\mathrm{gce}$','$S_b^{(1), \mathrm{gce}}$'],
@@ -97,7 +97,7 @@ loaded with ``n.load_scan()``.
                           [[-6,1],[2.05,30],[-2,1.95],[0.05,40]],
                           [True,False,False,False])
 
-.. code:: python
+.. code:: ipython3
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary, df_rho_div_f_ary = pc_inst.f_ary, pc_inst.df_rho_div_f_ary
@@ -105,10 +105,10 @@ loaded with ``n.load_scan()``.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
-.. code:: python
+.. code:: ipython3
 
     n.configure_for_scan(f_ary, df_rho_div_f_ary, nexp=1)
 
@@ -121,14 +121,14 @@ loaded with ``n.load_scan()``.
 Finally, instead of running the scan we simply load the completed scan
 performed in Example 8.
 
-.. code:: python
+.. code:: ipython3
 
     n.load_scan()
 
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/GCE_Example/.txt
+      analysing data from /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/chains/GCE_Example/.txt
 
 
 Analysis
@@ -137,7 +137,7 @@ Analysis
 An instance of ``nptf.NPTF`` with a loaded scan as above can already be
 used to access the posterior chains with ``n.samples``:
 
-.. code:: python
+.. code:: ipython3
 
     print(np.shape(n.samples))
     print(n.samples)
@@ -145,20 +145,20 @@ used to access the posterior chains with ``n.samples``:
 
 .. parsed-literal::
 
-    (824, 11)
-    [[  2.74286715e-01   8.00820892e-02   9.97173339e-01 ...,   1.01656932e+01
-       -3.48315668e-01   2.09180488e+01]
-     [  4.44056844e-01   8.21680973e-02   7.91419332e-01 ...,   1.82385893e+01
-       -1.58525212e+00   2.69631273e+01]
-     [  4.28687534e-01   3.72506130e-02   8.55213841e-01 ...,   2.23795652e+01
-       -8.92896893e-01   1.91366275e+01]
-     ..., 
-     [  2.87093187e-01   7.72450534e-04   9.21611959e-01 ...,   2.12708073e+01
-       -2.54785708e-01   2.44264436e+01]
-     [  4.22771051e-01   3.63170588e-03   8.62867831e-01 ...,   1.97433169e+01
-       -1.60970701e+00   2.81816400e+01]
-     [  3.49480991e-01   8.09305476e-04   9.39036006e-01 ...,   1.22020801e+01
-       -4.00295322e-01   2.33764601e+01]]
+    (640, 11)
+    [[ 3.33904781e-01  6.29116538e-02  8.83457883e-01 ...  2.67239749e+01
+      -9.77712060e-01  2.67974979e+01]
+     [ 1.81574859e-01  1.62327499e-02  8.74875466e-01 ...  1.65924583e+01
+       3.60687372e-01  6.42911142e+00]
+     [ 3.00509661e-02  1.37888104e-02  9.67000054e-01 ...  1.38951757e+01
+       9.96754750e-01  2.25883208e+01]
+     ...
+     [ 1.14970554e-01  9.34063431e-03  9.33562117e-01 ...  1.13523464e+01
+       4.73382997e-02  3.12313336e+01]
+     [ 6.78480147e-02  1.28769290e-03  9.47928654e-01 ...  1.02471941e+01
+      -5.84039360e-01  3.22930986e+01]
+     [ 2.01882926e-01  1.54871080e-02  9.30957177e-01 ...  6.45896818e+00
+       3.67382875e-01  2.96260251e+01]]
 
 
 In the analysis module described next we provide basic helper functions
@@ -172,7 +172,7 @@ The first thing to do is initialize an instance of the analysis module,
 ``nptfit.NPTF``. The ``NPTF`` instance should have a scan already loaded
 in, as done with ``n.load_scan()`` above.
 
-.. code:: python
+.. code:: ipython3
 
     an = dnds_analysis.Analysis(n)
 
@@ -188,7 +188,7 @@ Triangle/corner plots let us visualize multidimensional samples using a
 scatterplot matrix. A triangle plot with the default options can be made
 as follows.
 
-.. code:: python
+.. code:: ipython3
 
     an.make_triangle()
 
@@ -241,7 +241,7 @@ We can then look at the quantiles of this distribution, for example to
 see the middle 68% along with the medians of the GCE and disk NPT as
 well as that of the GCE PT:
 
-.. code:: python
+.. code:: ipython3
 
     print("GCE NPT Intensity", corner.quantile(an.return_intensity_arrays_non_poiss('gce_np'),[0.16,0.5,0.84]), "ph/cm^2/s")
     print("Disk NPT Intensity", corner.quantile(an.return_intensity_arrays_non_poiss('dsk_np'),[0.16,0.5,0.84]), "ph/cm^2/s")
@@ -250,9 +250,9 @@ well as that of the GCE PT:
 
 .. parsed-literal::
 
-    GCE NPT Intensity [  5.28070247e-08   7.04436858e-08   8.46625293e-08] ph/cm^2/s
-    Disk NPT Intensity [  5.60536598e-08   7.24397347e-08   9.10432724e-08] ph/cm^2/s
-    GCE PT Intensity [  7.32822801e-10   2.65734863e-09   6.85672788e-09] ph/cm^2/s
+    GCE NPT Intensity [9.46529620e-08 1.07665102e-07 1.21213080e-07] ph/cm^2/s
+    Disk NPT Intensity [2.10125373e-08 3.25540729e-08 4.62200900e-08] ph/cm^2/s
+    GCE PT Intensity [8.36993561e-10 3.18699151e-09 8.16049505e-09] ph/cm^2/s
 
 
 3. Plot Source Count Distributions
@@ -270,7 +270,7 @@ with a given template ``comp`` at a given ``flux``
 The quantiles of this can then be obtained as before. For example, the
 middle 68% and medians for the GCE and disk non-Poissonian templates:
 
-.. code:: python
+.. code:: ipython3
 
     print(corner.quantile(an.return_dndf_arrays('gce_np',1e-12),[0.16,0.5,0.84]))
     print(corner.quantile(an.return_dndf_arrays('dsk_np',1e-12),[0.16,0.5,0.84]))
@@ -278,8 +278,8 @@ middle 68% and medians for the GCE and disk non-Poissonian templates:
 
 .. parsed-literal::
 
-    [  2.32988871e+05   7.18228135e+06   5.74072851e+08]
-    [  5.73048168e+04   2.66699389e+06   4.42418623e+08]
+    [4.17195737e+05 9.19323116e+06 2.88804846e+08]
+    [7.49643119e+03 1.11781321e+06 2.90431609e+08]
 
 
 The following arrays are used to show the resolved 3FGL points sources
@@ -287,7 +287,7 @@ and associated Poisson errors as appropriate for the plots below. For
 how these were obtained, see `this
 snippet <https://gist.github.com/smsharma/829296c483a92528ab8bbba0d1439e88>`__.
 
-.. code:: python
+.. code:: ipython3
 
     x_counts, y_counts, error_L, error_H, x_errors_L, x_errors_H = \
     [np.array([  1.36887451e-10,   2.56502091e-10,   4.80638086e-10,
@@ -328,7 +328,7 @@ return while plotting, and ``qs`` is an array of quantiles for which to
 return the dN/dF band. We plot here the median in addition to 68% and
 95% confidence intervals.
 
-.. code:: python
+.. code:: ipython3
 
     plt.figure(figsize=[6,5])
     
@@ -368,7 +368,7 @@ return the dN/dF band. We plot here the median in addition to 68% and
 As some references also show :math:`dN/dF`, and we give an example of it
 below, also demonstrating the use of ``spow``.
 
-.. code:: python
+.. code:: ipython3
 
     plt.figure(figsize=[6,5])
     
@@ -415,7 +415,7 @@ using
 where ``comp`` is the template key, ``bins`` is the number of bins
 between 0 and 100 and ``**kwargs`` specify plotting options.
 
-.. code:: python
+.. code:: ipython3
 
     an.plot_intensity_fraction_non_poiss('gce_np', bins=800, color='firebrick', label='GCE PS')
     an.plot_intensity_fraction_poiss('gce', bins=800, color='darkgrey', label='GCE DM')
@@ -452,7 +452,7 @@ Poissonian parameters
 Posterior normalizations of Poissonian parameters can be loaded simply
 as:
 
-.. code:: python
+.. code:: ipython3
 
     Aiso_poiss_post = an.return_poiss_parameter_posteriors('iso')
     Agce_poiss_post = an.return_poiss_parameter_posteriors('gce')
@@ -460,7 +460,7 @@ as:
 
 These can then be use in any way required, for example simply plotted:
 
-.. code:: python
+.. code:: ipython3
 
     f, axarr = plt.subplots(nrows = 1, ncols=3)
     f.set_figwidth(12)
@@ -487,11 +487,11 @@ Non-poissonian parameters
 
 A similar syntax can be used to extract the non-Poissonian parameters.
 
-.. code:: python
+.. code:: ipython3
 
     Agce_non_poiss_post, n_non_poiss_post, Sb_non_poiss_post = an.return_non_poiss_parameter_posteriors('gce_np')
 
-.. code:: python
+.. code:: ipython3
 
     f, axarr = plt.subplots(2, 2);
     f.set_figwidth(8)
@@ -526,7 +526,7 @@ A similar syntax can be used to extract the non-Poissonian parameters.
 Finally the Bayesian log-evidence and associated error can be accessed
 as follows.
 
-.. code:: python
+.. code:: ipython3
 
     l_be, l_be_err = an.get_log_evidence()
     print(l_be, l_be_err)
@@ -534,6 +534,5 @@ as follows.
 
 .. parsed-literal::
 
-    -29454.0842087 0.404338419447
-
+    -29352.827909478605 0.4066660557173963
 
