@@ -56,8 +56,8 @@ set up the data on a UNIX system:
 
     # Assumes wget is available! Otherwise, use curl or download manually 
     # from https://dspace.mit.edu/handle/1721.1/105492
-    os.system("wget https://dspace.mit.edu/bitstream/handle/1721.1/105492/fermi_data.tar.gz");
-    os.system("tar -xvf fermi_data.tar.gz");
+    os.system("wget https://dspace.mit.edu/bitstream/handle/1721.1/105492/fermi_data.tar.gz?sequence=4");
+    os.system("tar -xvf fermi_data.tar.gz?sequence=4");
     os.system("rm -r fermi_data.tar.gz*");
 
 The Data - Map of Gamma-ray Counts
