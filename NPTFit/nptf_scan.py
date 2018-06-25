@@ -65,6 +65,10 @@ class NPTFScan(ConfigMaps):
         
         # Fixed and non-fixed poiss models appended to different dictionaries
         if fixed:
+            # if log prior, set to linear value immediately
+            if log_prior:
+                fixed_norm = 10.**fixed_norm
+
             self.poiss_models_fixed[template_name] = {'fixed_norm': fixed_norm}
         else:
             assert (len(prior_range) != 0), "Fix template or insert a prior"
@@ -324,6 +328,7 @@ class NPTFScan(ConfigMaps):
                              range(len(a_theta)))), axis=0)
              for region in range(self.nexp)])
 
+        # Manually added fixed params to account for log prior
         pt_sum_compressed_fixed = \
             np.array([np.sum(list(map(lambda key:
                                       self.poiss_models_fixed[key][
