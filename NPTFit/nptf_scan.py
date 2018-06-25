@@ -341,8 +341,9 @@ class NPTFScan(ConfigMaps):
 
         # Combine the two if necessary to build the full PT map
         if len(self.poiss_models_fixed) != 0:
-            pt_sum_compressed = pt_sum_compressed_float + \
-                                pt_sum_compressed_fixed
+            pt_sum_compressed = pt_sum_compressed_fixed
+            if self.n_poiss != 0:
+                pt_sum_compressed += pt_sum_compressed_float
         else:
             pt_sum_compressed = pt_sum_compressed_float
 
