@@ -15,7 +15,7 @@ fit prefers a non-zero value for the GCE template.
 **NB:** This example makes use of the Fermi Data, which needs to already
 be installed. See Example 1 for details.
 
-.. code:: ipython3
+.. code:: python
 
     # Import relevant modules
     
@@ -41,7 +41,7 @@ the chains directory where the output will be stored. Note for long runs
 the chains output can become large, so periodically deleting runs you
 are no longer using is recommended.
 
-.. code:: ipython3
+.. code:: python
 
     n = nptfit.NPTF(tag='Poissonian_Example')
 
@@ -99,7 +99,7 @@ data, exposure, mask, and templates all have the same length.
 Code to embed data on a regular Cartesian grid into a HEALPix map can be
 found here: https://github.com/nickrodd/grid2healpix.
 
-.. code:: ipython3
+.. code:: python
 
     fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
@@ -109,7 +109,7 @@ In order to study the inner galaxy, we restrict ourselves to a smaller
 ROI defined by the analysis mask discussed in Example 2. The mask must
 be the same length as the data and exposure.
 
-.. code:: ipython3
+.. code:: python
 
     pscmask=np.array(np.load('fermi_data/fermidata_pscmask.npy'), dtype=bool)
     analysis_mask = cm.make_mask_total(band_mask = True, band_mask_range = 2,
@@ -122,7 +122,7 @@ adding templates, the first entry is the template itself and the second
 the string by which it is identified. The length for each template must
 again match the data.
 
-.. code:: ipython3
+.. code:: python
 
     dif = np.load('fermi_data/template_dif.npy')
     iso = np.load('fermi_data/template_iso.npy')
@@ -165,7 +165,7 @@ template normalisation.
 
 We use each of these possibilities in the example below.
 
-.. code:: ipython3
+.. code:: python
 
     n.add_poiss_model('dif', '$A_\mathrm{dif}$', False, fixed=True, fixed_norm=15.23)
     n.add_poiss_model('iso', '$A_\mathrm{iso}$', [-2,1], True)
@@ -191,7 +191,7 @@ requested is made; and 3. Take the priors and parameters and prepare
 them into an efficient form for calculating the likelihood function that
 can then be used directly or passed to MultiNest.
 
-.. code:: ipython3
+.. code:: python
 
     n.configure_for_scan()
 
@@ -270,7 +270,7 @@ passed to ``perform_scan``. A detailed explanation of the MultiNest
 options can be found here:
 https://johannesbuchner.github.io/PyMultiNest/pymultinest\_run.html
 
-.. code:: ipython3
+.. code:: python
 
     n.perform_scan(nlive=500)
 
@@ -291,7 +291,7 @@ After the scan is loaded we then create an instance of
 argument - which must already have a scan loaded. From here we simply
 make a triangle plot.
 
-.. code:: ipython3
+.. code:: python
 
     n.load_scan()
     an = dnds_analysis.Analysis(n)
@@ -316,7 +316,7 @@ We also show the relative fraction of the Flux obtained by the GCE as
 compared to other templates. Note the majority of the flux is absorbed
 by the diffuse model.
 
-.. code:: ipython3
+.. code:: python
 
     an.plot_intensity_fraction_poiss('gce', bins=800, color='tomato', label='GCE')
     an.plot_intensity_fraction_poiss('iso', bins=800, color='cornflowerblue', label='Iso')

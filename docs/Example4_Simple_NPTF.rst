@@ -15,7 +15,7 @@ counts coming from all point sources. The effect of a finite point
 spread function on the statistics and how to account for it is discussed
 in Example 5.
 
-.. code:: ipython3
+.. code:: python
 
     # Import relevant modules
     
@@ -39,7 +39,7 @@ Example 1: A map without point sources
 We start out by analyzing a map without any point sources, using a
 uniform exposure map. First let's create and plot our random data.
 
-.. code:: ipython3
+.. code:: python
 
     nside = 2
     npix = hp.nside2npix(nside)
@@ -61,7 +61,7 @@ uniform exposure map. First let's create and plot our random data.
 Next we set up an instance of NPTFit and add in the data. We'll analyze
 the entire sky at once, so we won't add in a mask.
 
-.. code:: ipython3
+.. code:: python
 
     n = nptfit.NPTF(tag='SimpleNPTF_Example')
     n.load_data(data, exposure)
@@ -70,7 +70,7 @@ Now we add in templates, one to describe isotropic Poissonian emission
 and one for isotropic point sources. Note the different syntax requires
 for each.
 
-.. code:: ipython3
+.. code:: python
 
     iso = np.ones(npix)
     n.add_template(iso, 'iso_p', units='flux')
@@ -85,7 +85,7 @@ break Sb.
 More details on the forms for the non-Poissonian model can be found in
 Example 6.
 
-.. code:: ipython3
+.. code:: python
 
     n.add_poiss_model('iso_p', '$A_\mathrm{iso}$', [0,2], False)
     n.add_non_poiss_model('iso_np',
@@ -96,7 +96,7 @@ Example 6.
 Once everything is setup, we configure and perform the scan, and then
 show the triangle plot and flux fraction plot.
 
-.. code:: ipython3
+.. code:: python
 
     n.configure_for_scan()
     n.perform_scan(nlive=500)
@@ -140,7 +140,7 @@ Example 2: A map with point sources
 We now repeat the analysis above, but now add in 10 mean 50 count point
 sources. First lets take the data from above and add the point sources.
 
-.. code:: ipython3
+.. code:: python
 
     for ips in range(10):
         data[np.random.randint(npix)] += np.random.poisson(50)
@@ -154,7 +154,7 @@ sources. First lets take the data from above and add the point sources.
 
 Now we repeat all the steps used in the example without point sources.
 
-.. code:: ipython3
+.. code:: python
 
     n = nptfit.NPTF(tag='SimpleNPTF_Example')
     n.load_data(data,exposure)
@@ -208,7 +208,7 @@ side of the sky is expected to obtain twice as many counts as the other
 (which could occur if the instrument looked at that half of the sky
 twice as long for example).
 
-.. code:: ipython3
+.. code:: python
 
     nside = 2
     npix = hp.nside2npix(nside)
@@ -239,7 +239,7 @@ exposure regions. In this simple example we know that 2 is all we need,
 but in real situations it is worth trying various values of nexp to see
 where results converge.
 
-.. code:: ipython3
+.. code:: python
 
     n = nptfit.NPTF(tag='SimpleNPTF_Example')
     n.load_data(data,exposure)
@@ -284,7 +284,7 @@ To highlight the importance of the exposure regions, let's repeat this
 using only one exposure region which we emphasize is the **wrong** thing
 to do.
 
-.. code:: ipython3
+.. code:: python
 
     n = nptfit.NPTF(tag='SimpleNPTF_Example')
     n.load_data(data,exposure)

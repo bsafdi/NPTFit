@@ -28,7 +28,7 @@ save the output to avoid recomputing the same correction twice.
 Consequently it can be convenient to have a common ``psf_dir`` where all
 PSF corrections for the runs are stored.
 
-.. code:: ipython3
+.. code:: python
 
     # Import relevant modules
     
@@ -53,7 +53,7 @@ PSF as a function of :math:`r` is
 to the value of the 68% containment radius for the PSF of the *Fermi*
 dataset we will use in later examples.
 
-.. code:: ipython3
+.. code:: python
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary_1 = pc_inst.f_ary
@@ -98,7 +98,7 @@ concentrated at a single large value. As :math:`\sigma` increases we
 move away from this idealized scenario and the flux becomes more spread
 out, leading to a :math:`\rho(f)` peaked at lower flux values.
 
-.. code:: ipython3
+.. code:: python
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.05)
     f_ary_2 = pc_inst.f_ary
@@ -174,7 +174,7 @@ non-HEALPix grid, the PSF can often be approximated by an appropriate
 HEALPix binning. If this is not the case, however, a different approach
 must be pursued in calculating :math:`\rho(f)`.
 
-.. code:: ipython3
+.. code:: python
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812,num_f_bins=20)
     f_ary_4 = pc_inst.f_ary
@@ -244,7 +244,7 @@ Cartesian map that has pixels the same size as an ``nside=128`` healpix
 map, and compare the two PSF corrections. Note they are essentially
 identical.
 
-.. code:: ipython3
+.. code:: python
 
     pixarea = 4*np.pi/(12*128*128)
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812, healpix_map=False, pixarea=pixarea, gridsize=100)
@@ -336,7 +336,7 @@ becomes smaller, however, the difference is marginal.
 For the full details of the Fermi-LAT PSF, see:
 http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LAT\_IRFs/IRF\_PSF.html
 
-.. code:: ipython3
+.. code:: python
 
     # Fermi-LAT PSF at 2 GeV
     
@@ -397,7 +397,7 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 .. image:: Example5_PSF_Correction_files/Example5_PSF_Correction_17_2.png
 
 
-.. code:: ipython3
+.. code:: python
 
     # Fermi-LAT PSF at 20 GeV
     
