@@ -28,7 +28,7 @@ installed and linked prior to use. See `here <http://monte-python.readthedocs.io
 
 NPTFit supports both Python 2 and 3, specifically 2.7 and 3.5. It may work with earlier 3.* versions, although this has not been tested.
 
-Make sure Cython is installed (*e.g.* :code:`pip install Cython`). The easiest way to install NPTFit along with it's dependent Python packages is using ``pip``:
+Make sure Cython is installed (*e.g.* :code:`pip install Cython`). The easiest way to install NPTFit along with its dependent Python packages is using ``pip``:
 
 .. code:: sh
 
