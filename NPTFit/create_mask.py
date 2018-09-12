@@ -32,8 +32,10 @@ def make_long_mask(l_deg_min, l_deg_max, nside):
     """ Masks outside l_deg_min < l < l_deg_max
     """
     mask_none = np.arange(hp.nside2npix(nside))
-    return (np.radians(l_deg_max) < hp.pix2ang(nside, mask_none)[1]) * \
-           (hp.pix2ang(nside, mask_none)[1] < np.radians(360 + l_deg_min))
+    phi=hp.pix2ang(nside, mask_none)[1]
+    l=(np.mod(phi-np.pi,2.*np.pi)-np.pi)
+    return np.logical_not((np.radians(l_deg_min) < l) *
+                          (l < np.radians(l_deg_max))) 
 
 
 def make_lat_mask(b_deg_min, b_deg_max, nside):
