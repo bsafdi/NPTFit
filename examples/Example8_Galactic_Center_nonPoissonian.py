@@ -37,7 +37,7 @@ rescale = fermi_exposure/np.mean(fermi_exposure)
 n.add_template(gce/rescale, 'gce_np', units='PS')
 n.add_template(dsk/rescale, 'dsk_np', units='PS')
 
-n.add_poiss_model('dif', '$A_\mathrm{dif}$', fixed=True, fixed_norm=14.67)
+n.add_poiss_model('dif', '$A_\mathrm{dif}$', fixed=True, fixed_norm=12.85)
 n.add_poiss_model('iso', '$A_\mathrm{iso}$', [0,2], False)
 n.add_poiss_model('gce', '$A_\mathrm{gce}$', [0,2], False)
 n.add_poiss_model('bub', '$A_\mathrm{bub}$', [0,2], False)
