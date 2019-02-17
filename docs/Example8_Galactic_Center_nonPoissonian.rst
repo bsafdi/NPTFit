@@ -22,7 +22,7 @@ application of this in Example 10.
 **NB:** This example makes use of the Fermi Data, which needs to already
 be installed. See Example 1 for details.
 
-.. code:: python
+.. code:: ipython3
 
     # Import relevant modules
     
@@ -47,17 +47,17 @@ the scan 4. Load in the spatial templates
 These are done identically to Example 3, and we refer to that notebook
 for details.
 
-.. code:: python
+.. code:: ipython3
 
     n = nptfit.NPTF(tag='GCE_Example')
 
-.. code:: python
+.. code:: ipython3
 
     fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
 
-.. code:: python
+.. code:: ipython3
 
     pscmask=np.array(np.load('fermi_data/fermidata_pscmask.npy'), dtype=bool)
     analysis_mask = cm.make_mask_total(band_mask = True, band_mask_range = 2,
@@ -65,7 +65,7 @@ for details.
                                        custom_mask = pscmask)
     n.load_mask(analysis_mask)
 
-.. code:: python
+.. code:: ipython3
 
     dif = np.load('fermi_data/template_dif.npy')
     iso = np.load('fermi_data/template_iso.npy')
@@ -87,9 +87,9 @@ for details.
 Step 2: Add Models
 ------------------
 
-.. code:: python
+.. code:: ipython3
 
-    n.add_poiss_model('dif', '$A_\mathrm{dif}$', fixed=True, fixed_norm=14.88)
+    n.add_poiss_model('dif', '$A_\mathrm{dif}$', fixed=True, fixed_norm=12.85)
     n.add_poiss_model('iso', '$A_\mathrm{iso}$', [0,2], False)
     n.add_poiss_model('gce', '$A_\mathrm{gce}$', [0,2], False)
     n.add_poiss_model('bub', '$A_\mathrm{bub}$', [0,2], False)
@@ -100,7 +100,7 @@ latter is designed to account for the unresolved point sources
 attributed to the disk of the Milky Way (known sources in the 3FGL are
 masked).
 
-.. code:: python
+.. code:: ipython3
 
     n.add_non_poiss_model('gce_np',
                           ['$A_\mathrm{gce}^\mathrm{ps}$','$n_1^\mathrm{gce}$','$n_2^\mathrm{gce}$','$S_b^{(1), \mathrm{gce}}$'],
@@ -114,7 +114,7 @@ masked).
 Step 3: Configure Scan with PSF correction
 ------------------------------------------
 
-.. code:: python
+.. code:: ipython3
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary, df_rho_div_f_ary = pc_inst.f_ary, pc_inst.df_rho_div_f_ary
@@ -122,10 +122,10 @@ Step 3: Configure Scan with PSF correction
 
 .. parsed-literal::
 
-    Loading the psf correction from: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
-.. code:: python
+.. code:: ipython3
 
     n.configure_for_scan(f_ary, df_rho_div_f_ary, nexp=1)
 
@@ -141,14 +141,14 @@ Step 4: Perform the Scan
 As noted above, we take a small value of ``nlive`` simply to ensure the
 run finishes in a reasonable time on a single core.
 
-.. code:: python
+.. code:: ipython3
 
     n.perform_scan(nlive=100)
 
 This can take **up to an hour to run**. The output of this run will be
 analyzed in detail in the next example.
 
-.. code:: python
+.. code:: ipython3
 
     from IPython.display import Image
     Image(url = "https://imgs.xkcd.com/comics/compiling.png")

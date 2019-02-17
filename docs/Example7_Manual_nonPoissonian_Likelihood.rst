@@ -14,7 +14,7 @@ the normalisation of the non-Poissonian template.
 **NB:** This example makes use of the Fermi Data, which needs to already
 be installed. See Example 1 for details.
 
-.. code:: python
+.. code:: ipython3
 
     # Import relevant modules
     
@@ -39,29 +39,29 @@ Setup an identical instance of NPTFit to Example 6
 Firstly we initialize an instance of ``nptfit`` identical to that used
 in the previous example.
 
-.. code:: python
+.. code:: ipython3
 
     n = nptfit.NPTF(tag='non-Poissonian_Example')
 
-.. code:: python
+.. code:: ipython3
 
     fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
 
-.. code:: python
+.. code:: ipython3
 
     analysis_mask = cm.make_mask_total(mask_ring = True, inner = 0, outer = 5, ring_b = 90, ring_l = 0)
     n.load_mask(analysis_mask)
 
-.. code:: python
+.. code:: ipython3
 
     iso_p = np.load('fermi_data/template_iso.npy')
     n.add_template(iso_p, 'iso_p')
     iso_np = np.ones(len(iso_p))
     n.add_template(iso_np, 'iso_np',units='PS')
 
-.. code:: python
+.. code:: ipython3
 
     n.add_poiss_model('iso_p','$A_\mathrm{iso}$', False, fixed=True, fixed_norm=1.51)
     n.add_non_poiss_model('iso_np',
@@ -70,7 +70,7 @@ in the previous example.
                           [True,False,False],
                           fixed_params = [[3,172.52]])
 
-.. code:: python
+.. code:: ipython3
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary = pc_inst.f_ary
@@ -79,10 +79,10 @@ in the previous example.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
-.. code:: python
+.. code:: ipython3
 
     n.configure_for_scan(f_ary=f_ary, df_rho_div_f_ary=df_rho_div_f_ary, nexp=1)
 
@@ -107,7 +107,7 @@ is a flattened array of parameters. In the case above:
 As an example we can evaluate it at a few points around the best fit
 parameters:
 
-.. code:: python
+.. code:: ipython3
 
     print('Vary A: ', n.ll([-4.76+0.32,18.26,0.06]), n.ll([-4.76,18.26,0.06]), n.ll([-4.76-0.37,18.26,0.06]))
     print('Vary n1:', n.ll([-4.76,18.26+7.98,0.06]), n.ll([-4.76,18.26,0.06]), n.ll([-4.76,18.26-9.46,0.06]))
@@ -116,9 +116,9 @@ parameters:
 
 .. parsed-literal::
 
-    Vary A:  -587.122352024368 -586.130196097067 -588.0937820199872
-    Vary n1: -586.1007629900672 -586.130196097067 -586.2930087056609
-    Vary n2: -587.2239543224257 -586.130196097067 -587.4195252590384
+    Vary A:  -587.1163770023244 -586.2113098768381 -588.2406707060421
+    Vary n1: -586.1824552299396 -586.2113098768381 -586.3726977861785
+    Vary n2: -587.0768970698804 -586.2113098768381 -587.5645486197602
 
 
 To make the point clearer we can fix :math:`n_1` and :math:`n_2` to
@@ -127,12 +127,12 @@ vary :math:`\log_{10} \left( A^\mathrm{ps}_\mathrm{iso} \right)`. As
 shown the likelihood is maximised at approximated where MultiNest told
 us was the best fit point for this parameter.
 
-.. code:: python
+.. code:: ipython3
 
     Avals = np.arange(-6.0,-2.0,0.01)
     TSvals_A = np.array([2*(n.ll([-4.76,18.26,0.06])-n.ll([Avals[i],18.26,0.06])) for i in range(len(Avals))])
 
-.. code:: python
+.. code:: ipython3
 
     plt.plot(Avals,TSvals_A,color='black', lw=1.5)
     plt.axvline(-4.76+0.32,ls='dashed',color='black')
@@ -158,12 +158,12 @@ normalisation, as the TS is very flat.
 :math:`n=1`. The reason for this is the analytic form of the likelihood
 involves :math:`(n-1)^{-1}`.
 
-.. code:: python
+.. code:: ipython3
 
     n2vals = np.arange(-1.995,1.945,0.01)
     TSvals_n2 = np.array([2*(n.ll([-4.76,18.26,0.06])-n.ll([-4.76,18.26,n2vals[i]])) for i in range(len(n2vals))])
 
-.. code:: python
+.. code:: ipython3
 
     plt.plot(n2vals,TSvals_n2,color='black', lw=1.5)
     plt.axvline(0.06+0.93,ls='dashed',color='black')
@@ -204,7 +204,7 @@ To extract the prior cube, we use the internal function
 cube of dimension equal to the number of floated parameters; and 2.
 ``ndim``, the number of floated parameters.
 
-.. code:: python
+.. code:: ipython3
 
     print(n.prior_cube(cube=[1,1,1],ndim=3))
 

@@ -15,7 +15,7 @@ fit prefers a non-zero value for the GCE template.
 **NB:** This example makes use of the Fermi Data, which needs to already
 be installed. See Example 1 for details.
 
-.. code:: python
+.. code:: ipython3
 
     # Import relevant modules
     
@@ -36,54 +36,44 @@ Step 1: Setting up an instance of NPTFit
 
 To begin with we need to create an instance of ``NPTF`` from
 ``nptfit.py``. We will load it with the ``tag`` set to
-"Poissonian\_Example", which is the name attached to the folder within
+“Poissonian_Example”, which is the name attached to the folder within
 the chains directory where the output will be stored. Note for long runs
 the chains output can become large, so periodically deleting runs you
 are no longer using is recommended.
 
-.. code:: python
+.. code:: ipython3
 
     n = nptfit.NPTF(tag='Poissonian_Example')
 
 The full list of parameters that can be set with the initialization are
 as follows (all are optional).
 
-+----------------+----------------+----------------+
-| Argument       | Defaults       | Purpose        |
-+================+================+================+
-| tag            | "Untagged"     | The label of   |
-|                |                | the file where |
-|                |                | the output of  |
-|                |                | MultiNest will |
-|                |                | be stored,     |
-|                |                | specifically   |
-|                |                | they are       |
-|                |                | stored at      |
-|                |                | ``work_dir/cha |
-|                |                | ins/tag/``.    |
-+----------------+----------------+----------------+
-| work\_dir      | $pwd           | The directory  |
-|                |                | where all      |
-|                |                | outputs from   |
-|                |                | the NPTF will  |
-|                |                | be stored.     |
-|                |                | This defaults  |
-|                |                | to the         |
-|                |                | notebook       |
-|                |                | directory, but |
-|                |                | an alternative |
-|                |                | can be         |
-|                |                | specified.     |
-+----------------+----------------+----------------+
-| psf\_dir       | work\_dir/psf\ | Where the psf  |
-|                | _dir/          | corrections    |
-|                |                | will be stored |
-|                |                | (this          |
-|                |                | correction is  |
-|                |                | discussed in   |
-|                |                | the next       |
-|                |                | notebook).     |
-+----------------+----------------+----------------+
++-----------------------+-----------------------+-----------------------+
+| Argument              | Defaults              | Purpose               |
++=======================+=======================+=======================+
+| tag                   | “Untagged”            | The label of the file |
+|                       |                       | where the output of   |
+|                       |                       | MultiNest will be     |
+|                       |                       | stored, specifically  |
+|                       |                       | they are stored at    |
+|                       |                       | ``work_dir/chains/tag |
+|                       |                       | /``.                  |
++-----------------------+-----------------------+-----------------------+
+| work_dir              | $pwd                  | The directory where   |
+|                       |                       | all outputs from the  |
+|                       |                       | NPTF will be stored.  |
+|                       |                       | This defaults to the  |
+|                       |                       | notebook directory,   |
+|                       |                       | but an alternative    |
+|                       |                       | can be specified.     |
++-----------------------+-----------------------+-----------------------+
+| psf_dir               | work_dir/psf_dir/     | Where the psf         |
+|                       |                       | corrections will be   |
+|                       |                       | stored (this          |
+|                       |                       | correction is         |
+|                       |                       | discussed in the next |
+|                       |                       | notebook).            |
++-----------------------+-----------------------+-----------------------+
 
 Step 2: Add in Data, a Mask and Background Templates
 ----------------------------------------------------
@@ -99,7 +89,7 @@ data, exposure, mask, and templates all have the same length.
 Code to embed data on a regular Cartesian grid into a HEALPix map can be
 found here: https://github.com/nickrodd/grid2healpix.
 
-.. code:: python
+.. code:: ipython3
 
     fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
@@ -109,7 +99,7 @@ In order to study the inner galaxy, we restrict ourselves to a smaller
 ROI defined by the analysis mask discussed in Example 2. The mask must
 be the same length as the data and exposure.
 
-.. code:: python
+.. code:: ipython3
 
     pscmask=np.array(np.load('fermi_data/fermidata_pscmask.npy'), dtype=bool)
     analysis_mask = cm.make_mask_total(band_mask = True, band_mask_range = 2,
@@ -122,7 +112,7 @@ adding templates, the first entry is the template itself and the second
 the string by which it is identified. The length for each template must
 again match the data.
 
-.. code:: python
+.. code:: ipython3
 
     dif = np.load('fermi_data/template_dif.npy')
     iso = np.load('fermi_data/template_iso.npy')
@@ -165,9 +155,9 @@ template normalisation.
 
 We use each of these possibilities in the example below.
 
-.. code:: python
+.. code:: ipython3
 
-    n.add_poiss_model('dif', '$A_\mathrm{dif}$', False, fixed=True, fixed_norm=15.23)
+    n.add_poiss_model('dif', '$A_\mathrm{dif}$', False, fixed=True, fixed_norm=13.20)
     n.add_poiss_model('iso', '$A_\mathrm{iso}$', [-2,1], True)
     n.add_poiss_model('bub', '$A_\mathrm{bub}$', [0,2], False)
     n.add_poiss_model('psc', '$A_\mathrm{psc}$', [0,2], False)
@@ -175,7 +165,7 @@ We use each of these possibilities in the example below.
 
 Note the diffuse model is normalised to a much larger value than the
 maximum prior of the other templates. This is because the diffuse model
-explains the majority of the flux in our ROI. The value of 15 was
+explains the majority of the flux in our ROI. The value of 13 was
 determined from a fit where the diffuse model was not fixed.
 
 Step 4: Configure the Scan
@@ -191,7 +181,7 @@ requested is made; and 3. Take the priors and parameters and prepare
 them into an efficient form for calculating the likelihood function that
 can then be used directly or passed to MultiNest.
 
-.. code:: python
+.. code:: ipython3
 
     n.configure_for_scan()
 
@@ -208,69 +198,55 @@ Having setup all the parameters, we can now perform the scan using
 MultiNest. We will show an example of how to manually calculate the
 likelihood in Example 7.
 
-+----------------+----------------+----------------+
-| Argument       | Default Value  | Purpose        |
-+================+================+================+
-| run\_tag       | None           | An additional  |
-|                |                | tag can be     |
-|                |                | specified to   |
-|                |                | create a       |
-|                |                | subdirectory   |
-|                |                | of             |
-|                |                | work\_dir/chai |
-|                |                | ns/tag/        |
-|                |                | in which the   |
-|                |                | output is      |
-|                |                | stored.        |
-+----------------+----------------+----------------+
-| nlive          | 100            | Number of live |
-|                |                | points to be   |
-|                |                | used during    |
-|                |                | the MultiNest  |
-|                |                | scan. A higher |
-|                |                | value thatn    |
-|                |                | 100 is         |
-|                |                | recommended    |
-|                |                | for most runs, |
-|                |                | although       |
-|                |                | larger values  |
-|                |                | correspond to  |
-|                |                | increased run  |
-|                |                | time.          |
-+----------------+----------------+----------------+
-| pymultinest\_o | None           | When set to    |
-| ptions         |                | None our       |
-|                |                | default        |
-|                |                | choices for    |
-|                |                | MultiNest will |
-|                |                | be used        |
-|                |                | (explained     |
-|                |                | below). To     |
-|                |                | alter these    |
-|                |                | options, a     |
-|                |                | dictionary of  |
-|                |                | parameters and |
-|                |                | their values   |
-|                |                | should be      |
-|                |                | placed here.   |
-+----------------+----------------+----------------+
++-----------------------+-----------------------+-----------------------+
+| Argument              | Default Value         | Purpose               |
++=======================+=======================+=======================+
+| run_tag               | None                  | An additional tag can |
+|                       |                       | be specified to       |
+|                       |                       | create a subdirectory |
+|                       |                       | of                    |
+|                       |                       | work_dir/chains/tag/  |
+|                       |                       | in which the output   |
+|                       |                       | is stored.            |
++-----------------------+-----------------------+-----------------------+
+| nlive                 | 100                   | Number of live points |
+|                       |                       | to be used during the |
+|                       |                       | MultiNest scan. A     |
+|                       |                       | higher value thatn    |
+|                       |                       | 100 is recommended    |
+|                       |                       | for most runs,        |
+|                       |                       | although larger       |
+|                       |                       | values correspond to  |
+|                       |                       | increased run time.   |
++-----------------------+-----------------------+-----------------------+
+| pymultinest_options   | None                  | When set to None our  |
+|                       |                       | default choices for   |
+|                       |                       | MultiNest will be     |
+|                       |                       | used (explained       |
+|                       |                       | below). To alter      |
+|                       |                       | these options, a      |
+|                       |                       | dictionary of         |
+|                       |                       | parameters and their  |
+|                       |                       | values should be      |
+|                       |                       | placed here.          |
++-----------------------+-----------------------+-----------------------+
 
 Our default MultiNest options are defined as follows:
 
 .. code:: python
 
-    pymultinest_options = {'importance_nested_sampling': False,
-                           'resume': False, 'verbose': True,
-                           'sampling_efficiency': 'model',
-                           'init_MPI': False, 'evidence_tolerance': 0.5,
-                           'const_efficiency_mode': False}
+   pymultinest_options = {'importance_nested_sampling': False,
+                          'resume': False, 'verbose': True,
+                          'sampling_efficiency': 'model',
+                          'init_MPI': False, 'evidence_tolerance': 0.5,
+                          'const_efficiency_mode': False}
 
 For variations on these, a dictionary in the same format should be
 passed to ``perform_scan``. A detailed explanation of the MultiNest
 options can be found here:
-https://johannesbuchner.github.io/PyMultiNest/pymultinest\_run.html
+https://johannesbuchner.github.io/PyMultiNest/pymultinest_run.html
 
-.. code:: python
+.. code:: ipython3
 
     n.perform_scan(nlive=500)
 
@@ -291,7 +267,7 @@ After the scan is loaded we then create an instance of
 argument - which must already have a scan loaded. From here we simply
 make a triangle plot.
 
-.. code:: python
+.. code:: ipython3
 
     n.load_scan()
     an = dnds_analysis.Analysis(n)
@@ -300,7 +276,7 @@ make a triangle plot.
 
 .. parsed-literal::
 
-      analysing data from /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/chains/Poissonian_Example/.txt
+      analysing data from /zfs/nrodd/NPTFRemakeExamples/chains/Poissonian_Example/.txt
 
 
 
@@ -316,7 +292,7 @@ We also show the relative fraction of the Flux obtained by the GCE as
 compared to other templates. Note the majority of the flux is absorbed
 by the diffuse model.
 
-.. code:: python
+.. code:: ipython3
 
     an.plot_intensity_fraction_poiss('gce', bins=800, color='tomato', label='GCE')
     an.plot_intensity_fraction_poiss('iso', bins=800, color='cornflowerblue', label='Iso')

@@ -27,7 +27,7 @@ and is thereby described by the following eight parameters:
 This provides an example of a more complicated source count function,
 and also explains why the run needs MPI.
 
-.. code:: python
+.. code:: ipython3
 
     # Import relevant modules
     
@@ -52,22 +52,22 @@ Load in scan
 We need to create an instance of ``nptfit.NPTF`` and load in the scan
 performed using MPI.
 
-.. code:: python
+.. code:: ipython3
 
     n = nptfit.NPTF(tag='HighLat_Example')
 
-.. code:: python
+.. code:: ipython3
 
     fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
 
-.. code:: python
+.. code:: ipython3
 
     analysis_mask = cm.make_mask_total(band_mask = True, band_mask_range = 50)
     n.load_mask(analysis_mask)
 
-.. code:: python
+.. code:: ipython3
 
     dif = np.load('fermi_data/template_dif.npy')
     iso = np.load('fermi_data/template_iso.npy')
@@ -76,12 +76,12 @@ performed using MPI.
     n.add_template(iso, 'iso')
     n.add_template(np.ones(len(iso)), 'iso_np', units='PS')
 
-.. code:: python
+.. code:: ipython3
 
     n.add_poiss_model('dif','$A_\mathrm{dif}$', [0,20], False)
     n.add_poiss_model('iso','$A_\mathrm{iso}$', [0,5], False)
 
-.. code:: python
+.. code:: ipython3
 
     n.add_non_poiss_model('iso_np',
                           ['$A^\mathrm{ps}_\mathrm{iso}$',
@@ -92,7 +92,7 @@ performed using MPI.
                           [30,80],[1,30],[0.1,1]],
                           [True,False,False,False,False,False,False,False])
 
-.. code:: python
+.. code:: ipython3
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary, df_rho_div_f_ary = pc_inst.f_ary, pc_inst.df_rho_div_f_ary
@@ -100,10 +100,10 @@ performed using MPI.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
-.. code:: python
+.. code:: ipython3
 
     n.configure_for_scan(f_ary=f_ary, df_rho_div_f_ary=df_rho_div_f_ary, nexp=5)
 
@@ -115,14 +115,14 @@ performed using MPI.
 
 Finally, load the completed scan performed using MPI.
 
-.. code:: python
+.. code:: ipython3
 
     n.load_scan()
 
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/HighLat_Example/.txt
+      analysing data from /zfs/nrodd/NPTFRemakeExamples/chains/HighLat_Example/.txt
 
 
 Analysis
@@ -132,14 +132,14 @@ As in Example 9 we first initialize the analysis module. We will provide
 the same basic plots as in that notebook, where more details on each
 option is provided.
 
-.. code:: python
+.. code:: ipython3
 
     an = dnds_analysis.Analysis(n)
 
 1. Make triangle plots
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. code:: python
+.. code:: ipython3
 
     an.make_triangle()
 
@@ -151,7 +151,7 @@ option is provided.
 2. Get Intensities
 ~~~~~~~~~~~~~~~~~~
 
-.. code:: python
+.. code:: ipython3
 
     print("Iso NPT Intensity",corner.quantile(an.return_intensity_arrays_non_poiss('iso_np'),[0.16,0.5,0.84]), "ph/cm^2/s")
     print("Iso PT Intensity",corner.quantile(an.return_intensity_arrays_poiss('iso'),[0.16,0.5,0.84]), "ph/cm^2/s")
@@ -160,15 +160,15 @@ option is provided.
 
 .. parsed-literal::
 
-    Iso NPT Intensity [  1.21483730e-07   1.31199062e-07   1.41996475e-07] ph/cm^2/s
-    Iso PT Intensity [  1.40131525e-07   1.48859129e-07   1.56973582e-07] ph/cm^2/s
-    Dif PT Intensity [  1.96440673e-07   2.01367819e-07   2.06396272e-07] ph/cm^2/s
+    Iso NPT Intensity [1.13023625e-07 1.21451391e-07 1.29983760e-07] ph/cm^2/s
+    Iso PT Intensity [1.62091903e-07 1.68566455e-07 1.74563161e-07] ph/cm^2/s
+    Dif PT Intensity [1.88574352e-07 1.93195545e-07 1.97764592e-07] ph/cm^2/s
 
 
 3. Plot Source Count Distributions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code:: python
+.. code:: ipython3
 
     an.plot_source_count_median('iso_np',smin=0.01,smax=1000000,nsteps=10000,color='tomato',spow=2)
     an.plot_source_count_band('iso_np',smin=0.01,smax=1000000,nsteps=10000,qs=[0.16,0.5,0.84],color='tomato',alpha=0.3,spow=2)
@@ -188,7 +188,7 @@ option is provided.
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x7f120cab7bd0>
+    Text(0.5,1.02,'High Latitudes Isotropic NPTF')
 
 
 
@@ -199,7 +199,7 @@ option is provided.
 4. Plot Intensity Fractions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code:: python
+.. code:: ipython3
 
     an.plot_intensity_fraction_non_poiss('iso_np', bins=100, color='tomato', label='Iso PS')
     an.plot_intensity_fraction_poiss('iso', bins=100, color='cornflowerblue', label='Iso')
@@ -219,12 +219,12 @@ option is provided.
 Poissonian parameters
 ^^^^^^^^^^^^^^^^^^^^^
 
-.. code:: python
+.. code:: ipython3
 
     Aiso_poiss_post = an.return_poiss_parameter_posteriors('iso')
     Adif_poiss_post = an.return_poiss_parameter_posteriors('dif')
 
-.. code:: python
+.. code:: ipython3
 
     f, axarr = plt.subplots(1, 2);
     f.set_figwidth(8)
@@ -233,7 +233,7 @@ Poissonian parameters
     
     axarr[0].hist(Aiso_poiss_post, histtype='stepfilled', color='cornflowerblue', bins=np.linspace(.5,1,30),alpha=0.4);
     axarr[0].set_title('$A_\mathrm{iso}$')
-    axarr[1].hist(Adif_poiss_post, histtype='stepfilled', color='lightsalmon', bins=np.linspace(15,20,30),alpha=0.4);
+    axarr[1].hist(Adif_poiss_post, histtype='stepfilled', color='lightsalmon', bins=np.linspace(10,15,30),alpha=0.4);
     axarr[1].set_title('$A_\mathrm{dif}$')
     
     plt.setp([a.get_yticklabels() for a in axarr[:]], visible=False);
@@ -248,11 +248,11 @@ Poissonian parameters
 Non-poissonian parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code:: python
+.. code:: ipython3
 
     Aiso_non_poiss_post, n_non_poiss_post, Sb_non_poiss_post = an.return_non_poiss_parameter_posteriors('iso_np')
 
-.. code:: python
+.. code:: ipython3
 
     f, axarr = plt.subplots(2, 4);
     f.set_figwidth(16)

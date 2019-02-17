@@ -11,10 +11,10 @@ true location. This effect must be accounted for in the NPTF. This is
 achieved via a function :math:`\rho(f)`. In the code we discretize
 :math:`\rho(f)` as an approximation to the full function.
 
-The two outputs of an instance of ``psf_correction`` are: 1. f\_ary, an
-array of f values; and 2. df\_rho\_div\_f\_ary, an associated array of
+The two outputs of an instance of ``psf_correction`` are: 1. f_ary, an
+array of f values; and 2. df_rho_div_f_ary, an associated array of
 :math:`\Delta f \rho(f)/f` values, where :math:`\Delta f` is the width
-of the f\_ary bins.
+of the f_ary bins.
 
 If the angular reconstruction of the data is perfect, then
 :math:`\rho(f) = \delta(f-1)`. In many situations, such as for the
@@ -28,7 +28,7 @@ save the output to avoid recomputing the same correction twice.
 Consequently it can be convenient to have a common ``psf_dir`` where all
 PSF corrections for the runs are stored.
 
-.. code:: python
+.. code:: ipython3
 
     # Import relevant modules
     
@@ -53,7 +53,7 @@ PSF as a function of :math:`r` is
 to the value of the 68% containment radius for the PSF of the *Fermi*
 dataset we will use in later examples.
 
-.. code:: python
+.. code:: ipython3
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary_1 = pc_inst.f_ary
@@ -70,10 +70,10 @@ dataset we will use in later examples.
 
 .. parsed-literal::
 
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
     f_ary: [0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85 0.95]
-    df_rho_div_f_ary: [65.29502702  6.86435887  2.543033    1.28251213  0.80024078  0.54595125
-      0.09246876  0.          0.          0.        ]
+    df_rho_div_f_ary: [65.19815984  6.88897747  2.52908225  1.28920055  0.80522461  0.54317562
+      0.09145394  0.          0.          0.        ]
 
 
 
@@ -98,7 +98,7 @@ concentrated at a single large value. As :math:`\sigma` increases we
 move away from this idealized scenario and the flux becomes more spread
 out, leading to a :math:`\rho(f)` peaked at lower flux values.
 
-.. code:: python
+.. code:: ipython3
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.05)
     f_ary_2 = pc_inst.f_ary
@@ -119,8 +119,8 @@ out, leading to a :math:`\rho(f)` peaked at lower flux values.
 
 .. parsed-literal::
 
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.05_10_50000_1000_0.01.npy
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.4_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.05_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.4_10_50000_1000_0.01.npy
 
 
 
@@ -142,19 +142,15 @@ In this example we show how for a given PSF, the other parameters
 associated with how accurately we calculate :math:`\rho(f)` can impact
 what we get back. The parameters that can be changed are are:
 
-+---------------------+------------+--------------------------------------------------------+
-| Argument            | Defaults   | Purpose                                                |
-+=====================+============+========================================================+
-| ``num_f_bins``      | 10         | number of f\_bins used                                 |
-+---------------------+------------+--------------------------------------------------------+
-| ``n_psf``           | 50000      | number of PSFs placed down when calculating            |
-+---------------------+------------+--------------------------------------------------------+
-| ``n_pts_per_psf``   | 1000       | number of points to place per psf in the calculation   |
-+---------------------+------------+--------------------------------------------------------+
-| ``f_trunc``         | 0.01       | minimum flux fraction to keep track of                 |
-+---------------------+------------+--------------------------------------------------------+
-| ``nside``           | 128        | nside of the map the PSF is used on                    |
-+---------------------+------------+--------------------------------------------------------+
+================= ======== ====================================================
+Argument          Defaults Purpose
+================= ======== ====================================================
+``num_f_bins``    10       number of f_bins used
+``n_psf``         50000    number of PSFs placed down when calculating
+``n_pts_per_psf`` 1000     number of points to place per psf in the calculation
+``f_trunc``       0.01     minimum flux fraction to keep track of
+``nside``         128      nside of the map the PSF is used on
+================= ======== ====================================================
 
 The default parameters have been chosen to be accurate enough for the
 Fermi analyses we will be performed later. But if the user changes the
@@ -174,7 +170,7 @@ non-HEALPix grid, the PSF can often be approximated by an appropriate
 HEALPix binning. If this is not the case, however, a different approach
 must be pursued in calculating :math:`\rho(f)`.
 
-.. code:: python
+.. code:: ipython3
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812,num_f_bins=20)
     f_ary_4 = pc_inst.f_ary
@@ -204,17 +200,17 @@ must be pursued in calculating :math:`\rho(f)`.
 
 .. parsed-literal::
 
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_20_50000_1000_0.01.npy
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_5000_100_0.01.npy
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_50000_1000_0.1.npy
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_64_0.181_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_20_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_5000_100_0.01.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.1.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_64_0.181_10_50000_1000_0.01.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x7f393e0dc470>
+    <matplotlib.legend.Legend at 0x7fe4c00337b8>
 
 
 
@@ -244,7 +240,7 @@ Cartesian map that has pixels the same size as an ``nside=128`` healpix
 map, and compare the two PSF corrections. Note they are essentially
 identical.
 
-.. code:: python
+.. code:: ipython3
 
     pixarea = 4*np.pi/(12*128*128)
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812, healpix_map=False, pixarea=pixarea, gridsize=100)
@@ -259,7 +255,7 @@ identical.
 
 .. parsed-literal::
 
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_0.21_0.181_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_0.21_0.181_10_50000_1000_0.01.npy
 
 
 
@@ -286,43 +282,25 @@ manually define the parameters that define the PSF and then call
 The variables that need to be redefined in the instance of
 ``psf_correction`` are:
 
-+----------------+----------------+
-| Argument       | Purpose        |
-+================+================+
-| ``psf_r_func`` | the psf as a   |
-|                | function of r, |
-|                | distance in    |
-|                | radians from   |
-|                | the center of  |
-|                | the point      |
-|                | source         |
-+----------------+----------------+
-| ``sample_psf_m | maximum        |
-| ax``           | distance to    |
-|                | sample the psf |
-|                | from the       |
-|                | center, should |
-|                | be larger for  |
-|                | psfs with long |
-|                | tails          |
-+----------------+----------------+
-| ``psf_samples` | number of      |
-| `              | samples to     |
-|                | make from the  |
-|                | psf (linearly  |
-|                | spaced) from 0 |
-|                | to             |
-|                | sample\_psf\_m |
-|                | ax,            |
-|                | should be      |
-|                | large enough   |
-|                | to adequately  |
-|                | represent the  |
-|                | full psf       |
-+----------------+----------------+
-| ``psf_tag``    | label the psf  |
-|                | is saved with  |
-+----------------+----------------+
++-----------------------------------+-----------------------------------+
+| Argument                          | Purpose                           |
++===================================+===================================+
+| ``psf_r_func``                    | the psf as a function of r,       |
+|                                   | distance in radians from the      |
+|                                   | center of the point source        |
++-----------------------------------+-----------------------------------+
+| ``sample_psf_max``                | maximum distance to sample the    |
+|                                   | psf from the center, should be    |
+|                                   | larger for psfs with long tails   |
++-----------------------------------+-----------------------------------+
+| ``psf_samples``                   | number of samples to make from    |
+|                                   | the psf (linearly spaced) from 0  |
+|                                   | to sample_psf_max, should be      |
+|                                   | large enough to adequately        |
+|                                   | represent the full psf            |
++-----------------------------------+-----------------------------------+
+| ``psf_tag``                       | label the psf is saved with       |
++-----------------------------------+-----------------------------------+
 
 As an example of a more complicated PSF we consider the full Fermi-LAT
 PSF. The PSF of Fermi is approximately Gaussian near the core, but has
@@ -334,9 +312,9 @@ between the two can be significant. For higher energies where the PSF
 becomes smaller, however, the difference is marginal.
 
 For the full details of the Fermi-LAT PSF, see:
-http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LAT\_IRFs/IRF\_PSF.html
+http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone_LAT_IRFs/IRF_PSF.html
 
-.. code:: python
+.. code:: ipython3
 
     # Fermi-LAT PSF at 2 GeV
     
@@ -381,15 +359,15 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 
 .. parsed-literal::
 
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.235_10_50000_1000_0.01.npy
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/Fermi_PSF_2GeV.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.235_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/Fermi_PSF_2GeV.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x7f393e00dd30>
+    <matplotlib.legend.Legend at 0x7fe4b5217e10>
 
 
 
@@ -397,7 +375,7 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 .. image:: Example5_PSF_Correction_files/Example5_PSF_Correction_17_2.png
 
 
-.. code:: python
+.. code:: ipython3
 
     # Fermi-LAT PSF at 20 GeV
     
@@ -442,15 +420,15 @@ http://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone\_LA
 
 .. parsed-literal::
 
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.055_10_50000_1000_0.01.npy
-    File saved as: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/Fermi_PSF_20GeV.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.055_10_50000_1000_0.01.npy
+    File saved as: /zfs/nrodd/NPTFRemakeExamples/psf_dir/Fermi_PSF_20GeV.npy
 
 
 
 
 .. parsed-literal::
 
-    <matplotlib.legend.Legend at 0x7f393df7a8d0>
+    <matplotlib.legend.Legend at 0x7fe4b51cccc0>
 
 
 
