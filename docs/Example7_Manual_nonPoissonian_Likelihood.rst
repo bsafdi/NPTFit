@@ -14,7 +14,7 @@ the normalisation of the non-Poissonian template.
 **NB:** This example makes use of the Fermi Data, which needs to already
 be installed. See Example 1 for details.
 
-.. code:: ipython3
+.. code:: python
 
     # Import relevant modules
     
@@ -39,29 +39,29 @@ Setup an identical instance of NPTFit to Example 6
 Firstly we initialize an instance of ``nptfit`` identical to that used
 in the previous example.
 
-.. code:: ipython3
+.. code:: python
 
     n = nptfit.NPTF(tag='non-Poissonian_Example')
 
-.. code:: ipython3
+.. code:: python
 
     fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
 
-.. code:: ipython3
+.. code:: python
 
     analysis_mask = cm.make_mask_total(mask_ring = True, inner = 0, outer = 5, ring_b = 90, ring_l = 0)
     n.load_mask(analysis_mask)
 
-.. code:: ipython3
+.. code:: python
 
     iso_p = np.load('fermi_data/template_iso.npy')
     n.add_template(iso_p, 'iso_p')
     iso_np = np.ones(len(iso_p))
     n.add_template(iso_np, 'iso_np',units='PS')
 
-.. code:: ipython3
+.. code:: python
 
     n.add_poiss_model('iso_p','$A_\mathrm{iso}$', False, fixed=True, fixed_norm=1.51)
     n.add_non_poiss_model('iso_np',
@@ -70,7 +70,7 @@ in the previous example.
                           [True,False,False],
                           fixed_params = [[3,172.52]])
 
-.. code:: ipython3
+.. code:: python
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary = pc_inst.f_ary
@@ -82,7 +82,7 @@ in the previous example.
     Loading the psf correction from: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
-.. code:: ipython3
+.. code:: python
 
     n.configure_for_scan(f_ary=f_ary, df_rho_div_f_ary=df_rho_div_f_ary, nexp=1)
 
@@ -107,7 +107,7 @@ is a flattened array of parameters. In the case above:
 As an example we can evaluate it at a few points around the best fit
 parameters:
 
-.. code:: ipython3
+.. code:: python
 
     print('Vary A: ', n.ll([-4.76+0.32,18.26,0.06]), n.ll([-4.76,18.26,0.06]), n.ll([-4.76-0.37,18.26,0.06]))
     print('Vary n1:', n.ll([-4.76,18.26+7.98,0.06]), n.ll([-4.76,18.26,0.06]), n.ll([-4.76,18.26-9.46,0.06]))
@@ -127,12 +127,12 @@ vary :math:`\log_{10} \left( A^\mathrm{ps}_\mathrm{iso} \right)`. As
 shown the likelihood is maximised at approximated where MultiNest told
 us was the best fit point for this parameter.
 
-.. code:: ipython3
+.. code:: python
 
     Avals = np.arange(-6.0,-2.0,0.01)
     TSvals_A = np.array([2*(n.ll([-4.76,18.26,0.06])-n.ll([Avals[i],18.26,0.06])) for i in range(len(Avals))])
 
-.. code:: ipython3
+.. code:: python
 
     plt.plot(Avals,TSvals_A,color='black', lw=1.5)
     plt.axvline(-4.76+0.32,ls='dashed',color='black')
@@ -158,12 +158,12 @@ normalisation, as the TS is very flat.
 :math:`n=1`. The reason for this is the analytic form of the likelihood
 involves :math:`(n-1)^{-1}`.
 
-.. code:: ipython3
+.. code:: python
 
     n2vals = np.arange(-1.995,1.945,0.01)
     TSvals_n2 = np.array([2*(n.ll([-4.76,18.26,0.06])-n.ll([-4.76,18.26,n2vals[i]])) for i in range(len(n2vals))])
 
-.. code:: ipython3
+.. code:: python
 
     plt.plot(n2vals,TSvals_n2,color='black', lw=1.5)
     plt.axvline(0.06+0.93,ls='dashed',color='black')
@@ -204,7 +204,7 @@ To extract the prior cube, we use the internal function
 cube of dimension equal to the number of floated parameters; and 2.
 ``ndim``, the number of floated parameters.
 
-.. code:: ipython3
+.. code:: python
 
     print(n.prior_cube(cube=[1,1,1],ndim=3))
 

@@ -15,7 +15,7 @@ In this example we provide the details of how to use each function.
 performed there was with a low nside and a fixed diffuse model, so the
 results below should be interpreted only as approximate.
 
-.. code:: ipython3
+.. code:: python
 
     # Import relevant modules
     
@@ -42,17 +42,17 @@ done when initiating and performing the scan. The process here is the
 same as in Example 8, up to configuring the scan. Finally, the scan is
 loaded with ``n.load_scan()``.
 
-.. code:: ipython3
+.. code:: python
 
     n = nptfit.NPTF(tag='GCE_Example')
 
-.. code:: ipython3
+.. code:: python
 
     fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
 
-.. code:: ipython3
+.. code:: python
 
     pscmask=np.array(np.load('fermi_data/fermidata_pscmask.npy'), dtype=bool)
     analysis_mask = cm.make_mask_total(band_mask = True, band_mask_range = 2,
@@ -60,7 +60,7 @@ loaded with ``n.load_scan()``.
                                        custom_mask = pscmask)
     n.load_mask(analysis_mask)
 
-.. code:: ipython3
+.. code:: python
 
     dif = np.load('fermi_data/template_dif.npy')
     iso = np.load('fermi_data/template_iso.npy')
@@ -79,14 +79,14 @@ loaded with ``n.load_scan()``.
     n.add_template(gce/rescale, 'gce_np', units='PS')
     n.add_template(dsk/rescale, 'dsk_np', units='PS')
 
-.. code:: ipython3
+.. code:: python
 
     n.add_poiss_model('dif', '$A_\mathrm{dif}$', fixed=True, fixed_norm=12.85)
     n.add_poiss_model('iso', '$A_\mathrm{iso}$', [0,2], False)
     n.add_poiss_model('gce', '$A_\mathrm{gce}$', [0,2], False)
     n.add_poiss_model('bub', '$A_\mathrm{bub}$', [0,2], False)
 
-.. code:: ipython3
+.. code:: python
 
     n.add_non_poiss_model('gce_np',
                           ['$A_\mathrm{gce}^\mathrm{ps}$','$n_1^\mathrm{gce}$','$n_2^\mathrm{gce}$','$S_b^{(1), \mathrm{gce}}$'],
@@ -97,7 +97,7 @@ loaded with ``n.load_scan()``.
                           [[-6,1],[2.05,30],[-2,1.95],[0.05,40]],
                           [True,False,False,False])
 
-.. code:: ipython3
+.. code:: python
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary, df_rho_div_f_ary = pc_inst.f_ary, pc_inst.df_rho_div_f_ary
@@ -108,7 +108,7 @@ loaded with ``n.load_scan()``.
     Loading the psf correction from: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
-.. code:: ipython3
+.. code:: python
 
     n.configure_for_scan(f_ary, df_rho_div_f_ary, nexp=1)
 
@@ -121,7 +121,7 @@ loaded with ``n.load_scan()``.
 Finally, instead of running the scan we simply load the completed scan
 performed in Example 8.
 
-.. code:: ipython3
+.. code:: python
 
     n.load_scan()
 
@@ -137,7 +137,7 @@ Analysis
 An instance of ``nptf.NPTF`` with a loaded scan as above can already be
 used to access the posterior chains with ``n.samples``:
 
-.. code:: ipython3
+.. code:: python
 
     print(np.shape(n.samples))
     print(n.samples)
@@ -172,7 +172,7 @@ The first thing to do is initialize an instance of the analysis module,
 ``nptfit.NPTF``. The ``NPTF`` instance should have a scan already loaded
 in, as done with ``n.load_scan()`` above.
 
-.. code:: ipython3
+.. code:: python
 
     an = dnds_analysis.Analysis(n)
 
@@ -188,7 +188,7 @@ Triangle/corner plots let us visualize multidimensional samples using a
 scatterplot matrix. A triangle plot with the default options can be made
 as follows.
 
-.. code:: ipython3
+.. code:: python
 
     an.make_triangle()
 
@@ -238,7 +238,7 @@ We can then look at the quantiles of this distribution, for example to
 see the middle 68% along with the medians of the GCE and disk NPT as
 well as that of the GCE PT:
 
-.. code:: ipython3
+.. code:: python
 
     print("GCE NPT Intensity", corner.quantile(an.return_intensity_arrays_non_poiss('gce_np'),[0.16,0.5,0.84]), "ph/cm^2/s")
     print("Disk NPT Intensity", corner.quantile(an.return_intensity_arrays_non_poiss('dsk_np'),[0.16,0.5,0.84]), "ph/cm^2/s")
@@ -267,7 +267,7 @@ with a given template ``comp`` at a given ``flux``
 The quantiles of this can then be obtained as before. For example, the
 middle 68% and medians for the GCE and disk non-Poissonian templates:
 
-.. code:: ipython3
+.. code:: python
 
     print(corner.quantile(an.return_dndf_arrays('gce_np',1e-12),[0.16,0.5,0.84]))
     print(corner.quantile(an.return_dndf_arrays('dsk_np',1e-12),[0.16,0.5,0.84]))
@@ -284,7 +284,7 @@ and associated Poisson errors as appropriate for the plots below. For
 how these were obtained, see `this
 snippet <https://gist.github.com/smsharma/829296c483a92528ab8bbba0d1439e88>`__.
 
-.. code:: ipython3
+.. code:: python
 
     x_counts, y_counts, error_L, error_H, x_errors_L, x_errors_H = \
     [np.array([  1.36887451e-10,   2.56502091e-10,   4.80638086e-10,
@@ -325,7 +325,7 @@ return while plotting, and ``qs`` is an array of quantiles for which to
 return the dN/dF band. We plot here the median in addition to 68% and
 95% confidence intervals.
 
-.. code:: ipython3
+.. code:: python
 
     plt.figure(figsize=[6,5])
     
@@ -365,7 +365,7 @@ return the dN/dF band. We plot here the median in addition to 68% and
 As some references also show :math:`dN/dF`, and we give an example of it
 below, also demonstrating the use of ``spow``.
 
-.. code:: ipython3
+.. code:: python
 
     plt.figure(figsize=[6,5])
     
@@ -412,7 +412,7 @@ using
 where ``comp`` is the template key, ``bins`` is the number of bins
 between 0 and 100 and ``**kwargs`` specify plotting options.
 
-.. code:: ipython3
+.. code:: python
 
     an.plot_intensity_fraction_non_poiss('gce_np', bins=800, color='firebrick', label='GCE PS')
     an.plot_intensity_fraction_poiss('gce', bins=800, color='darkgrey', label='GCE DM')
@@ -449,7 +449,7 @@ Poissonian parameters
 Posterior normalizations of Poissonian parameters can be loaded simply
 as:
 
-.. code:: ipython3
+.. code:: python
 
     Aiso_poiss_post = an.return_poiss_parameter_posteriors('iso')
     Agce_poiss_post = an.return_poiss_parameter_posteriors('gce')
@@ -457,7 +457,7 @@ as:
 
 These can then be use in any way required, for example simply plotted:
 
-.. code:: ipython3
+.. code:: python
 
     f, axarr = plt.subplots(nrows = 1, ncols=3)
     f.set_figwidth(12)
@@ -484,11 +484,11 @@ Non-poissonian parameters
 
 A similar syntax can be used to extract the non-Poissonian parameters.
 
-.. code:: ipython3
+.. code:: python
 
     Agce_non_poiss_post, n_non_poiss_post, Sb_non_poiss_post = an.return_non_poiss_parameter_posteriors('gce_np')
 
-.. code:: ipython3
+.. code:: python
 
     f, axarr = plt.subplots(2, 2);
     f.set_figwidth(8)
@@ -523,7 +523,7 @@ A similar syntax can be used to extract the non-Poissonian parameters.
 Finally the Bayesian log-evidence and associated error can be accessed
 as follows.
 
-.. code:: ipython3
+.. code:: python
 
     l_be, l_be_err = an.get_log_evidence()
     print(l_be, l_be_err)

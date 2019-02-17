@@ -26,7 +26,7 @@ Quality Cuts     ``DATA_QUAL==1 && LAT_CONFIG==1``
 Max Zenith Angle 90 degrees
 ================ =========================================================
 
-.. code:: ipython3
+.. code:: python
 
     # Import relevant modules
     
@@ -47,7 +47,7 @@ https://dspace.mit.edu/handle/1721.1/105492 along with a ``README``
 detailing the data. The following commands automatically download and
 set up the data on a UNIX system:
 
-.. code:: ipython3
+.. code:: python
 
     # Assumes wget is available! Otherwise, use curl or download manually 
     # from https://dspace.mit.edu/handle/1721.1/105492
@@ -65,7 +65,7 @@ shown below on two scales, the second making it clear there are pixels
 with large numbers of counts - there are very bright gamma-ray sources
 in the data.
 
-.. code:: ipython3
+.. code:: python
 
     counts = np.load('fermi_data/fermidata_counts.npy')
     
@@ -85,7 +85,7 @@ in the data.
 To see the detailed structure in the map, we also mock up a logarithmic
 version of the data.
 
-.. code:: ipython3
+.. code:: python
 
     nonzero = np.where(counts != 0)[0]
     zero = np.where(counts == 0)[0]
@@ -114,7 +114,7 @@ in which we perform our statistical analysis. The mapping from
 [counts/cm:math:`^2`/s(/sr)] to [counts(/pixel)] is performed by the
 exposure map, which has units of [cm:math:`^2` s].
 
-.. code:: ipython3
+.. code:: python
 
     exposure = np.load('fermi_data/fermidata_exposure.npy')
     
@@ -143,7 +143,7 @@ try changing ``nexp``.
 **NB:** In the actual analysis the exposure region division is done
 within the specified ROI, not the entire sky
 
-.. code:: ipython3
+.. code:: python
 
     # Number of exposure regions - change this to see what the regions look like when dividing the full sky
     nexp = 2
@@ -184,7 +184,7 @@ The map below is a mask, so just a boolean array
 Note that with the NPTF it is not always desirable to mask point sources
 - we can often simply use a non-Poissonian template to model them.
 
-.. code:: ipython3
+.. code:: python
 
     pscmask = np.load('fermi_data/fermidata_pscmask.npy')
     
@@ -227,7 +227,7 @@ template for the *Fermi* bubbles which we model separately).
 Below we show a log and linear version of the map, as we did for the
 data.
 
-.. code:: ipython3
+.. code:: python
 
     dif = np.load('fermi_data/template_dif.npy')
     
@@ -251,7 +251,7 @@ There is also an approximately isotropic contribution to the data from
 extragalactic emission and also cosmic ray contamination. Note that this
 map makes the fact the template has been exposure corrected manifest.
 
-.. code:: ipython3
+.. code:: python
 
     iso = np.load('fermi_data/template_iso.npy')
     
@@ -269,7 +269,7 @@ We also provide a separate model for emission from the *Fermi* bubbles.
 Emission from the bubbles is taken to be uniform in intensity, which
 becomes non-uniform in counts after exposure correction.
 
-.. code:: ipython3
+.. code:: python
 
     bub = np.load('fermi_data/template_bub.npy')
     
@@ -292,7 +292,7 @@ A linear plot of this map shows that these point sources are quite
 localised on the sky, but in the log plot below we can clearly see their
 spread due to the Fermi PSF.
 
-.. code:: ipython3
+.. code:: python
 
     psc = np.load('fermi_data/template_psc.npy')
     
@@ -331,7 +331,7 @@ where :math:`s` parameterizes the line of sight distance, which is
 integrated over, and :math:`\psi` is the angle away from the Galactic
 center.
 
-.. code:: ipython3
+.. code:: python
 
     gce = np.load('fermi_data/template_gce.npy')
     
@@ -361,7 +361,7 @@ exponential model for the point source population:
 where :math:`R` and :math:`z` are cylindrical polar coordinates measured
 from the Galactic Center.
 
-.. code:: ipython3
+.. code:: python
 
     disk = np.load('fermi_data/template_dsk.npy')
     

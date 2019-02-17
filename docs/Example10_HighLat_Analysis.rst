@@ -27,7 +27,7 @@ and is thereby described by the following eight parameters:
 This provides an example of a more complicated source count function,
 and also explains why the run needs MPI.
 
-.. code:: ipython3
+.. code:: python
 
     # Import relevant modules
     
@@ -52,22 +52,22 @@ Load in scan
 We need to create an instance of ``nptfit.NPTF`` and load in the scan
 performed using MPI.
 
-.. code:: ipython3
+.. code:: python
 
     n = nptfit.NPTF(tag='HighLat_Example')
 
-.. code:: ipython3
+.. code:: python
 
     fermi_data = np.load('fermi_data/fermidata_counts.npy').astype(np.int32)
     fermi_exposure = np.load('fermi_data/fermidata_exposure.npy')
     n.load_data(fermi_data, fermi_exposure)
 
-.. code:: ipython3
+.. code:: python
 
     analysis_mask = cm.make_mask_total(band_mask = True, band_mask_range = 50)
     n.load_mask(analysis_mask)
 
-.. code:: ipython3
+.. code:: python
 
     dif = np.load('fermi_data/template_dif.npy')
     iso = np.load('fermi_data/template_iso.npy')
@@ -76,12 +76,12 @@ performed using MPI.
     n.add_template(iso, 'iso')
     n.add_template(np.ones(len(iso)), 'iso_np', units='PS')
 
-.. code:: ipython3
+.. code:: python
 
     n.add_poiss_model('dif','$A_\mathrm{dif}$', [0,20], False)
     n.add_poiss_model('iso','$A_\mathrm{iso}$', [0,5], False)
 
-.. code:: ipython3
+.. code:: python
 
     n.add_non_poiss_model('iso_np',
                           ['$A^\mathrm{ps}_\mathrm{iso}$',
@@ -92,7 +92,7 @@ performed using MPI.
                           [30,80],[1,30],[0.1,1]],
                           [True,False,False,False,False,False,False,False])
 
-.. code:: ipython3
+.. code:: python
 
     pc_inst = pc.PSFCorrection(psf_sigma_deg=0.1812)
     f_ary, df_rho_div_f_ary = pc_inst.f_ary, pc_inst.df_rho_div_f_ary
@@ -103,7 +103,7 @@ performed using MPI.
     Loading the psf correction from: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
-.. code:: ipython3
+.. code:: python
 
     n.configure_for_scan(f_ary=f_ary, df_rho_div_f_ary=df_rho_div_f_ary, nexp=5)
 
@@ -115,7 +115,7 @@ performed using MPI.
 
 Finally, load the completed scan performed using MPI.
 
-.. code:: ipython3
+.. code:: python
 
     n.load_scan()
 
@@ -132,14 +132,14 @@ As in Example 9 we first initialize the analysis module. We will provide
 the same basic plots as in that notebook, where more details on each
 option is provided.
 
-.. code:: ipython3
+.. code:: python
 
     an = dnds_analysis.Analysis(n)
 
 1. Make triangle plots
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. code:: ipython3
+.. code:: python
 
     an.make_triangle()
 
@@ -151,7 +151,7 @@ option is provided.
 2. Get Intensities
 ~~~~~~~~~~~~~~~~~~
 
-.. code:: ipython3
+.. code:: python
 
     print("Iso NPT Intensity",corner.quantile(an.return_intensity_arrays_non_poiss('iso_np'),[0.16,0.5,0.84]), "ph/cm^2/s")
     print("Iso PT Intensity",corner.quantile(an.return_intensity_arrays_poiss('iso'),[0.16,0.5,0.84]), "ph/cm^2/s")
@@ -168,7 +168,7 @@ option is provided.
 3. Plot Source Count Distributions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code:: ipython3
+.. code:: python
 
     an.plot_source_count_median('iso_np',smin=0.01,smax=1000000,nsteps=10000,color='tomato',spow=2)
     an.plot_source_count_band('iso_np',smin=0.01,smax=1000000,nsteps=10000,qs=[0.16,0.5,0.84],color='tomato',alpha=0.3,spow=2)
@@ -199,7 +199,7 @@ option is provided.
 4. Plot Intensity Fractions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code:: ipython3
+.. code:: python
 
     an.plot_intensity_fraction_non_poiss('iso_np', bins=100, color='tomato', label='Iso PS')
     an.plot_intensity_fraction_poiss('iso', bins=100, color='cornflowerblue', label='Iso')
@@ -219,12 +219,12 @@ option is provided.
 Poissonian parameters
 ^^^^^^^^^^^^^^^^^^^^^
 
-.. code:: ipython3
+.. code:: python
 
     Aiso_poiss_post = an.return_poiss_parameter_posteriors('iso')
     Adif_poiss_post = an.return_poiss_parameter_posteriors('dif')
 
-.. code:: ipython3
+.. code:: python
 
     f, axarr = plt.subplots(1, 2);
     f.set_figwidth(8)
@@ -248,11 +248,11 @@ Poissonian parameters
 Non-poissonian parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code:: ipython3
+.. code:: python
 
     Aiso_non_poiss_post, n_non_poiss_post, Sb_non_poiss_post = an.return_non_poiss_parameter_posteriors('iso_np')
 
-.. code:: ipython3
+.. code:: python
 
     f, axarr = plt.subplots(2, 4);
     f.set_figwidth(16)

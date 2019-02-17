@@ -21,7 +21,7 @@ installed. Instructions to do so can be found here:
 
 http://nptfit.readthedocs.io/
 
-.. code:: ipython3
+.. code:: python
 
     # Import relevant modules
     
@@ -41,7 +41,7 @@ If no options are specified, create mask returns an empty mask. In the
 plot here and for those below, purple represents unmasked, yellow
 masked.
 
-.. code:: ipython3
+.. code:: python
 
     example1 = cm.make_mask_total()
     hp.mollview(example1, title='', cbar=False, min=0,max=1)
@@ -57,7 +57,7 @@ Example 2: Band Mask
 Here we show an example of how to mask a region either side of the plane
 - specifically we mask 30 degrees either side
 
-.. code:: ipython3
+.. code:: python
 
     example2 = cm.make_mask_total(band_mask = True, band_mask_range = 30)
     hp.mollview(example2, title='', cbar = False, min=0, max=1)
@@ -75,7 +75,7 @@ in galactic longitude (*l*) and latitude (*b*). The third example shows
 how when two different masks are specified, the mask returned is the
 combination of both.
 
-.. code:: ipython3
+.. code:: python
 
     example3a = cm.make_mask_total(l_mask = False, l_deg_min = -30, l_deg_max = 30, 
                                    b_mask = True, b_deg_min = -30, b_deg_max = 30)
@@ -108,7 +108,7 @@ Example 4: Ring and Annulus Mask
 Next we show examples of masking outside a ring or annulus. The final
 example demonstrates that the ring need not be at the galactic center.
 
-.. code:: ipython3
+.. code:: python
 
     example4a = cm.make_mask_total(mask_ring = True, inner = 0, outer = 30, ring_b = 0, ring_l = 0)
     hp.mollview(example4a,title='',cbar=False,min=0,max=1)
@@ -145,7 +145,7 @@ Example 5: Custom Mask
 In addition to the options above, we can also add in custom masks. In
 this example we highlight this by adding a random mask.
 
-.. code:: ipython3
+.. code:: python
 
     random_custom_mask = np.random.choice(np.array([True, False]), hp.nside2npix(128))
     example5 = cm.make_mask_total(custom_mask = random_custom_mask)
@@ -168,7 +168,7 @@ in Example 1.
 **NB:** before the point source mask can be loaded, the Fermi Data needs
 to be downloaded. See details in Example 1.
 
-.. code:: ipython3
+.. code:: python
 
     pscmask=np.array(np.load('fermi_data/fermidata_pscmask.npy'), dtype=bool)
     example6 = cm.make_mask_total(band_mask = True, band_mask_range = 2,
