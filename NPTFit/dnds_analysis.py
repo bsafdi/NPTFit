@@ -506,3 +506,20 @@ class Analysis:
             residual[tomask] = maskval
 
         return residual
+
+    def ll_map(self, theta=None):
+        """ Return a map of the LL in each pixel
+
+            :param theta: parameter values to compute map at. If None, use
+            best fit values
+        """
+
+        if theta == None:
+            theta = self.get_best_fit_params()
+
+        if len(self.nptf.non_poiss_models) == 0:
+            llmap = self.nptf.pll_map(theta)
+        else:
+            llmap = self.nptf.npll_map(theta)
+
+        return llmap

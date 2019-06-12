@@ -688,6 +688,87 @@ class NPTFScan(ConfigMaps):
                                                         int(fixed[0]),
                                                         [key, False])
 
+    def pll_map(self, theta):
+        """ Return a map of the Poissonian LL in each pixel
+        """
+
+        # Determine PT and pass to the likelihood function
+        pt_sum_compressed_arr, _ = self.make_pt_sum_theta(theta)
+        # Take out the 0th element as the Poissonian likelihood does not loop
+        # through exposure regions
+        pt_sum_compressed = pt_sum_compressed_arr[0]
+
+        # Calculate Gaussian prior contribution
+        gpllv = self.gpll(theta)
+
+        # Setup base compressed map, divide gpll between them
+        npixc = len(pt_sum_compressed)
+        llmapc = np.ones(npixc) * gpllv/float(npixc)
+        
+        # Now loop through to get the ll in each compressed pixel
+        for pc in range(npixc):
+            data_pc = np.array([self.masked_compressed_data[pc]])
+            model_pc =np.array([pt_sum_compressed[pc]])
+
+            llmapc[pc] += pll.log_like_poissonian(model_pc, data_pc)
+
+        # Now embed this into a full healpix map
+        llmap = np.zeros(self.npix)
+        roi = np.where(self.mask_total == False)[0]
+        llmap[roi] = llmapc
+
+        return llmap
+
+    def npll_map(self, theta):
+        """ Return a map of the non-Poissonian LL in each pixel
+        """
+
+        # Determine PT and NPT contribution and pass to the likelihood function
+        pt_sum_compressed, theta_ps_marked = self.make_pt_sum_theta(theta)
+        # theta_ps_marked is an array of [tag, value], extract values
+        theta_ps = list(np.vectorize(float)(np.array(theta_ps_marked)[::, 1]))
+        theta_ps = self.model_parameters_nbreak(theta_ps)
+        nbreak_ary = [int((len(theta_ps[j]) - 2) / 2.)
+                           for j in range(len(theta_ps))]
+        # Calculate Gaussian prior contribution
+        gpllv = self.gpll(theta)
+
+        # Build up the map one exposure region at a time
+        llmap = np.zeros(self.npix)
+        roi = np.where(self.mask_total == False)[0]
+        npixc = len(roi)
+
+        for i in range(self.nexp):
+            # For each NPT template adjust the breaks to account for the
+            # difference in exposure
+            theta_ps_expreg = [[theta_ps[j][0]] +
+                               list(theta_ps[j][1:nbreak_ary[j] + 2]) +
+                               list(np.array(
+                                    theta_ps[j][nbreak_ary[j] + 2:]) *
+                                    (self.exposure_means_list[
+                                        i] / self.exposure_mean))
+                               for j in
+                               range(len(self.NPT_dist_compressed_exp_ary))]
+
+            # Loop through each pixel in the exposure region
+            npixe = len(pt_sum_compressed[i])
+            llmape = np.zeros(npixe)
+            for pc in range(npixe):
+                llmape[pc] = npll.log_like(np.array([pt_sum_compressed[i][pc]]), 
+                                            theta_ps_expreg,
+                                            self.f_ary, self.df_rho_div_f_ary,
+                          [np.array([NPT[i][pc]]) for NPT in
+                          self.NPT_dist_compressed_exp_ary],
+                          np.array([self.masked_compressed_data_expreg[i][pc]]))
+
+            # Embed this exposure region into the full map
+            roie = np.where(self.expreg_mask[i] == False)[0]
+            llmap[roie] = llmape
+            # Divide gpll betweeen all pixels
+            llmap[roie] += gpllv/float(npixc)
+           
+        return llmap
+
     @staticmethod
     def convert_log_list(the_list, is_log):
         """ Take a list of parameters and accounts for those with log priors
