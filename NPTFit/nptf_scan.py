@@ -722,6 +722,16 @@ class NPTFScan(ConfigMaps):
     def npll_map(self, theta):
         """ Return a map of the non-Poissonian LL in each pixel
         """
+        
+        # Re-initialize the model_decompression_key to remove fixed parameters
+        self.model_decompression_key = [[key,
+                                         self.poiss_models[key]['log_prior']]
+                                        for key in self.poiss_model_keys]
+
+        for key in self.non_poiss_models.keys():
+            for j in range(self.non_poiss_models[key]['n_params']):
+                self.model_decompression_key += [
+                    [key, self.non_poiss_models[key]['log_prior'][j]]]
 
         # Determine PT and NPT contribution and pass to the likelihood function
         pt_sum_compressed, theta_ps_marked = self.make_pt_sum_theta(theta)
@@ -766,7 +776,10 @@ class NPTFScan(ConfigMaps):
             llmap[roie] = llmape
             # Divide gpll betweeen all pixels
             llmap[roie] += gpllv/float(npixc)
-           
+
+        # Add fixed parameters back in
+        self.fix_model_decompression()
+
         return llmap
 
     @staticmethod
