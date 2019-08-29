@@ -406,7 +406,7 @@ class Analysis:
         self.exp_masked_mean = np.mean(self.exp_masked_compressed)
 
     def get_log_evidence(self):
-        """ Global log-evidence and associated error
+        """ Global ln-evidence (i.e. natural log) and associated error
         """
 
         self.lge = self.nptf.s['nested sampling global log-evidence']
