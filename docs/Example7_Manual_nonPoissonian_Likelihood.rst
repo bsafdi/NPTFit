@@ -79,7 +79,7 @@ in the previous example.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
 .. code:: python
@@ -116,9 +116,9 @@ parameters:
 
 .. parsed-literal::
 
-    Vary A:  -587.122352024368 -586.130196097067 -588.0937820199872
-    Vary n1: -586.1007629900672 -586.130196097067 -586.2930087056609
-    Vary n2: -587.2239543224257 -586.130196097067 -587.4195252590384
+    Vary A:  -587.1163770023244 -586.2113098768381 -588.2406707060421
+    Vary n1: -586.1824552299396 -586.2113098768381 -586.3726977861785
+    Vary n2: -587.0768970698804 -586.2113098768381 -587.5645486197602
 
 
 To make the point clearer we can fix :math:`n_1` and :math:`n_2` to

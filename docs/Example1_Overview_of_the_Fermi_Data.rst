@@ -15,21 +15,16 @@ http://fermi.gsfc.nasa.gov/ssc/data/access/
 
 The specifics of the dataset we use are given below.
 
-+--------------------+-------------------------------------------------------------+
-| Parameter          | Value                                                       |
-+====================+=============================================================+
-| Energy Range       | 2-20 GeV                                                    |
-+--------------------+-------------------------------------------------------------+
-| Time Period        | Aug 4, 2008 to July 7, 2016 (413 weeks)                     |
-+--------------------+-------------------------------------------------------------+
-| Event Class        | UltracleanVeto (1024) - highest cosmic ray rejection        |
-+--------------------+-------------------------------------------------------------+
-| Event Type         | PSF3 (32) - top quartile graded by angular reconstruction   |
-+--------------------+-------------------------------------------------------------+
-| Quality Cuts       | ``DATA_QUAL==1 && LAT_CONFIG==1``                           |
-+--------------------+-------------------------------------------------------------+
-| Max Zenith Angle   | 90 degrees                                                  |
-+--------------------+-------------------------------------------------------------+
+================ =========================================================
+Parameter        Value
+================ =========================================================
+Energy Range     2-20 GeV
+Time Period      Aug 4, 2008 to July 7, 2016 (413 weeks)
+Event Class      UltracleanVeto (1024) - highest cosmic ray rejection
+Event Type       PSF3 (32) - top quartile graded by angular reconstruction
+Quality Cuts     ``DATA_QUAL==1 && LAT_CONFIG==1``
+Max Zenith Angle 90 degrees
+================ =========================================================
 
 .. code:: python
 
@@ -56,8 +51,8 @@ set up the data on a UNIX system:
 
     # Assumes wget is available! Otherwise, use curl or download manually 
     # from https://dspace.mit.edu/handle/1721.1/105492
-    os.system("wget https://dspace.mit.edu/bitstream/handle/1721.1/105492/fermi_data.tar.gz?sequence=4");
-    os.system("tar -xvf fermi_data.tar.gz?sequence=4");
+    os.system("wget https://dspace.mit.edu/bitstream/handle/1721.1/105492/fermi_data.tar.gz?sequence=5");
+    os.system("tar -xvf fermi_data.tar.gz?sequence=5");
     os.system("rm -r fermi_data.tar.gz*");
 
 The Data - Map of Gamma-ray Counts

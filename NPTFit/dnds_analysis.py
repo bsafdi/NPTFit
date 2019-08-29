@@ -15,6 +15,7 @@
 ###############################################################################
 
 import numpy as np
+import healpy as hp
 import numpy.ma as ma
 import matplotlib.pyplot as plt
 import corner
@@ -413,6 +414,25 @@ class Analysis:
         self.lge_err = self.nptf.s['nested sampling global log-evidence error']
         return self.lge, self.lge_err
 
+    def get_log_likelihood(self):
+        """ log-likelihood of the best fit parameters
+            NB: nested sampling techniques like multinest are not designed to
+            provide a reliable estimate of the maximum likelihood, should
+            instead use an optimizer for this purpose
+        """
+
+        self.llmax = self.nptf.bf['log_likelihood']
+        return self.llmax
+
+    def get_best_fit_params(self):
+        """ Parameters associated with the maximum likelihood
+            NB: as for the log likelihood, multinest is not optimized to
+            determine these
+        """
+
+        self.bfp = self.nptf.bf['parameters']
+        return self.bfp
+
     def make_triangle(self):
         """ Make a triangle plot
         """
@@ -422,3 +442,84 @@ class Analysis:
                       title_fmt='.2f', title_args={'fontsize': 14},
                       range=[1 for _ in range(self.nptf.n_params_full)],
                       plot_datapoints=False, verbose=False)
+
+    def residual_map(self, mask=False, maskval=0., exclude=np.array([]), 
+                     smooth=False, smooth_sig=1.):
+        """ Return the residual map, which is the data minus the best fit
+            Poissonian templates
+
+            :param mask: whether to apply a mask to the residual map
+            :param maskval: value masked pixels are set to if mask=True
+            :param exclude: array of strings, listing which templates not to
+            subtract
+            :param smooth: whether to smooth the map to scale smooth_sig
+            :param smooth_sig: std dev of the smoothing kernel [degrees]
+        """
+        
+        residual = np.array(self.nptf.count_map).astype(np.float)
+
+        # Loop through floated and fixed models
+        fix_keys = self.nptf.poiss_models_fixed.keys()
+        for k in fix_keys:
+            # Skip excluded maps
+            if k in exclude: continue
+
+            tmp = self.nptf.templates_dict[k]
+            norm = self.nptf.poiss_models_fixed[k]['fixed_norm']
+
+            residual -= norm*tmp
+
+        if self.nptf.n_poiss != 0:
+            flt_keys = self.nptf.poiss_model_keys
+            theta_bf = self.get_best_fit_params()
+
+            # Get the best fit values, convert from log if need be
+            a_theta = np.array([self.nptf.convert_log(
+                           self.nptf.model_decompression_key[i],theta_bf[i])[1] 
+                           for i in range(self.nptf.n_poiss)])
+
+            mdk = np.array(self.nptf.model_decompression_key)[:, 0]
+
+            for k in flt_keys:
+                # Skip excluded maps
+                if k in exclude: continue
+
+                tmp = self.nptf.templates_dict[k]
+
+                model_where = np.where(mdk == k)[0][0]
+                norm = a_theta[model_where]
+
+                residual -= norm*tmp
+
+        # Smooth
+        if smooth:
+            # Convert smoothing scale to radians
+            sigma_psf = smooth_sig*np.pi/180.
+            residual = hp.smoothing(residual,sigma=sigma_psf)
+
+        # Mask 
+        if mask:
+            msk = self.nptf.mask_total
+
+            tomask = np.where(msk == True)[0]
+
+            residual[tomask] = maskval
+
+        return residual
+
+    def ll_map(self, theta=None):
+        """ Return a map of the LL in each pixel
+
+            :param theta: parameter values to compute map at. If None, use
+            best fit values
+        """
+
+        if theta == None:
+            theta = self.get_best_fit_params()
+
+        if len(self.nptf.non_poiss_models) == 0:
+            llmap = self.nptf.pll_map(theta)
+        else:
+            llmap = self.nptf.npll_map(theta)
+
+        return llmap
