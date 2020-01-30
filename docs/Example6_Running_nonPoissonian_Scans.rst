@@ -137,7 +137,7 @@ of the code.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
     The number of parameters to be fit is 3
 
 
@@ -169,7 +169,7 @@ example.
 
 .. parsed-literal::
 
-      analysing data from /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/chains/non-Poissonian_Example/.txt
+      analysing data from /zfs/nrodd/NPTFRemakeExamples/chains/non-Poissonian_Example/.txt
 
 
 .. parsed-literal::

@@ -100,7 +100,7 @@ performed using MPI.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /group/hepheno/smsharma/NPTFit/examples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
 .. code:: python
@@ -122,7 +122,7 @@ Finally, load the completed scan performed using MPI.
 
 .. parsed-literal::
 
-      analysing data from /group/hepheno/smsharma/NPTFit/examples/chains/HighLat_Example/.txt
+      analysing data from /zfs/nrodd/NPTFRemakeExamples/chains/HighLat_Example/.txt
 
 
 Analysis
@@ -160,9 +160,9 @@ option is provided.
 
 .. parsed-literal::
 
-    Iso NPT Intensity [  1.21483730e-07   1.31199062e-07   1.41996475e-07] ph/cm^2/s
-    Iso PT Intensity [  1.40131525e-07   1.48859129e-07   1.56973582e-07] ph/cm^2/s
-    Dif PT Intensity [  1.96440673e-07   2.01367819e-07   2.06396272e-07] ph/cm^2/s
+    Iso NPT Intensity [1.13023625e-07 1.21451391e-07 1.29983760e-07] ph/cm^2/s
+    Iso PT Intensity [1.62091903e-07 1.68566455e-07 1.74563161e-07] ph/cm^2/s
+    Dif PT Intensity [1.88574352e-07 1.93195545e-07 1.97764592e-07] ph/cm^2/s
 
 
 3. Plot Source Count Distributions
@@ -188,7 +188,7 @@ option is provided.
 
 .. parsed-literal::
 
-    <matplotlib.text.Text at 0x7f120cab7bd0>
+    Text(0.5,1.02,'High Latitudes Isotropic NPTF')
 
 
 
@@ -233,7 +233,7 @@ Poissonian parameters
     
     axarr[0].hist(Aiso_poiss_post, histtype='stepfilled', color='cornflowerblue', bins=np.linspace(.5,1,30),alpha=0.4);
     axarr[0].set_title('$A_\mathrm{iso}$')
-    axarr[1].hist(Adif_poiss_post, histtype='stepfilled', color='lightsalmon', bins=np.linspace(15,20,30),alpha=0.4);
+    axarr[1].hist(Adif_poiss_post, histtype='stepfilled', color='lightsalmon', bins=np.linspace(10,15,30),alpha=0.4);
     axarr[1].set_title('$A_\mathrm{dif}$')
     
     plt.setp([a.get_yticklabels() for a in axarr[:]], visible=False);

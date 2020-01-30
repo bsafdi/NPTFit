@@ -47,7 +47,8 @@ class NPTFScan(ConfigMaps):
         self.non_poiss_list_is_log_prior = []
 
     def add_poiss_model(self, template_name, model_tag, prior_range=[],
-                        log_prior=False, fixed=False, fixed_norm=1.0):
+                        log_prior=False, fixed=False, fixed_norm=1.0,
+                        Gauss_prior=False, gmu=0.,gsig=1.):
         """ Add a Poissonian model corresponding to a template.
 
             :param template_name: string corresponding to a template added via
@@ -57,11 +58,18 @@ class NPTFScan(ConfigMaps):
             :param log_prior: boolean, = True for log spaced priors
             :param fixed: boolean, = True if the template is fixed, not floated
             :param fixed_norm: normalization of template, if fixed
+            :param Gauss_prior: whether to use a Gaussian prior
+            :param gmu: mean of the Gaussian prior
+            :param gsig: std deviation of the Gaussian prior
         """
 
         # Check the model is in the template dictionary
         assert (template_name in self.templates_dict), \
             template_name + " is not a known template, must be added"
+
+        # Template cannot be fixed and have a Gaussian prior
+        assert (not (log_prior*Gauss_prior)), \
+            "Cannot use a Gaussian prior and also fix the template"
         
         # Fixed and non-fixed poiss models appended to different dictionaries
         if fixed:
@@ -71,10 +79,21 @@ class NPTFScan(ConfigMaps):
 
             self.poiss_models_fixed[template_name] = {'fixed_norm': fixed_norm}
         else:
-            assert (len(prior_range) != 0), "Fix template or insert a prior"
+            if not Gauss_prior:
+                assert (len(prior_range) != 0), \
+                    "Floated template must have a prior"
+
+            # For Gaussian prior models, use uniform prior mu+/- 10 sigma
+            # and then place the Gaussian into the likelihood
+            if Gauss_prior:
+                prior_range = [gmu - 10.*gsig, gmu + 10.*gsig]
+            
             self.poiss_models[template_name] = {'prior_range': prior_range,
                                                 'log_prior': log_prior,
-                                                'model_tag': model_tag}
+                                                'model_tag': model_tag,
+                                                'Gauss_prior': Gauss_prior,
+                                                'gmu': gmu,
+                                                'gsig': gsig}
 
     def add_non_poiss_model(self, template_name, model_tag, prior_range=[],
                             log_prior=False, dnds_model='specify_breaks',
@@ -190,6 +209,14 @@ class NPTFScan(ConfigMaps):
                                    self.non_poiss_models.values()])
         self.n_non_poiss_models = len(self.non_poiss_models.keys())
         self.non_poiss_models_keys = self.non_poiss_models.keys()
+
+        # Save Gaussian prior details
+        self.poiss_gprior = [self.poiss_models[key]['Gauss_prior'] 
+                             for key in self.poiss_model_keys]
+        self.poiss_gmu = [self.poiss_models[key]['gmu']
+                          for key in self.poiss_model_keys]
+        self.poiss_gsig = [self.poiss_models[key]['gsig']
+                          for key in self.poiss_model_keys]
 
         # At this stage we have the mean exposure, so if non-Poissonian
         # templates are defined in terms of flux, adjust this now
@@ -424,12 +451,33 @@ class NPTFScan(ConfigMaps):
                     [theta_ps[offset_indices_ary[i]+nparams_ary[i] - 1]])
         return theta_ps_ary
 
+    def gpll(self, theta):
+        """ For Gaussian priors, pass multinest a linear prior and move
+            the Gaussian contribution into the ll, calculate that here
+        """
+
+        gll = 0.
+
+        if self.n_poiss != 0:
+            # Run through Poissonian models, add contribution for those with a
+            # Gaussian prior
+            for ipt in range(self.n_poiss):
+                if self.poiss_gprior[ipt]:
+                    xv = theta[ipt]
+                    mv = self.poiss_gmu[ipt]
+                    sv = self.poiss_gsig[ipt]
+                    gll += -0.5*np.log(2.*np.pi*sv**2.) - (xv-mv)**2./(2.*sv**2.)
+
+        return gll
+        
     def make_ll(self):
         """ Pass all details to the likelihood evaluator, and define the total
             ll to be the sum of that in each of the exposure regions
         """
 
         ll = 0.0
+        # Add the Gaussian prior contribution
+        ll += self.gpllv
         for i in range(self.nexp):
             # For each NPT template adjust the breaks to account for the
             # difference in exposure
@@ -463,6 +511,8 @@ class NPTFScan(ConfigMaps):
         self.nbreak_ary = [int((len(self.theta_ps[j]) - 2) / 2.)
                            for j in range(len(self.theta_ps))]
         self.PT_sum_compressed = pt_sum_compressed
+        # Calculate Gaussian prior contribution
+        self.gpllv = self.gpll(theta)
 
         return self.make_ll()
 
@@ -475,9 +525,12 @@ class NPTFScan(ConfigMaps):
         # Take out the 0th element as the Poissonian likelihood does not loop
         # through exposure regions
         pt_sum_compressed = pt_sum_compressed_arr[0]
+        
+        # Calculate Gaussian prior contribution
+        gpllv = self.gpll(theta)
 
         return pll.log_like_poissonian(pt_sum_compressed,
-                                       self.masked_compressed_data)
+                                       self.masked_compressed_data) + gpllv
 
     def perform_scan(self, run_tag=None, nlive=100, pymultinest_options=None):
         """ When called creates the directories for and then performs the scan
@@ -528,6 +581,7 @@ class NPTFScan(ConfigMaps):
                 pymultinest.Analyzer(n_params=self.n_params,
                                      outputfiles_basename=self.chains_dir_for_run)
             self.s = self.a.get_stats()
+            self.bf = self.a.get_best_fit()
             self.chain_file = self.chains_dir_for_run + '/post_equal_weights.dat'
             self.samples = np.array(np.loadtxt(self.chain_file)[:, :-1])
 
@@ -633,6 +687,100 @@ class NPTFScan(ConfigMaps):
                     self.model_decompression_key.insert(index +
                                                         int(fixed[0]),
                                                         [key, False])
+
+    def pll_map(self, theta):
+        """ Return a map of the Poissonian LL in each pixel
+        """
+
+        # Determine PT and pass to the likelihood function
+        pt_sum_compressed_arr, _ = self.make_pt_sum_theta(theta)
+        # Take out the 0th element as the Poissonian likelihood does not loop
+        # through exposure regions
+        pt_sum_compressed = pt_sum_compressed_arr[0]
+
+        # Calculate Gaussian prior contribution
+        gpllv = self.gpll(theta)
+
+        # Setup base compressed map, divide gpll between them
+        npixc = len(pt_sum_compressed)
+        llmapc = np.ones(npixc) * gpllv/float(npixc)
+        
+        # Now loop through to get the ll in each compressed pixel
+        for pc in range(npixc):
+            data_pc = np.array([self.masked_compressed_data[pc]])
+            model_pc =np.array([pt_sum_compressed[pc]])
+
+            llmapc[pc] += pll.log_like_poissonian(model_pc, data_pc)
+
+        # Now embed this into a full healpix map
+        llmap = np.zeros(self.npix)
+        roi = np.where(self.mask_total == False)[0]
+        llmap[roi] = llmapc
+
+        return llmap
+
+    def npll_map(self, theta):
+        """ Return a map of the non-Poissonian LL in each pixel
+        """
+        
+        # Re-initialize the model_decompression_key to remove fixed parameters
+        self.model_decompression_key = [[key,
+                                         self.poiss_models[key]['log_prior']]
+                                        for key in self.poiss_model_keys]
+
+        for key in self.non_poiss_models.keys():
+            for j in range(self.non_poiss_models[key]['n_params']):
+                self.model_decompression_key += [
+                    [key, self.non_poiss_models[key]['log_prior'][j]]]
+
+        # Determine PT and NPT contribution and pass to the likelihood function
+        pt_sum_compressed, theta_ps_marked = self.make_pt_sum_theta(theta)
+        # theta_ps_marked is an array of [tag, value], extract values
+        theta_ps = list(np.vectorize(float)(np.array(theta_ps_marked)[::, 1]))
+        theta_ps = self.model_parameters_nbreak(theta_ps)
+        nbreak_ary = [int((len(theta_ps[j]) - 2) / 2.)
+                           for j in range(len(theta_ps))]
+        # Calculate Gaussian prior contribution
+        gpllv = self.gpll(theta)
+
+        # Build up the map one exposure region at a time
+        llmap = np.zeros(self.npix)
+        roi = np.where(self.mask_total == False)[0]
+        npixc = len(roi)
+
+        for i in range(self.nexp):
+            # For each NPT template adjust the breaks to account for the
+            # difference in exposure
+            theta_ps_expreg = [[theta_ps[j][0]] +
+                               list(theta_ps[j][1:nbreak_ary[j] + 2]) +
+                               list(np.array(
+                                    theta_ps[j][nbreak_ary[j] + 2:]) *
+                                    (self.exposure_means_list[
+                                        i] / self.exposure_mean))
+                               for j in
+                               range(len(self.NPT_dist_compressed_exp_ary))]
+
+            # Loop through each pixel in the exposure region
+            npixe = len(pt_sum_compressed[i])
+            llmape = np.zeros(npixe)
+            for pc in range(npixe):
+                llmape[pc] = npll.log_like(np.array([pt_sum_compressed[i][pc]]), 
+                                            theta_ps_expreg,
+                                            self.f_ary, self.df_rho_div_f_ary,
+                          [np.array([NPT[i][pc]]) for NPT in
+                          self.NPT_dist_compressed_exp_ary],
+                          np.array([self.masked_compressed_data_expreg[i][pc]]))
+
+            # Embed this exposure region into the full map
+            roie = np.where(self.expreg_mask[i] == False)[0]
+            llmap[roie] = llmape
+            # Divide gpll betweeen all pixels
+            llmap[roie] += gpllv/float(npixc)
+
+        # Add fixed parameters back in
+        self.fix_model_decompression()
+
+        return llmap
 
     @staticmethod
     def convert_log_list(the_list, is_log):

@@ -81,7 +81,7 @@ loaded with ``n.load_scan()``.
 
 .. code:: python
 
-    n.add_poiss_model('dif', '$A_\mathrm{dif}$', fixed=True, fixed_norm=14.88)
+    n.add_poiss_model('dif', '$A_\mathrm{dif}$', fixed=True, fixed_norm=12.85)
     n.add_poiss_model('iso', '$A_\mathrm{iso}$', [0,2], False)
     n.add_poiss_model('gce', '$A_\mathrm{gce}$', [0,2], False)
     n.add_poiss_model('bub', '$A_\mathrm{bub}$', [0,2], False)
@@ -105,7 +105,7 @@ loaded with ``n.load_scan()``.
 
 .. parsed-literal::
 
-    Loading the psf correction from: /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
+    Loading the psf correction from: /zfs/nrodd/NPTFRemakeExamples/psf_dir/gauss_128_0.181_10_50000_1000_0.01.npy
 
 
 .. code:: python
@@ -128,7 +128,7 @@ performed in Example 8.
 
 .. parsed-literal::
 
-      analysing data from /zfs/nrodd/CodeDev/RerunNPTFExDiffFix/chains/GCE_Example/.txt
+      analysing data from /zfs/nrodd/NPTFRemakeExamples/chains/GCE_Example/.txt
 
 
 Analysis
@@ -145,20 +145,20 @@ used to access the posterior chains with ``n.samples``:
 
 .. parsed-literal::
 
-    (640, 11)
-    [[ 3.33904781e-01  6.29116538e-02  8.83457883e-01 ...  2.67239749e+01
-      -9.77712060e-01  2.67974979e+01]
-     [ 1.81574859e-01  1.62327499e-02  8.74875466e-01 ...  1.65924583e+01
-       3.60687372e-01  6.42911142e+00]
-     [ 3.00509661e-02  1.37888104e-02  9.67000054e-01 ...  1.38951757e+01
-       9.96754750e-01  2.25883208e+01]
+    (727, 11)
+    [[ 3.02530027e-01  1.28844616e-02  7.61010110e-01 ...  3.33197176e+00
+      -1.75810216e+00  1.21244569e+01]
+     [ 1.42579079e-01  4.47359376e-02  8.78739424e-01 ...  3.23668719e+00
+      -1.01507893e-02  2.16130996e+01]
+     [ 3.55121759e-01  6.53227405e-02  7.85106865e-01 ...  2.99195590e+00
+       7.37752368e-01  2.04954322e+01]
      ...
-     [ 1.14970554e-01  9.34063431e-03  9.33562117e-01 ...  1.13523464e+01
-       4.73382997e-02  3.12313336e+01]
-     [ 6.78480147e-02  1.28769290e-03  9.47928654e-01 ...  1.02471941e+01
-      -5.84039360e-01  3.22930986e+01]
-     [ 2.01882926e-01  1.54871080e-02  9.30957177e-01 ...  6.45896818e+00
-       3.67382875e-01  2.96260251e+01]]
+     [ 2.29948101e-01  1.61386174e-02  8.31147674e-01 ...  2.69403412e+00
+      -3.40231551e-01  9.37923721e+00]
+     [ 2.12020248e-01  1.13076016e-02  8.34925625e-01 ...  3.54014211e+00
+      -1.02525168e+00  2.08287337e+01]
+     [ 1.35120585e-01  1.12892027e-03  8.63017349e-01 ...  3.15637545e+00
+       5.02206794e-01  2.85446996e+01]]
 
 
 In the analysis module described next we provide basic helper functions
@@ -201,7 +201,7 @@ To use your own custom plotting options, use corner as follows
 
 .. code:: python
 
-    corner.corner(an.nptf.samples, labels=an.nptf.params, range=[1 for i in range(an.nptf.n_params)])
+   corner.corner(an.nptf.samples, labels=an.nptf.params, range=[1 for i in range(an.nptf.n_params)])
 
 with additional arguments as specified in
 http://corner.readthedocs.io/en/latest/.
@@ -213,8 +213,8 @@ Template intensities can be calculated with
 
 .. code:: python
 
-    dnds_analysis.return_intensity_arrays_poiss(comp)
-    dnds_analysis.return_intensity_arrays_non_poiss(comp)
+   dnds_analysis.return_intensity_arrays_poiss(comp)
+   dnds_analysis.return_intensity_arrays_non_poiss(comp)
 
 for the Poissonian and non-Poissonian templates respectively. This
 returns an intensity array corresponding to each chain sample associated
@@ -225,17 +225,14 @@ The NPT intensity is calculated by integrating up
 sum between :math:`S_{min}` and :math:`S_{max}`. The options associated
 with the non-Poissonian template intensity are:
 
-+--------------+-----------------+--------------------------------------------+
-| Argument     | Default Value   | Purpose                                    |
-+==============+=================+============================================+
-| ``comp``     | -               | The NPT key                                |
-+--------------+-----------------+--------------------------------------------+
-| ``smin``     | 0.01            | Minimum counts to sum up from              |
-+--------------+-----------------+--------------------------------------------+
-| ``smax``     | 10000           | Maximum counts to sum up to                |
-+--------------+-----------------+--------------------------------------------+
-| ``nsteps``   | 10000           | Number of bins in ``s`` while summing up   |
-+--------------+-----------------+--------------------------------------------+
+========== ============= ========================================
+Argument   Default Value Purpose
+========== ============= ========================================
+``comp``   -             The NPT key
+``smin``   0.01          Minimum counts to sum up from
+``smax``   10000         Maximum counts to sum up to
+``nsteps`` 10000         Number of bins in ``s`` while summing up
+========== ============= ========================================
 
 We can then look at the quantiles of this distribution, for example to
 see the middle 68% along with the medians of the GCE and disk NPT as
@@ -250,9 +247,9 @@ well as that of the GCE PT:
 
 .. parsed-literal::
 
-    GCE NPT Intensity [9.46529620e-08 1.07665102e-07 1.21213080e-07] ph/cm^2/s
-    Disk NPT Intensity [2.10125373e-08 3.25540729e-08 4.62200900e-08] ph/cm^2/s
-    GCE PT Intensity [8.36993561e-10 3.18699151e-09 8.16049505e-09] ph/cm^2/s
+    GCE NPT Intensity [1.15207873e-07 1.27800928e-07 1.41013411e-07] ph/cm^2/s
+    Disk NPT Intensity [1.94686971e-08 3.06909244e-08 4.59075661e-08] ph/cm^2/s
+    GCE PT Intensity [7.26099026e-10 3.05887937e-09 7.86384174e-09] ph/cm^2/s
 
 
 3. Plot Source Count Distributions
@@ -265,7 +262,7 @@ with a given template ``comp`` at a given ``flux``
 
 .. code:: python
 
-    dnds.return_dndf_arrays(comp,flux)
+   dnds.return_dndf_arrays(comp,flux)
 
 The quantiles of this can then be obtained as before. For example, the
 middle 68% and medians for the GCE and disk non-Poissonian templates:
@@ -278,8 +275,8 @@ middle 68% and medians for the GCE and disk non-Poissonian templates:
 
 .. parsed-literal::
 
-    [4.17195737e+05 9.19323116e+06 2.88804846e+08]
-    [7.49643119e+03 1.11781321e+06 2.90431609e+08]
+    [3.11754163e+05 6.13090927e+06 2.96631422e+08]
+    [1.26336916e+04 2.10184377e+06 9.07314393e+08]
 
 
 The following arrays are used to show the resolved 3FGL points sources
@@ -319,8 +316,8 @@ The source count distribution can be plotted with
 
 .. code:: python
 
-    dnds.plot_source_count_median(comp, smin, smax, nsteps, spow, **kwargs)
-    dnds.plot_source_count_band(comp, smin, smax, nsteps, spow, qs, **kwargs)
+   dnds.plot_source_count_median(comp, smin, smax, nsteps, spow, **kwargs)
+   dnds.plot_source_count_band(comp, smin, smax, nsteps, spow, qs, **kwargs)
 
 The options being the same as for obtaining the NPT intensity above.
 Additionally, ``spow`` is the power :math:`n` in :math:`F^ndN/dF` to
@@ -409,8 +406,8 @@ using
 
 .. code:: python
 
-    dnds.plot_intensity_fraction_poiss(comp, bins, **kwargs)
-    dnds.plot_intensity_fraction_non_poiss(comp, bins, **kwargs)
+   dnds.plot_intensity_fraction_poiss(comp, bins, **kwargs)
+   dnds.plot_intensity_fraction_non_poiss(comp, bins, **kwargs)
 
 where ``comp`` is the template key, ``bins`` is the number of bins
 between 0 and 100 and ``**kwargs`` specify plotting options.
@@ -441,8 +438,8 @@ interfact to access individual parameters:
 
 .. code:: python
 
-    dnds_analysis.return_poiss_parameter_posteriors(comp)
-    dnds_analysis.return_poiss_parameter_posteriors(comp)
+   dnds_analysis.return_poiss_parameter_posteriors(comp)
+   dnds_analysis.return_poiss_parameter_posteriors(comp)
 
 where ``comp`` is the (non-)Poissonian template key.
 
@@ -534,5 +531,5 @@ as follows.
 
 .. parsed-literal::
 
-    -29352.827909478605 0.4066660557173963
+    -30956.359589319734 0.43278107806496635
 
