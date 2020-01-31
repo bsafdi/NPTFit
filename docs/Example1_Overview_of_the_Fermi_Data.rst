@@ -318,11 +318,10 @@ spatially distributed as approximately a squared generalized
 Navarro–Frenk–White (NFW) profile integrated along the line of sight.
 The generalized NFW for the Milky Way has the form:
 
-.. math:: \rho(r) = \rho_0 \frac{(r/r_s)^{-\gamma}}{(1+r/r_s)^{3-\gamma}}\,,
+.. math:: \rho(r) \propto \frac{(r/r_s)^{-\gamma}}{(1+r/r_s)^{3-\gamma}}\,,
 
 where :math:`r` is the distance from the Galactic center. We take
-:math:`r_s = 8.5` kpc, :math:`\gamma = 1.0`, and choose :math:`\rho_0`
-such that :math:`\rho(r_s) = 0.4` GeV/cm\ :math:`^3`. The flux GCE
+:math:`r_s = 20` kpc and :math:`\gamma = 1.0`. The flux GCE
 template is then formed as:
 
 .. math:: J(\psi) = \int_{\rm los} \rho^2(r) ds\,,
