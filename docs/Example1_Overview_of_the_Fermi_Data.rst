@@ -352,10 +352,10 @@ Model for Disk Correlated Point Sources
 
 When studying the point source origin of the GCE - done in Example 8 -
 we will also include a model for point sources correlated with the disk
-of the Milky Way. For this purpose we use the following thin disk double
+of the Milky Way. For this purpose we use the following thick disk double
 exponential model for the point source population:
 
-.. math:: n(z,R) \propto \exp \left( - R / 5~\textrm{kpc} \right) \exp \left( - |z| /0.3~\textrm{kpc} \right)\,,
+.. math:: n(z,R) \propto \exp \left( - R / 5~\textrm{kpc} \right) \exp \left( - |z| /1~\textrm{kpc} \right)\,,
 
 where :math:`R` and :math:`z` are cylindrical polar coordinates measured
 from the Galactic Center.
@@ -364,9 +364,9 @@ from the Galactic Center.
 
     disk = np.load('fermi_data/template_dsk.npy')
     
-    hp.mollview(disk,title='Thin Disk')
+    hp.mollview(disk,title='Thick Disk')
     
-    hp.mollview(np.log10(disk),title='Thin Disk - Log')
+    hp.mollview(np.log10(disk),title='Thick Disk - Log')
 
 
 
