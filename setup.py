@@ -31,7 +31,13 @@ def call_pkgconfig(args, remove_flags=False):
 
 # Try to find GSL with pkg-config
 def find_gsl(libraries=[], library_dirs=[], extra_link_args=[], include_dirs=[], extra_compile_args=[]):
-    default = dict(libraries = ['gsl', 'gslcblas', 'm'])
+    default = dict(
+        libraries = ['gsl', 'gslcblas'] + libraries,
+        library_dirs=library_dirs,
+        extra_link_args=extra_link_args,
+        include_dirs=include_dirs,
+        extra_compile_args=extra_compile_args
+        )
     try:
         result = dict(
             libraries = call_pkgconfig(['--libs-only-l', 'gsl'], remove_flags=True) + libraries,
@@ -49,6 +55,10 @@ def find_gsl(libraries=[], library_dirs=[], extra_link_args=[], include_dirs=[],
     result = { key: value for key, value in result.items() if len(value) > 0 }
     return result
 
+    # remove empty args
+    result = { key: value for key, value in result.items() if len(value) > 0 }
+    return result
+
 
 extensions = [
     Extension("NPTFit.npll", ["NPTFit/npll.pyx"],
@@ -58,8 +68,9 @@ extensions = [
     Extension("NPTFit.incgamma_fct_p", ["NPTFit/incgamma_fct_p.pyx"],
         include_dirs=[numpy.get_include()], extra_compile_args=["-ffast-math",'-O3']),
     Extension("NPTFit.x_m", ["NPTFit/x_m.pyx"],
-        include_dirs=[numpy.get_include()], extra_compile_args=["-ffast-math",'-O3']),
+        libraries=['m'],include_dirs=[numpy.get_include()], extra_compile_args=["-ffast-math",'-O3']),
     Extension("NPTFit.incgamma_fct", ["NPTFit/incgamma_fct.pyx"], **find_gsl(
+            libraries=['m'],
             include_dirs = [numpy.get_include()],
             extra_compile_args = ["-ffast-math",'-O3']))
 ]
